@@ -1,6 +1,8 @@
 # HoleController_Server
 EVE Online WH-Map server
 
+Last update 30.08.2020
+
 1. Install NODE:
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.34.0/install.sh | bash
 . ~/.nvm/nvm.sh
