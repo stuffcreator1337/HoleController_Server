@@ -1,6 +1,5 @@
 var busy = false;
 const path1 = './';
-const listenport = 3000;
 
 var crest,map1,charFleet;
 
@@ -11,98 +10,37 @@ const atob_func = require('atob');
 var io = require('socket.io');
 const request = require('request');
 const querystring = require('querystring');
-// const axios = require('axios');
-// const superagent = require('superagent');
+
+const settings = require(path1+'settings');
+
+const { Webhook } = require('discord-webhook-node');
+
+const hook = new Webhook(settings.whook.url);
+
+hook.setUsername(settings.whook.name);
+hook.setAvatar(settings.whook.avatar); 
+hook.send(settings.whook.welcomeMsg);
+
+const homesystemID = settings.homesystemID;
 
 /*****************************************************************
-	создаем базы данных по еве
+	creating datas
 ******************************************************************/
-const dbconst = require(path1+'/db/constellations');
+// const dbconst = require(path1+'/db/constellations');
 const dbjumps = require(path1+'/db/jumps');
 const dbfulleden = require(path1+'/db/mapofeden');
 const dbsysnames = require(path1+'/db/sysnames');
-const dbregions = require(path1+'/db/regions');
-const dbholes = require(path1+'/db/wh_holes');
+// const dbregions = require(path1+'/db/regions');
+// const dbholes = require(path1+'/db/wh_holes');
 const dbinfo = require(path1+'/db/wh_info');
 const  tools = require(path1+'/tools');
 // console.log(dbsysnames['J115031']);
 
 /*****************************************************************
-	задаем скоупы
+	connection settings
 ******************************************************************/
-const scopes = 'esi-location.read_ship_type.v1'+
-			'%20esi-ui.write_waypoint.v1'+	
-			// <!-- '%20esi-skills.read_skills.v1'+ -->
-			// <!-- '%20esi-skills.read_skillqueue.v1'+ -->
-			'%20esi-bookmarks.read_character_bookmarks.v1'+
-			'%20esi-bookmarks.read_corporation_bookmarks.v1'+
-			'%20esi-killmails.read_killmails.v1'+
-			'%20esi-fleets.read_fleet.v1'+
-			'%20esi-fleets.write_fleet.v1'+
-			// <!-- '%20esi-ui.open_window.v1'+ -->
-			// <!-- '%20esi-fittings.read_fittings.v1'+  -->
-			// <!-- '%20esi-characters.read_loyalty.v1'+ -->
-			'%20esi-location.read_online.v1'+
-			'%20esi-location.read_location.v1';
-			
-/*****************************************************************
-	настройки для запуска сервера с разных мест
-******************************************************************/
-var Servers = {};
-Servers["amazon"] = {
-	 "client" : "",
-	 "secret" : "",
-	"login" : "login.",
-	"source" : "tranquility",
-	"file": "_tranq",
-	"token" : "stokens",
-	"scopes" : scopes,
-	"path" : '/home/ec2-user/files/'
-};
-Servers["amazon2"] = {
-	 "client" : "",
-	 "secret" : "",
-	"login" : "login.",
-	"source" : "tranquility",
-	"file": "_tranq",
-	"token" : "stokens",
-	"scopes" : scopes,
-	"path" : '.'
-};
-Servers["home_1"] = {
-	// "client" : "",
-	// "secret" : "",
-	"client" : "",
-	"secret" : "",
-	"login" : "login.",
-	"source" : "tranquility",
-	"file": "_tranq",
-	"token" : "stokens",
-	"scopes" : scopes,
-	"path" : 'D:/files/nodejs/'
-};
-Servers["home_2"] = {
-	"client" : "",
-	"secret" : "",
-	"login" : "login.",
-	"source" : "tranquility",
-	"file": "_tranq",
-	"token" : "stokens",
-	"scopes" : scopes,
-	"path" : 'C:/Program Files/nodejs/'
-};
-Servers["home_3"] = {
-	"client" : "",
-	"secret" : "",
-	"login" : "login.",
-	"source" : "tranquility",
-	"file": "_tranq",
-	"token" : "stokens",
-	"scopes" : scopes,
-	"path" : 'C:/Program Files/nodejs/'
-};
-
-const currentServer = Servers["amazon2"];		
+	
+const currentServer = settings.Servers.server1_tranq;
 const path = currentServer["path"];
 
 process.on('uncaughtException', function (err) {
@@ -110,17 +48,13 @@ process.on('uncaughtException', function (err) {
   console.log('\x1b[31m%s\x1b[0m', "Node NOT Exiting...");
 });
 
-// const redis = require('socket.io-redis');
 var json = '';
 var used_code = "";
-//http://localhost:8080/?code=                 &state=uniquestate123
-//https://login.eveonline.com/oauth/authorize/?response_type=code&redirect_uri=http://localhost:8080&client_id=                         &scope=esi-location.read_ship_type.v1%20esi-ui.write_waypoint.v1%20esi-assets.read_assets.v1%20esi-location.read_location.v1&state=uniquestate123
-
 
 // var crestDB = [];
 // var charsLoc = [];
 /*****************************************************************
-	считываем сохраненные файлы с крест-ключами и картой
+	reading saved files with map and ESI-keys
 ******************************************************************/
 readF('crestDB',function(err,old_db){
 	crest = new swagger(old_db);
@@ -132,8 +66,12 @@ readF('map1',function(err,old_db){
 	// console.log(map1);
 });
 
+//'\x1b[31m%s\x1b[0m' - red
+//'\x1b[32m%s\x1b[0m' - green
+//'\x1b[33m%s\x1b[0m' - dark yellow
+
 /*****************************************************************
-	создаем сервер
+	creating server
 ******************************************************************/
 var server = http.createServer(function(req, res)
 	{ 
@@ -146,21 +84,21 @@ var server = http.createServer(function(req, res)
 		}
 		return query;
 	};
-	 var parsedUrl = parseQuery(req.url);
-	 var URLparams = new URLSearchParams(req.url);
-	 var code1 = parsedUrl["/?code"];
-	 console.log(req.url);
-	 var pars_ = parsedUrl["state"].split('_');
-	 var stateCode = pars_[0];
-	 var uniqueCode = pars_[1];
-  // Send HTML headers and message
-  res.writeHead(404, {'Content-Type': 'text/html'});
-  res.end('<script>window.close();</script>');
+	var parsedUrl = parseQuery(req.url);
+	var URLparams = new URLSearchParams(req.url);
+	var code1 = parsedUrl["/?code"];
+	console.log(req.url);
+	var pars_ = parsedUrl["state"].split('_');
+	var stateCode = pars_[0];
+	var uniqueCode = pars_[1];
+	// Send HTML headers and message
+	res.writeHead(404, {'Content-Type': 'text/html'});
+	// res.end('<script>window.close();</script>');
   	if (code1){
 		if(code1 == used_code){
 			res.end('This code has already been used, press LOGIN button again to recieve a new code.');
 		}else{
-			res.end('Token recieved. Close this page and open the app.');
+			res.end('Token recieved. Close this page and open the app.<script>window.close();</script>');
 			used_code = code1;
 			var data =  querystring.stringify({ 'grant_type': 'authorization_code',
 				'code': code1 });
@@ -186,7 +124,7 @@ var server = http.createServer(function(req, res)
 		}
 	}
 });
-server.listen(listenport);
+server.listen(currentServer["port"]);
 
 /*****************************************************************
 	создаем класс для базы с крест-инфой о персах
@@ -262,7 +200,7 @@ class swagger{
 			for(let i=0;i<crestDB.length;i++){
 				if(id == crestDB[i]['CharacterID']){								
 					if (err) {
-						console.log(err);console.log(id);
+						console.log('\x1b[31m%s\x1b[0m', "Character with the ID="+id+" got error:");console.log('\x1b[31m%s\x1b[0m', err);
 						send('', "token_error", id, crestDB[i]['code']);
 					} else {
 						crest.charStatus[id] = 'refreshed';
@@ -435,8 +373,6 @@ class swagger{
 								var s2wh 	= tools.isWh(dbfulleden,old_id);
 								var sJumps = null;
 								if(!s1wh && !s2wh){sJumps = map1.jumps[old_id][new_id];}
-								// var ksConn 	= tools.kspaceConnected(map1.jumps[old_id],map1.jumps[new_id]);
-								// console.log((tools.isWh(dbfulleden,new_id) ),(tools.isWh(dbfulleden,old_id) ),(map1.jumps[old_id][new_id]));
 								if((tools.isWh(dbfulleden,new_id) == true)||(tools.isWh(dbfulleden,old_id) == true)||(map1.jumps[old_id][new_id]==null)){
 									console.log('\x1b[34m%s\x1b[0m', 'Old sysID: '+old_id+', new sysID: '+new_id);
 									map1.create_link(new_id,old_id,'',id);
@@ -696,10 +632,10 @@ class map{
 		// for(var i=0;i<16;i++){
 		// this.map1.push(json[i]);}// || readFsync(path+'/server_files/map1'+currentServer["file"]+'.json')[i]
 		this.systems 	= dbfulleden;
-		this.consts 	= dbconst;
+		// this.consts 	= dbconst;
 		this.jumps 		= dbjumps;
-		this.regions 	= dbregions;
-		this.holes 		= dbholes;
+		// this.regions 	= dbregions;
+		// this.holes 		= dbholes;
 		this.info 		= dbinfo;
 		this.sigs 		= readFsync(path+'/server_files/sigs'+currentServer["file"]+'.json');
 		this.names 		= readFsync(path+'/server_files/names'+currentServer["file"]+'.json');
@@ -794,17 +730,19 @@ class map{
 				already_exists = true;
 			}
 		}
+		// console.log(links);
 		//console.log(old_j[i]["sys1"],old_j[i]["sys2"]);
 		if(!already_exists){
 			old_j.push(links);
-			if(links.sys1 == '31001824' || links.sys2 == '31001824'){
+			if(links.sys1 == homesystemID.toString() || links.sys2 == homesystemID.toString()){
 				var s = '';
-				if(links.sys1 == '31001824'){s = links.sys2;}else{s = links.sys1;}
+				if(links.sys1 == homesystemID.toString()){s = links.sys2;}else{s = links.sys1;}
 				// this.systems[s]
-				slackMessage('Система из дома: '+s,s,this.systems[s],this);
+				webhooksSend('Система из дома: '+s,s,this.systems[s],this);
 			}
 			
 		}
+		// console.log(old_j);
 		send('', "new_links_found", old_j,"all");
 		if(old_j != "[]"){
 			// writeF(old_j,'map1');
@@ -846,10 +784,10 @@ function update_crest(token,info,state,unique){//обновляем имеющу
 		let found = findById(crest.crestDB,info['CharacterID'],'CharacterID');//ищем нужного перса
 		//если перс не найден, значит всё новое - узнаем корпу, делаем новую запись, узнаем локацию
 		if(!found){
-			let url = 'https://esi.evetech.net/v4/characters/'+info['CharacterID']+'/?datasource='+currentServer["source"];
+			let url = 'https://esi.evetech.net/dev/characters/'+info['CharacterID']+'/?datasource='+currentServer["source"];
 			getCCPdata(url,function(e,response){
 				if(e){console.log('\x1b[31m%s\x1b[0m', '408: error'); return;}
-				if(response.corporation_id != 605796230){
+				if(response.corporation_id != currentServer["corp"]){
 					console.log('\x1b[35m%s\x1b[0m', '430: Not in Another War!');
 					send('', "error_text", {'text':'Not in Another War!'},unique);
 					return;
@@ -1121,7 +1059,7 @@ function postCharacterData(h,u,token,callback,id,data){
 ******************************************************************/
 io = io.listen(server);
 console.log('\x1b[32m%s\x1b[0m', '_______________________________________');
-console.log('\x1b[32m%s\x1b[0m', '507: Server running on port:'+listenport);
+console.log('\x1b[32m%s\x1b[0m', '507: Server running on port:'+currentServer["port"]);
 
 var fs = require('fs');
 var json_files = {};
@@ -1468,12 +1406,41 @@ socket.on('link_edit', function(data) {
 });
 
 /*****************************************************************
+	отправка сообщений в discord
+******************************************************************/
+function sendToDiscord(txt,id,inf,that){
+	var icon_url = "https://imageserver.eveonline.com/Type/2062_64.png";
+	var cl = inf.sysclass;
+	var sec = inf.security;
+	var data = "";
+	if(sec > 0.45){
+		that.getDistance(homesystemID,id,function(data1,data2){
+			var data = "Дома хайсек <https://zkillboard.com/system/"+id+"|"+inf.solarSystemName+">";
+			hook.send(data);
+			return;			
+		});
+	}else if(sec > 0){
+		data = "Дома лоусек <https://zkillboard.com/system/"+id+"|"+inf.solarSystemName+">";
+	// }else if(inf.hubj == '-1' && cl == 'C4'){
+		// data = "Новый статик <https://zkillboard.com/system/"+id+"|"+inf.solarSystemName+">";
+	}else if(inf.regionID == '10000070'){
+		data = "Дома почвень "+cl+" <https://zkillboard.com/system/"+id+"|"+inf.solarSystemName+">";//10000070
+	}else if(inf.hubj == '-1'){
+		data = "Дома новая дыра "+cl+" <https://zkillboard.com/system/"+id+"|"+inf.solarSystemName+">";
+	}else {
+		data = "Дома нули <https://zkillboard.com/system/"+id+"|"+inf.solarSystemName+">";
+	}
+	if(data != "" ){hook.send(data);return;}
+	
+}
+
+
+/*****************************************************************
 	отправка сообщений в слак
 ******************************************************************/
 function sendToSlack(data){
-	// var url = 'https://hooks.slack.com/services/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';//map_room
-	var url = 'https://hooks.slack.com/services/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';//map-bot-test
-	// var txt = 'Hellow slack';
+	var url = 'https://hooks.slack.com/services/BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB';//map-bot-
+
 	var options = {
 		json: data,
 		dataType: 'json',
@@ -1492,33 +1459,15 @@ function sendToSlack(data){
 	});
 }
 function slackMessage(txt,id,inf,that){
-		// {
-		// "text": "I am a test message http://slack.com",
-		// "attachments": [
-			// {
-				// "text": "And here’s an attachment!"
-			// }
-		// ]
-	// }
-
 	var icon_url = "https://imageserver.eveonline.com/Type/2062_64.png";
-		var cl = inf.class5;
+		var cl = inf.sysclass;
 		var sec = inf.security;
 		var data = {};
 		if(sec > 0.45){
-			that.getDistance(30002803,id,function(data1,data2){
-				var data = {
-					"icon_url": icon_url,
-					"text": "Дома хайсек <https://zkillboard.com/system/"+id+"|"+inf.solarSystemName+">",
-					"attachments": 	[
-						{
-							"text":  "До Буткемпа:"+data2.length+" ("+data1.length+")"
-						}
-					]
-				};
-				sendToSlack(data);
-				return;			
-			});
+			var data = {
+				"icon_url": icon_url,
+				"text": "Дома хайсек <https://zkillboard.com/system/"+id+"|"+inf.solarSystemName+">"
+			};
 		}else if(sec > 0){
 			data = {
 				"icon_url": icon_url,
@@ -1547,6 +1496,15 @@ function slackMessage(txt,id,inf,that){
 	// }
 }
 
+/*****************************************************************
+	вспомогательные функции будут здесь
+******************************************************************/
+function webhooksSend(txt,id,inf,that){	
+	//Slack:
+	slackMessage(txt,id,inf,that);
+	//Discord:
+	hook.send(txt);
+}
 /*****************************************************************
 	вспомогательные функции будут здесь
 ******************************************************************/

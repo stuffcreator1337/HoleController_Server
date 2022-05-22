@@ -68,7 +68,7 @@ module.exports = {
 		// if(typeof map1 === 'undefined')return;
 	// console.log(map1.systems[id]);
 		var currentSys = systems[id];
-		if((currentSys["class5"]!="High")&&(currentSys["class5"]!="Low")&&(currentSys["class5"]!="Null")){
+		if((currentSys["sysclass"]!="High")&&(currentSys["sysclass"]!="Low")&&(currentSys["sysclass"]!="Null")){
 		return true;}
 		else {return false;}
 	},

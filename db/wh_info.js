@@ -18195,28 +18195,28 @@ module.exports = {
 "31000002" : { 	"name" : "J110145",
 					"const" : "C334", 
 					"region" : "R33",
-					"class5" : "15",
+					"class5" : "14",
 					"effect" : "Cataclysmic<br>Variable",
 					"statics" : ""
 			},
 "31000003" : { 	"name" : "J164710",
 					"const" : "C334", 
 					"region" : "R33",
-					"class5" : "16",
+					"class5" : "14",
 					"effect" : "Magnetar",
 					"statics" : ""
 			},
 "31000004" : { 	"name" : "J200727",
 					"const" : "C334", 
 					"region" : "R33",
-					"class5" : "17",
+					"class5" : "14",
 					"effect" : "Pulsar",
 					"statics" : ""
 			},
 "31000006" : { 	"name" : "J174618",
 					"const" : "C334", 
 					"region" : "R33",
-					"class5" : "18",
+					"class5" : "14",
 					"effect" : "Wolf Rayet",
 					"statics" : ""
 			}};
