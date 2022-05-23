@@ -8,10 +8,10 @@
 		"ship_name": "QWxwaG8ncyBJYmlz",
 		"ship_item_id": "MTAzNzY0MDUyNjE4Ng==",
 		"last_login": "2022-05-22T18:51:18Z",
-		"last_logout": "2022-05-15T11:45:44Z",
+		"last_logout": "2022-05-22T20:44:04Z",
 		"logins": 6175,
-		"online": true,
-		"loc_time": 1653247918421
+		"online": false,
+		"loc_time": 1653252253532
 	},
 	{
 		"CharacterName": "QWxwaG8=",
@@ -22,10 +22,10 @@
 		"ship_name": "QWxwaG8ncyBJYmlz",
 		"ship_item_id": "MTAzNzY0MDUyNjE4Ng==",
 		"last_login": "2022-05-22T18:51:18Z",
-		"last_logout": "2022-05-15T11:45:44Z",
+		"last_logout": "2022-05-22T20:44:04Z",
 		"logins": 6175,
-		"online": true,
-		"loc_time": 1653247918421
+		"online": false,
+		"loc_time": 1653252253532
 	},
 	{
 		"CharacterName": "T3hhbmEgS3Jpc3Rvcw==",
@@ -50,9 +50,9 @@
 		"ship_name": "bm90IGEgc2xlZXBlcg==",
 		"ship_item_id": "MTAyNjk3NDgzNjA4MQ==",
 		"last_login": "2022-05-22T19:23:39Z",
-		"last_logout": "2022-05-14T12:09:03Z",
+		"last_logout": "2022-05-22T20:44:01Z",
 		"logins": 1186,
-		"online": true,
-		"loc_time": 1653247918353
+		"online": false,
+		"loc_time": 1653252238465
 	}
 ]
