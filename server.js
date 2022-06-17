@@ -15,6 +15,9 @@ const settings = require(path1+'settings');
 
 const { Webhook } = require('discord-webhook-node');
 
+// import { XMLHttpRequest } from 'w3c-xmlhttprequest';
+
+var XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
 const hook = new Webhook(settings.whook.url);
 
 hook.setUsername(settings.whook.name);
@@ -137,17 +140,20 @@ class swagger{
 		this.crestDB = old || readFsync(path+'/server_files/crestDB'+currentServer["file"]+'.json');
 		this.charLoc = readFsync(path+'/server_files/charLoc'+currentServer["file"]+'.json');
 		this.charStatus = {};
+		this.systemsKB = {};
 	}
 	/*****************************************************************
 	|=|	запускаем таймера, первоначальный через секунду, дл обновления токенов
 	|=| затем каждые 100 секунд = 1,6 минут (макс 20)
 	|=| обновляем инфу о персах каждые 15 сек
+	|=| обновляем данные о системах с КБ каждые 600 секунд = 10 минут
 	******************************************************************/
 	start_timer(){
 		var that = this;
 		setTimeout(function(){ that.refreshAccess('all');},1000);
 		setInterval(function(){ that.refreshAccess('all');},100000);
 		setInterval(function(){ that.updateChar();},15000);
+		setTimeout(function(){ that.updateZKB();},3000);
 	}
 	upd(json){
 		this.crestDB = json;
@@ -258,6 +264,40 @@ class swagger{
 			}
 		}
 		send('', "new_chars_position", sendData,'all');
+	}
+	/*****************************************************************
+	|=|	обновляем дынные по системам с килборды
+	******************************************************************/
+	updateZKB(){
+		var mp = map1.map1;
+		for(var j in mp){
+			var s1 = mp[j]["sys1"];
+			var s2 = mp[j]["sys2"];
+			this.systemsKB["sys_"+s1+""] = "";
+			this.systemsKB["sys_"+s2+""] = "";
+		}
+
+		var tmout = 0;
+		var syst_count = Object.keys(this.systemsKB).length;
+		console.log("Starting KB-parse, systems to check: "+syst_count);
+		for(var s in this.systemsKB){	
+			setTimeout(this.requestZkb,tmout+=1000,s,syst_count--);		
+		}
+	}
+	requestZkb(s,c){		
+		var syst = s.substring(4, 12);
+		var url = "https://zkillboard.com/api/systemID/"+syst+"/";		
+		console.log(url);
+		// var url = "https://zkillboard.com/api/systemID/30000142/pastSeconds/43200/";		
+		getAjax(url,function(er,data1){
+			if(data1.length){				;
+				crest.systemsKB[s] = data1[0].killmail_id;
+			}
+			if(c == 1){
+				send('', "zkb_data", crest.systemsKB, 'all');
+			}
+		}); 
+		
 	}
 	/*****************************************************************
 	|=|	обновляем статус онлайн перса
@@ -690,7 +730,8 @@ class map{
 				}
 		if(type == 'labelline'){
 			this.getDistance(new_id,old_id,function(data1,data2,that){
-				jsonReady.labelCenter = data2.length+" ("+data1.length+") jumps";
+				jsonReady.labelCenter = data2.length+" ("+data1.length+")_jumps";
+				// console.log(jsonReady);
 				that.newLinkCheck(charID,jsonReady);
 			});	
 		}
@@ -917,10 +958,35 @@ function getCCPdata(u,callback){
 	request.get(options, function (error, response, body) {
 		// console.log("492:"+id);
 		if (error || response.statusCode !== 200) {
-			console.log('\x1b[31m%s\x1b[0m', "450: ERROR FOR ");
+			console.log('\x1b[31m%s\x1b[0m', "450: ERROR FOR "+response.statusCode+ " "+error);
 			// console.log(error);
 		}
 		callback(null, JSON.parse(body));  
+	});
+}
+function getAjax(u,callback, token){
+	var options = {
+		type: 'GET',
+		url: u,
+		crossDomain: true,
+		headers: { 
+			'Authorization': 'Bearer ' + token
+		}
+	};	
+	request.get(options, function (error, response, body) {
+		// console.log("492:"+id);
+		if (error || response.statusCode !== 200) {
+			console.log('\x1b[31m%s\x1b[0m', "978: ERROR FOR "+response.statusCode+ " "+error);
+			callback(null,[]);
+			return;
+		}
+		try{	
+			if(body != null)callback(null, JSON.parse(body));				
+		}
+		catch(e){
+			console.log('985:');
+			console.log(e);		
+		}
 	});
 }
 function getCharacterData(h,u,token,callback,id,name){
@@ -972,19 +1038,13 @@ function getCharacterData(h,u,token,callback,id,name){
 			var tst = JSON.parse(tmp3);			
 			callback(null, tst, id, name);  
 			
-// 876:"{\"solar_system_id\":31001926}"
-// { solar_system_id: 31001926 } 1336894112 undefined
-
 		}
 		catch(e){
-			console.log('1040:');
+			console.log('1044:');
 			console.log(e);
 			console.log('876:'+ JSON.stringify(body));
 			console.log(JSON.parse(body),id, name);
-			
-			// var tst = JSON.parse(body);			
-			// callback(null, tst, id, name);  
-			// console.log(options);
+		
 		}
 	});
 	// tools.memory();

@@ -1,36 +1,36 @@
 module.exports = {
 	"whook" : { 
-		"url" : "https://discord.com/api/webhooks/***WEBHOOK_URL_GOES_HERE***",
-		"name": '***YOUR_DISCORD_MAP_BOT_NAME***',
-		"avatar": "https://imageserver.eveonline.com/Type/2062_64.png",//<- avatar example for your discord bot
-		"welcomeMsg": "***MESSAGE_IN_DISCORD_DISPLAYED_AFTER_MAP_STARTED***"
+		"url" : "https://discord.com/api/webhooks/971463060801851463/Ut8bq1-2-vsoJrXWVIN544D_yBuTkxI_522vocgjVM6oBFY76VDL-NX0qG9lTDl2KXa2",
+		"name": 'Hole Controller',
+		"avatar": "https://imageserver.eveonline.com/Type/2062_64.png",
+		"welcomeMsg": "Hole Controller restarted."
 	},
 	"Servers":{
-		"server1_tranq" : {//TRANQUILITY SERVER EXAMPLE
-			"client" : "12345678901234567890123456789012",//<- ClientID from https://developers.eveonline.com/applications, 32-long
-			"secret" : "1234567890123456789012345678901234567890",//<- ClientSecret from https://developers.eveonline.com/applications, 40-long
+		"server1_tranq" : {
+			"client" : "26463421869a4d34961b5f47a737da6b",
+			"secret" : "6nPDTexIIWMqRmMEk5gYMzPFWXvbrKgl8YDq4a7e",
 			"login" : "login.",
-			"port" : 3000,//<- your port
+			"port" : 3000,
 			"source" : "tranquility",
 			"file": "_tranq",
 			"token" : "stokens",
-			"path" : 'C:/nodejs/server',//<- your files location example
-			"corp": 605796230//<- your corporation needed to first login
+			"path" : 'D:/Files/map/HoleController_Server',
+			"corp": 605796230
 		},
-		"server1_sisi" : {//SINGULARITY SERVER EXAMPLE
-			"client" : "12345678901234567890123456789012",//<- ClientID from https://developers.testeveonline.com/, 32-long 
-			"secret" : "1234567890123456789012345678901234567890",//<- ClientSecret from https://developers.testeveonline.com/, 40 long
+		"server1_sisi" : {
+			"client" : "26463421869a4d34961b5f47a737da6b",
+			"secret" : "6nPDTexIIWMqRmMEk5gYMzPFWXvbrKgl8YDq4a7e",
 			"login" : "sisilogin.test",
-			"port" : 8080,//<- your port
-			// "source" : "singularity", //<-- CCP removed it 2020-01-13, only TRANQ data is available
+			"port" : 8080,
+			// "source" : "singularity", //<-- CCP removed it 2020-01-13
 			"source" : "tranquility",
 			"file": "_sisi",
 			"token" : "ttokens",
-			"path" : 'C:/nodejs/server',//<- your files location example
-			"corp": 1000044//<- your corporation needed to first login
+			"path" : 'D:/Files/map/HoleController_Server',
+			"corp": 605796230
 		}
 	},
-	"homesystemID" : 31000001,//<- your home system; it cannot be deleted from map view, ID could easily be found at https://zkillboard.com/system/31000001/
-	"currentServer" : "server1_tranq"//<- current server that would be in use at launch
+	"homesystemID" : 31001834,
+	"currentServer" : "server1_tranq"
 	
 };

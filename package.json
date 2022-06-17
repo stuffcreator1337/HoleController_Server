@@ -35,8 +35,10 @@
     "socket.io-parser": "3.4.1",
     "text-blob-builder": "0.0.1",
     "to-array": "0.1.4",
+	"w3c-xmlhttprequest": "3.0.4",
     "webpack": "4.44.1",
-    "webpack-stream": "6.0.0"
+    "webpack-stream": "6.0.0",
+	"xmlhttprequest": "1.8.0"
   },
   "devDependencies": {
     "tape": "^4.7.0"

@@ -108,7 +108,42 @@ module.exports = {
 			socket.emit('new_link', {'user':'testUser', 'link': jsonReady});
 		}
 	},
-	getDistance: function(id1,id2,callback){
+	// getAjax: function(url,token,task,name){
+	// 	return $.ajax({
+	// 		type: 'GET',
+	// 		url: url,   
+	// 		crossDomain: true,
+	// 		headers: {
+	// 		   'Authorization': 'Bearer ' + token
+	// 		},
+	// 		success: function (result) {
+	// 			console.log("%c Success AJAX request from server","background:green;color:white");
+	// 		},
+	// 		error: function (req, status, error) {
+	// 			var tokenStatus = $("text[class^='tdText'][id^='status']");
+	// 			console.log("e:"+req.status+"; task: "+task+"; char: "+name+"; token: "+token.substring(0, 10)+"; error number: "+errorCount[name]);
+	// 		}
+	// 	});
+	// },
+	// getAjax: function(u,callback,token){
+	// 	var options = {
+	// 		type: 'GET',
+	// 		url: u,
+	// 		crossDomain: true,
+	// 		headers: { 
+	// 			'Authorization': 'Bearer ' + token
+	// 		}
+	// 	};	
+	// 	request.get(options, function (error, response, body) {
+	// 		// console.log("492:"+id);
+	// 		if (error || response.statusCode !== 200) {
+	// 			console.log('\x1b[31m%s\x1b[0m', "450: ERROR FOR "+response.statusCode+ " "+error);
+	// 			// console.log(error);
+	// 		}
+	// 		callback(null, JSON.parse(body));  
+	// 	});
+	// },
+	// getDistance: function(id1,id2,callback){
 	// if(isWh(id1) || isWh(id2)) return "no way";
 		// var url1 = 'https://esi.tech.ccp.is/latest/route/'+id1+'/'+id2+'/?datasource=tranquility&flag=shortest';
 		// var url2 = 'https://esi.tech.ccp.is/latest/route/'+id1+'/'+id2+'/?datasource=tranquility&flag=secure';
@@ -118,7 +153,7 @@ module.exports = {
 			// });
 		// });
 
-	},
+	// },
 	correctJS: function(json){
 		var del = [];
 		for(var i=0; i<json.length;i++){
