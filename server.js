@@ -77,60 +77,92 @@ readF('map1',function(err,old_db){
 /*****************************************************************
 	creating server
 ******************************************************************/
-var server = http.createServer(function(req, res)
-	{ 
-	var parseQuery = function(qstr) {
-		var query = {};
-		var a = (qstr[0] === '?' ? qstr.substr(1) : qstr).split('&');
-		for (var i = 0; i < a.length; i++) {
-			var b = a[i].split('=');
-			query[decodeURIComponent(b[0])] = decodeURIComponent(b[1] || '');
-		}
-		return query;
-	};
-	var parsedUrl = parseQuery(req.url);
-	var URLparams = new URLSearchParams(req.url);
-	var code1 = parsedUrl["/?code"];
-	console.log(req.url);
-	console.log("Starting server on port "+currentServer["port"]);
-	var pars_ = parsedUrl["state"].split('_');
-	var stateCode = pars_[0];
-	var uniqueCode = pars_[1];
-	// Send HTML headers and message
-	res.writeHead(404, {'Content-Type': 'text/html'});
-	// res.end('<script>window.close();</script>');
-  	if (code1){
-		if(code1 == used_code){
-			res.end('This code has already been used, press LOGIN button again to recieve a new code.');
-		}else{
-			res.end('Token recieved. Close this page and open the app.<script>window.close();</script>');
-			used_code = code1;
-			var data =  querystring.stringify({ 'grant_type': 'authorization_code',
-				'code': code1 });
-			auth(data,'', function(err, name, json1) {
-				if (err) {
-					console.log(err);
-				} else {
-					console.log("120: New Token: "+json1["access_token"]); 
-					var host = currentServer["login"]+'eveonline.com';
-					var url = '/oauth/verify';	
-					getCharacterData(host,url,json1["access_token"], function(err, json2) {
-						if (err) {
-							console.log(err);
-						} else {
-							console.log(json2);
-							update_crest(json1,json2,stateCode,uniqueCode);
-						}
-					});
-				}
-			});
-			// console.log(answer);
-			// console.log(answer.responseJSON);
-		}
-	} else {
-		res.end("Server is running");
+var server = http.createServer(function (req, res) {
+
+	console.log("=== Incoming request ===");
+	console.log("URL:", req.url);
+
+	// --- Разбор URL безопасным способом ---
+	const fullUrl = "http://localhost" + req.url; // base обязательна
+	const urlObj = new URL(fullUrl);
+
+	// Извлекаем GET-параметры:
+	const code = urlObj.searchParams.get("code");
+	const state = urlObj.searchParams.get("state");
+
+	// Это случается при запросах Socket.IO:
+	// /socket.io/?EIO=3&transport=polling&t=123
+	if (req.url.startsWith("/socket.io/")) {
+		res.writeHead(200);
+		return res.end("");  // socket.io сам продолжает обработку
 	}
+
+	// Если запрос без code — значит это просто заход на localhost:3000
+	if (!code) {
+		res.writeHead(200, { 'Content-Type': 'text/plain' });
+		return res.end("Server running.\nNo OAuth code provided.\n");
+	}
+
+	// Если нет state — ошибка формата запроса
+	if (!state) {
+		res.writeHead(400, { 'Content-Type': 'text/plain' });
+		return res.end("Missing 'state' parameter");
+	}
+
+	// --- Разбор state ---
+	let parts = state.split('_');
+	if (parts.length !== 2) {
+		res.writeHead(400, { 'Content-Type': 'text/plain' });
+		return res.end("Malformed 'state' parameter");
+	}
+
+	let stateCode = parts[0];
+	let uniqueCode = parts[1];
+
+	console.log("code =", code);
+	console.log("state =", state);
+	console.log("stateCode =", stateCode);
+	console.log("uniqueCode =", uniqueCode);
+
+	// --- Ответ пользователю ---
+	res.writeHead(200, { 'Content-Type': 'text/html' });
+	res.end('Token received. You can close this page.<script>window.close();</script>');
+
+	// --- Далее: используем code ---
+	if (code === used_code) {
+		console.log("Duplicate OAuth code ignored");
+		return;
+	}
+
+	used_code = code;
+
+	// Формируем запрос на получение токена
+	var data = querystring.stringify({
+		'grant_type': 'authorization_code',
+		'code': code
+	});
+
+	auth(data, '', function (err, name, json1) {
+		if (err) {
+			console.log("auth() error:", err);
+			return;
+		}
+		console.log("New access token:", json1["access_token"]);
+
+		var host = currentServer["login"] + 'eveonline.com';
+		var url = '/oauth/verify';
+
+		getCharacterData(host, url, json1["access_token"], function (err, json2) {
+			if (err) {
+				console.log("verify error:", err);
+				return;
+			}
+			console.log("Character data:", json2);
+			update_crest(json1, json2, stateCode, uniqueCode);
+		});
+	});
 });
+
 server.listen(currentServer["port"]);
 console.log('\x1b[32m%s\x1b[0m', '_______________________________________');
 console.log('\x1b[32m%s\x1b[0m', '507: http server running on port:' + currentServer["port"]);
