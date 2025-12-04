@@ -129,6 +129,8 @@ var server = http.createServer(function(req, res)
 	}
 });
 server.listen(currentServer["port"]);
+console.log('\x1b[32m%s\x1b[0m', '_______________________________________');
+console.log('\x1b[32m%s\x1b[0m', '507: http server running on port:' + currentServer["port"]);
 
 /*****************************************************************
 	создаем класс для базы с крест-инфой о персах
@@ -1120,7 +1122,7 @@ function postCharacterData(h,u,token,callback,id,data){
 ******************************************************************/
 io = io.listen(server);
 console.log('\x1b[32m%s\x1b[0m', '_______________________________________');
-console.log('\x1b[32m%s\x1b[0m', '507: Server running on port:'+currentServer["port"]);
+console.log('\x1b[32m%s\x1b[0m', '507: Socket.IO running on port:'+currentServer["port"]);
 
 var fs = require('fs');
 var json_files = {};
