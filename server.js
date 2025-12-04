@@ -162,10 +162,17 @@ var server = http.createServer(function (req, res) {
 		});
 	});
 });
+/*****************************************************************
+	запускаем сокет для общения с клиентом
+******************************************************************/
+const io = new Server(server, {
+	cors: {
+		origin: "http://" + currentServer["LocalAddr"] + ":" + currentServer["port"],
+		methods: ["GET", "POST"],
+		credentials: true           // обязательно
+	}
+});
 
-server.listen(currentServer["port"]);
-console.log('\x1b[32m%s\x1b[0m', '_______________________________________');
-console.log('\x1b[32m%s\x1b[0m', '507: http server running on port:' + currentServer["port"]);
 
 /*****************************************************************
 	создаем класс для базы с крест-инфой о персах
@@ -1151,21 +1158,6 @@ function postCharacterData(h,u,token,callback,id,data){
 		}
 	});
 }		
-
-/*****************************************************************
-	запускаем сокет для общения с клиентом
-******************************************************************/
-const io = require('socket.io')(server, {
-	cors: {
-		origin: function (origin, callback) {
-			console.log("Incoming origin:", origin);
-			// Разрешаем все origin (или проверяем по whitelist)
-			callback(null, true);
-		},
-		methods: ["GET", "POST"],
-		credentials: true           // обязательно
-	}
-});
 console.log('\x1b[32m%s\x1b[0m', '_______________________________________');
 console.log('\x1b[32m%s\x1b[0m', '507: Socket.IO running on port:'+currentServer["port"]);
 
@@ -1180,339 +1172,339 @@ var backup = setInterval(saveFile, 10000);
 // Add a connect listener
 io.sockets.on('connection', function(socket)
 {
-  console.log('connection :', socket.request.connection._peername);
+	console.log('connection :', socket.request.connection._peername);
 	// Disconnect listener
-socket.on('disconnect', function() {
-	console.log('Client disconnected.');
-});
-/*****************************************************************
-|=|	пришел запрос на доступ с данными
-******************************************************************/
-socket.on('user_auth', function(data) {
-	data = data.replace(/"/g,'');
-	console.log('\x1b[34m%s\x1b[0m', '====================');
-	console.log('\x1b[34m%s\x1b[0m', '532: USER AUTH CODE:',data);
-	console.log('\x1b[34m%s\x1b[0m', '====================');
-	// data = JSON.parse(data);
-	var crestDB = crest.crestDB;
-	// console.log("542: we need id: "+data[i]['CharacterID']);
-	var sendData = [];
-	for(var i=0;i<crestDB.length;i++){//перебираем персов из данных на соответствие имеющимся
-		console.log('635: code = '+crestDB[i].code);
-		if(crestDB[i].code == data){			
-			console.log("542: FOUND "+atob(crestDB[i]['CharacterName'])+" with code "+data);
-			// for(var j=0;j<)
-			if(findById(crest.charLoc,crestDB[i]['CharacterID'],'CharacterID')){
-				sendData.push(findById(crest.charLoc,crestDB[i]['CharacterID'],'CharacterID')[1]);
-			}
-		}
-	}		
-	console.log(sendData);
-	if(sendData.length == 0){
-		send('', "privat_char_update", sendData,data);
-	}else{
-		send('', "privat_char_update", sendData,data);
-		map1.map1 = tools.correctJS(map1.map1);
-		send(socket, "map_connections", {'map':map1.map1,'custom_sys_names':map1.names,'residents':json_files["locals"]},data);
-	}
-});
-/*****************************************************************
-|=|		
-******************************************************************/
-// socket.on('residents_request', function(data) {
-	// var user = data["user"];
-	// var old_j = json_files["locals"];
-	// send('', "new_chars_position", old_j,user);
-// });
-// socket.on('residents_update', function() {
-	// var old_j = json_files["locals"];
-	// send('', "new_chars_position", old_j,"all");
-// });
-/*****************************************************************
-|=|	получил сигнатуры от клиента
-******************************************************************/
-socket.on('sigs_from_client', function(data) {
-	console.log('562: ================== sigs_from_client ==========================');
-	var dWrite = {"id" : data["id"], "system" : data["system"], "sigs": data["sigs"]};
-	var old_sigs = map1.sigs;
-		var finded = false;
-		for(let i=0; i< old_sigs.length; i++){
-			console.log("569: "+old_sigs[i].id);
-			if(old_sigs[i].id == data["id"]){
-				// console.log("found system");
-				finded = true;
-				old_sigs[i].sigs = data["sigs"];
-			}
-		}
-		if(finded == false){
-			console.log("577: system not found");
-			old_sigs[old_sigs.length] = dWrite;
-		}
-		
-		map1.sigs = old_sigs;
-});
-/*****************************************************************
-|=|	
-******************************************************************/
-socket.on('sysname_from_client', function(data) {
-	console.log('562: ================== sigs_from_client ==========================');
-	var dWrite = {"id" : data["id"], "system" : data["system"], "name": data["name"]};
-	var old_names = map1.names;
-		var finded = false;
-		for(let i=0; i< old_names.length; i++){
-			console.log("569: "+old_names[i].id);
-			if(old_names[i].id == data["id"]){
-				// console.log("found system");
-				finded = true;
-				old_names[i].name = data["name"];
-			}
-		}
-		if(finded == false){
-			console.log("1043: system not found");
-			old_names[old_names.length] = dWrite;
-		}
-		
-		map1.names = old_names;
-		
-		send(socket, "sending_names", {"names":map1.names,"data":data}, 'all');	
-});
-/*****************************************************************
-|=|		запрос на сигнатуры
-******************************************************************/	
-socket.on('sigs_request', function(data) {
-	console.log('588: ================== sigs_request ==========================');
-	console.log('sigs requested from '+data["user"]+' for system '+data.name+" ("+data.id+")");
-	var old_sigs = map1.sigs;
-		// console.log(old_sigs);
-		// console.log(data.id);
-		var sData = '';
-		for(let i=0; i< old_sigs.length; i++){
-			// console.log(old_sigs[i].id);
-			if(old_sigs[i].id == data["id"]){
-				console.log("598: Found system with "+old_sigs[i].sigs.length+" sigs");
-				sData = old_sigs[i].sigs;
+	socket.on('disconnect', function() {
+		console.log('Client disconnected.');
+	});
+	/*****************************************************************
+	|=|	пришел запрос на доступ с данными
+	******************************************************************/
+	socket.on('user_auth', function(data) {
+		data = data.replace(/"/g,'');
+		console.log('\x1b[34m%s\x1b[0m', '====================');
+		console.log('\x1b[34m%s\x1b[0m', '532: USER AUTH CODE:',data);
+		console.log('\x1b[34m%s\x1b[0m', '====================');
+		// data = JSON.parse(data);
+		var crestDB = crest.crestDB;
+		// console.log("542: we need id: "+data[i]['CharacterID']);
+		var sendData = [];
+		for(var i=0;i<crestDB.length;i++){//перебираем персов из данных на соответствие имеющимся
+			console.log('635: code = '+crestDB[i].code);
+			if(crestDB[i].code == data){			
+				console.log("542: FOUND "+atob(crestDB[i]['CharacterName'])+" with code "+data);
+				// for(var j=0;j<)
+				if(findById(crest.charLoc,crestDB[i]['CharacterID'],'CharacterID')){
+					sendData.push(findById(crest.charLoc,crestDB[i]['CharacterID'],'CharacterID')[1]);
+				}
 			}
 		}		
-		send(socket, "sending_sigs", {"sigs":sData,"data":data}, data["user"]);
-	// });
-});
-/*****************************************************************
-|=|		
-******************************************************************/	
-socket.on('system_names_request', function(data) {
-	console.log('588: ================== system_names_request ==========================');
-	console.log('system_names requested from '+data["user"]);
-	
-	send(socket, "sending_names", {"names":map1.names,"data":data}, data["user"]);		
-});
-
-// socket.on('new_char_location', function(data) {
-	// console.log('recieved new_char_location for: '+data["user"]);
-	// var find = false;
-	// // readF('users', function(err,old_j){
-	// var old_j = json_files["users"];
-	// for(var i=0; i<old_j.length; i++){
-		// if(old_j[i]["name"] == data["user"]){
-			// // console.log('sys old: '+old_j[i]["solar_system_id"]+" sys new: "+data["solar_system_id"]);
-			// old_j[i]["solar_system_id"] 		= data["solar_system_id"] || old_j[i]["solar_system_id"];	
-			// old_j[i]["ship_type_id"] 	= data["ship_type_id"] || old_j[i]["ship_type_id"];		
-			// old_j[i]["ship_name"] 	= data["ship_name"] || old_j[i]["ship_name"];		
-			// old_j[i]["ship_item_id"] 		= data["ship_item_id"] || old_j[i]["ship_item_id"];		
-			// old_j[i]["loc_time"] 		= data["loc_time"] || old_j[i]["loc_time"];		
-			// old_j[i]["last_time"] 		= data["last_time"] || old_j[i]["last_time"];		
-			// find = true;		
-			// // console.log("char entry found, we choose: "+old_j[i]["solar_system_id"]);
-		// }
-	// }
-	// if(find == false){
-		// console.log("creating new entry for a char: "+data["user"]);
-		// for(var i=0; i<old_j.length; i++){
-			// console.log(old_j[i]["name"]);
-		// }
-		// var newEntry = {'name'		: data["user"] || '',
-						// 'solar_system_id'		: data["solar_system_id"] || '',
-						// 'ship_type_id'	: data["ship_type_id"] || '',
-						// 'ship_name'	: data["ship_name"] || '',
-						// 'loc_time'	: data["loc_time"] || '',
-						// 'last_time'	: data["last_time"] || '',
-						// 'ship_item_id'	: data["ship_item_id"] || ''};
-		// old_j[old_j.length] = newEntry;
-	// }
-	// // console.log(newEntry);
-	// // console.log(old_j);
-	// send(socket, "new_chars_position", old_j,"all");
-	// if(old_j != "[]"){
-		// // writeF(old_j,'users');
-		// json_files["users"] = old_j;
-		// }else{console.log("empty json from new_char_location");}
-	// // });
-// });
-
-/*****************************************************************
-|=|		возвращение карты по запросу юзера
-******************************************************************/
-socket.on('map_request', function(user) {
-	console.log('650: ================== map_request from '+user+' ==========================');
-	// readF('map1',function(err,data){		
-	// var crestDB = crest.crestDB;
-	// for(var i=0; i<crestDB.length;i++){
-		
-		// if(crestDB[i]['CharacterID'] == user){}
-		// var url = 'https://esi.evetech.net/v1/characters/'+charID+'/location/?datasource='+currentServer["source"];
-		// getCharacterData(url,token, function(err, data,id) {
-			// if (err) {
-				// console.log(err+' Location for: '+id);
-			// } else {
-				// send(socket, "map_connections", {'map':map1.map1,'residents':json_files["locals"]},user);
-			// }
-		// });
-	// }
-	// console.log(map1.map1);
-	// console.log(tools.correctJS(map1.map1));
-	map1.map1 = tools.correctJS(map1.map1);
-	send(socket, "map_connections", {'map':map1.map1,'custom_sys_names':map1.names,'residents':json_files["locals"]},user);
-	// });
-	
-});
-/*****************************************************************
-|=|	
-******************************************************************/	
-socket.on('routes_request', function(user) {
-	// readF('map1',function(err,data){		
-		send(socket, "routes", map1.map1,user);
-	// });
-});
-/*****************************************************************
-|=|		удаление ноды со всеми связями
-******************************************************************/
-socket.on('node_to_del', function(data) {
-	console.log('677: ================== node_to_del ==========================');
-	// console.log(data);
-	var user = data["user"];
-	var node = data["node"];
-	// readF('map1', function(err,old_j){
-	var old_j = map1.map1;
-		for(let i=0; i<old_j.length; i++){
-			if((old_j[i]["sys1"] == node)||(old_j[i]["sys2"] == node)){
-				old_j[i]["alive"] = "0";	
-				old_j[i]["deleted"] = data["date"];				
-			}		
+		console.log(sendData);
+		if(sendData.length == 0){
+			send('', "privat_char_update", sendData,data);
+		}else{
+			send('', "privat_char_update", sendData,data);
+			map1.map1 = tools.correctJS(map1.map1);
+			send(socket, "map_connections", {'map':map1.map1,'custom_sys_names':map1.names,'residents':json_files["locals"]},data);
 		}
-		send(socket, "new_links_found", old_j,"all");
-		if(old_j != "[]"){
-			// writeF(old_j,'map1');
-			map1.map1 = old_j;
-			}else{console.log("693: empty json from node_to_del");}
+	});
+	/*****************************************************************
+	|=|		
+	******************************************************************/
+	// socket.on('residents_request', function(data) {
+		// var user = data["user"];
+		// var old_j = json_files["locals"];
+		// send('', "new_chars_position", old_j,user);
 	// });
-});
-
-/*****************************************************************
-|=|		восстановить последнюю связь
-******************************************************************/	
-socket.on('restore_last', function(data) {
-	console.log('698: ================== restore last ==========================');
-	//console.log(data);
-	// readF('map1', function(err,old_j){
-	var old_j = map1.map1;
-		var rest = [];
-		var k = 0;
-		for(let i=0; i<old_j.length; i++){
-			if(old_j[i]["alive"] == "0"){
-				//console.log("found connection to restore: "+old_j[i]['sys1']+" -- "+old_j[i]['sys2']);
-				rest[k] = old_j[i];
-				k++;
-			}
-		}
-		console.log("711:");
-		console.log(rest[0]);
-		if(rest[0] == null) return;
-		rest.sort(tools.compare);
-		// console.log(rest);
-		var sys1 = rest[0]["sys1"]
-		var sys2 = rest[0]["sys2"]
-		
-		for(let i=0; i<old_j.length; i++){
-			if((old_j[i]["alive"] == "0")&&(old_j[i]["sys1"] == sys1)&&(old_j[i]["sys2"] == sys2)){
-				old_j[i]["alive"] = "1";
-			}
-		}
-		// console.log(old_j);
-		send(socket, "new_links_found", old_j,"all");
-		if(old_j != "[]"){
-			// writeF(old_j,'map1');
-			map1.map1 = old_j;
-			}else{console.log("empty json from restore_last");}
+	// socket.on('residents_update', function() {
+		// var old_j = json_files["locals"];
+		// send('', "new_chars_position", old_j,"all");
 	// });
-});
-/*****************************************************************
-|=|		обновить локацию перса при сообщении из фантома
-******************************************************************/	
-socket.on('message_from_phantom', function(data) {
-	// var user = data["user"];
-	// console.log('message_from_phantom:',data);
-	crest.updateCharLocPhantom(data.characterID,data.characterName,data.location,crest.charLoc);
-	// send(socket, "map_replot", map1.map1,data);
-});
-
-/*****************************************************************
-|=|		общее сообщение перерисовать карту
-******************************************************************/
-socket.on('map_redraw', function(data) {
-	// var user = data["user"];
-	send(socket, "map_replot", map1.map1,data);
-});
-
-/*****************************************************************
-|=|		новый линк, чтобы перерисовать карту
-|=|		если пустой, то посылается одному
-******************************************************************/
-socket.on('new_link', function(data) {
-	if(data['sys1']==''){
-		send(socket, "map_replot", map1.map1,data['user']);
-		return;
-	}
-	map1.create_link(data['sys1'],data['sys2'],data['type'],data['user']);
-});
-/*****************************************************************
-|=|		изменение параметров связи
-******************************************************************/
-socket.on('link_edit', function(data) {
-	console.log('738: ================== edit link ==========================');
-	var user = data["user"];
-	var action = data["action"];
-	var prop;
-	// console.log(data);
-	//v = (v ? 0 : 1);
-	// readF('map1', function(err,old_j){
-		var old_j = map1.map1;
-		if(action == "Time"){prop = "tc"}
-		if(action == "Mass"){prop = "mc"}
-		if(action == "Frig"){prop = "fs"}
-		
-		for(let i=0; i<old_j.length; i++){
-			if(tools.compareSystems(old_j[i],data)){
-				if(action == "Delete"){
-					//console.log(data["date"]);
-					//console.log(old_j[i]["deleted"]);
-					old_j[i]["alive"] = "0";
-					old_j[i]["deleted"] = data["date"];
+	/*****************************************************************
+	|=|	получил сигнатуры от клиента
+	******************************************************************/
+	socket.on('sigs_from_client', function(data) {
+		console.log('562: ================== sigs_from_client ==========================');
+		var dWrite = {"id" : data["id"], "system" : data["system"], "sigs": data["sigs"]};
+		var old_sigs = map1.sigs;
+			var finded = false;
+			for(let i=0; i< old_sigs.length; i++){
+				console.log("569: "+old_sigs[i].id);
+				if(old_sigs[i].id == data["id"]){
+					// console.log("found system");
+					finded = true;
+					old_sigs[i].sigs = data["sigs"];
 				}
-					else{console.log("758: The "+prop+" was: "+old_j[i][prop]);
-					old_j[i][prop] = (old_j[i][prop] ? 0 : 1);
-						console.log("760: Setting "+prop+" to: "+old_j[i][prop]);
-				}			
 			}
-		}
-		//console.log(old_j[i]["sys1"],old_j[i]["sys2"]);
-		send(socket, "link_edit_from_node", old_j,"all");
-		if(old_j != "[]"){
-			// writeF(old_j,'map1');
-			map1.map1 = old_j;
-			}else{console.log("769: empty json from link_edit");}
-	// });
-});
-});
+			if(finded == false){
+				console.log("577: system not found");
+				old_sigs[old_sigs.length] = dWrite;
+			}
+		
+			map1.sigs = old_sigs;
+	});
+	/*****************************************************************
+	|=|	
+	******************************************************************/
+	socket.on('sysname_from_client', function(data) {
+		console.log('562: ================== sigs_from_client ==========================');
+		var dWrite = {"id" : data["id"], "system" : data["system"], "name": data["name"]};
+		var old_names = map1.names;
+			var finded = false;
+			for(let i=0; i< old_names.length; i++){
+				console.log("569: "+old_names[i].id);
+				if(old_names[i].id == data["id"]){
+					// console.log("found system");
+					finded = true;
+					old_names[i].name = data["name"];
+				}
+			}
+			if(finded == false){
+				console.log("1043: system not found");
+				old_names[old_names.length] = dWrite;
+			}
+		
+			map1.names = old_names;
+		
+			send(socket, "sending_names", {"names":map1.names,"data":data}, 'all');	
+	});
+	/*****************************************************************
+	|=|		запрос на сигнатуры
+	******************************************************************/	
+	socket.on('sigs_request', function(data) {
+		console.log('588: ================== sigs_request ==========================');
+		console.log('sigs requested from '+data["user"]+' for system '+data.name+" ("+data.id+")");
+		var old_sigs = map1.sigs;
+			// console.log(old_sigs);
+			// console.log(data.id);
+			var sData = '';
+			for(let i=0; i< old_sigs.length; i++){
+				// console.log(old_sigs[i].id);
+				if(old_sigs[i].id == data["id"]){
+					console.log("598: Found system with "+old_sigs[i].sigs.length+" sigs");
+					sData = old_sigs[i].sigs;
+				}
+			}		
+			send(socket, "sending_sigs", {"sigs":sData,"data":data}, data["user"]);
+		// });
+	});
+	/*****************************************************************
+	|=|		
+	******************************************************************/	
+	socket.on('system_names_request', function(data) {
+		console.log('588: ================== system_names_request ==========================');
+		console.log('system_names requested from '+data["user"]);
+	
+		send(socket, "sending_names", {"names":map1.names,"data":data}, data["user"]);		
+	});
 
+	// socket.on('new_char_location', function(data) {
+		// console.log('recieved new_char_location for: '+data["user"]);
+		// var find = false;
+		// // readF('users', function(err,old_j){
+		// var old_j = json_files["users"];
+		// for(var i=0; i<old_j.length; i++){
+			// if(old_j[i]["name"] == data["user"]){
+				// // console.log('sys old: '+old_j[i]["solar_system_id"]+" sys new: "+data["solar_system_id"]);
+				// old_j[i]["solar_system_id"] 		= data["solar_system_id"] || old_j[i]["solar_system_id"];	
+				// old_j[i]["ship_type_id"] 	= data["ship_type_id"] || old_j[i]["ship_type_id"];		
+				// old_j[i]["ship_name"] 	= data["ship_name"] || old_j[i]["ship_name"];		
+				// old_j[i]["ship_item_id"] 		= data["ship_item_id"] || old_j[i]["ship_item_id"];		
+				// old_j[i]["loc_time"] 		= data["loc_time"] || old_j[i]["loc_time"];		
+				// old_j[i]["last_time"] 		= data["last_time"] || old_j[i]["last_time"];		
+				// find = true;		
+				// // console.log("char entry found, we choose: "+old_j[i]["solar_system_id"]);
+			// }
+		// }
+		// if(find == false){
+			// console.log("creating new entry for a char: "+data["user"]);
+			// for(var i=0; i<old_j.length; i++){
+				// console.log(old_j[i]["name"]);
+			// }
+			// var newEntry = {'name'		: data["user"] || '',
+							// 'solar_system_id'		: data["solar_system_id"] || '',
+							// 'ship_type_id'	: data["ship_type_id"] || '',
+							// 'ship_name'	: data["ship_name"] || '',
+							// 'loc_time'	: data["loc_time"] || '',
+							// 'last_time'	: data["last_time"] || '',
+							// 'ship_item_id'	: data["ship_item_id"] || ''};
+			// old_j[old_j.length] = newEntry;
+		// }
+		// // console.log(newEntry);
+		// // console.log(old_j);
+		// send(socket, "new_chars_position", old_j,"all");
+		// if(old_j != "[]"){
+			// // writeF(old_j,'users');
+			// json_files["users"] = old_j;
+			// }else{console.log("empty json from new_char_location");}
+		// // });
+	// });
+
+	/*****************************************************************
+	|=|		возвращение карты по запросу юзера
+	******************************************************************/
+	socket.on('map_request', function(user) {
+		console.log('650: ================== map_request from '+user+' ==========================');
+		// readF('map1',function(err,data){		
+		// var crestDB = crest.crestDB;
+		// for(var i=0; i<crestDB.length;i++){
+		
+			// if(crestDB[i]['CharacterID'] == user){}
+			// var url = 'https://esi.evetech.net/v1/characters/'+charID+'/location/?datasource='+currentServer["source"];
+			// getCharacterData(url,token, function(err, data,id) {
+				// if (err) {
+					// console.log(err+' Location for: '+id);
+				// } else {
+					// send(socket, "map_connections", {'map':map1.map1,'residents':json_files["locals"]},user);
+				// }
+			// });
+		// }
+		// console.log(map1.map1);
+		// console.log(tools.correctJS(map1.map1));
+		map1.map1 = tools.correctJS(map1.map1);
+		send(socket, "map_connections", {'map':map1.map1,'custom_sys_names':map1.names,'residents':json_files["locals"]},user);
+		// });
+	
+	});
+	/*****************************************************************
+	|=|	
+	******************************************************************/	
+	socket.on('routes_request', function(user) {
+		// readF('map1',function(err,data){		
+			send(socket, "routes", map1.map1,user);
+		// });
+	});
+	/*****************************************************************
+	|=|		удаление ноды со всеми связями
+	******************************************************************/
+	socket.on('node_to_del', function(data) {
+		console.log('677: ================== node_to_del ==========================');
+		// console.log(data);
+		var user = data["user"];
+		var node = data["node"];
+		// readF('map1', function(err,old_j){
+		var old_j = map1.map1;
+			for(let i=0; i<old_j.length; i++){
+				if((old_j[i]["sys1"] == node)||(old_j[i]["sys2"] == node)){
+					old_j[i]["alive"] = "0";	
+					old_j[i]["deleted"] = data["date"];				
+				}		
+			}
+			send(socket, "new_links_found", old_j,"all");
+			if(old_j != "[]"){
+				// writeF(old_j,'map1');
+				map1.map1 = old_j;
+				}else{console.log("693: empty json from node_to_del");}
+		// });
+	});
+
+	/*****************************************************************
+	|=|		восстановить последнюю связь
+	******************************************************************/	
+	socket.on('restore_last', function(data) {
+		console.log('698: ================== restore last ==========================');
+		//console.log(data);
+		// readF('map1', function(err,old_j){
+		var old_j = map1.map1;
+			var rest = [];
+			var k = 0;
+			for(let i=0; i<old_j.length; i++){
+				if(old_j[i]["alive"] == "0"){
+					//console.log("found connection to restore: "+old_j[i]['sys1']+" -- "+old_j[i]['sys2']);
+					rest[k] = old_j[i];
+					k++;
+				}
+			}
+			console.log("711:");
+			console.log(rest[0]);
+			if(rest[0] == null) return;
+			rest.sort(tools.compare);
+			// console.log(rest);
+			var sys1 = rest[0]["sys1"]
+			var sys2 = rest[0]["sys2"]
+		
+			for(let i=0; i<old_j.length; i++){
+				if((old_j[i]["alive"] == "0")&&(old_j[i]["sys1"] == sys1)&&(old_j[i]["sys2"] == sys2)){
+					old_j[i]["alive"] = "1";
+				}
+			}
+			// console.log(old_j);
+			send(socket, "new_links_found", old_j,"all");
+			if(old_j != "[]"){
+				// writeF(old_j,'map1');
+				map1.map1 = old_j;
+				}else{console.log("empty json from restore_last");}
+		// });
+	});
+	/*****************************************************************
+	|=|		обновить локацию перса при сообщении из фантома
+	******************************************************************/	
+	socket.on('message_from_phantom', function(data) {
+		// var user = data["user"];
+		// console.log('message_from_phantom:',data);
+		crest.updateCharLocPhantom(data.characterID,data.characterName,data.location,crest.charLoc);
+		// send(socket, "map_replot", map1.map1,data);
+	});
+
+	/*****************************************************************
+	|=|		общее сообщение перерисовать карту
+	******************************************************************/
+	socket.on('map_redraw', function(data) {
+		// var user = data["user"];
+		send(socket, "map_replot", map1.map1,data);
+	});
+
+	/*****************************************************************
+	|=|		новый линк, чтобы перерисовать карту
+	|=|		если пустой, то посылается одному
+	******************************************************************/
+	socket.on('new_link', function(data) {
+		if(data['sys1']==''){
+			send(socket, "map_replot", map1.map1,data['user']);
+			return;
+		}
+		map1.create_link(data['sys1'],data['sys2'],data['type'],data['user']);
+	});
+	/*****************************************************************
+	|=|		изменение параметров связи
+	******************************************************************/
+	socket.on('link_edit', function(data) {
+		console.log('738: ================== edit link ==========================');
+		var user = data["user"];
+		var action = data["action"];
+		var prop;
+		// console.log(data);
+		//v = (v ? 0 : 1);
+		// readF('map1', function(err,old_j){
+			var old_j = map1.map1;
+			if(action == "Time"){prop = "tc"}
+			if(action == "Mass"){prop = "mc"}
+			if(action == "Frig"){prop = "fs"}
+		
+			for(let i=0; i<old_j.length; i++){
+				if(tools.compareSystems(old_j[i],data)){
+					if(action == "Delete"){
+						//console.log(data["date"]);
+						//console.log(old_j[i]["deleted"]);
+						old_j[i]["alive"] = "0";
+						old_j[i]["deleted"] = data["date"];
+					}
+						else{console.log("758: The "+prop+" was: "+old_j[i][prop]);
+						old_j[i][prop] = (old_j[i][prop] ? 0 : 1);
+							console.log("760: Setting "+prop+" to: "+old_j[i][prop]);
+					}			
+				}
+			}
+			//console.log(old_j[i]["sys1"],old_j[i]["sys2"]);
+			send(socket, "link_edit_from_node", old_j,"all");
+			if(old_j != "[]"){
+				// writeF(old_j,'map1');
+				map1.map1 = old_j;
+				}else{console.log("769: empty json from link_edit");}
+		// });
+	});
+});
+server.listen(currentServer["port"], () => console.log('\x1b[32m%s\x1b[0m', "Server listening on " + currentServer["port"]));
 /*****************************************************************
 	отправка сообщений в discord
 ******************************************************************/
