@@ -92,7 +92,7 @@ var server = http.createServer(function(req, res)
 	var URLparams = new URLSearchParams(req.url);
 	var code1 = parsedUrl["/?code"];
 	console.log(req.url);
-	console.log("Starting server: "+currentServer["port"]+":"+currentServer["port"]);
+	console.log("Starting server on port "+currentServer["port"]);
 	var pars_ = parsedUrl["state"].split('_');
 	var stateCode = pars_[0];
 	var uniqueCode = pars_[1];
@@ -127,6 +127,8 @@ var server = http.createServer(function(req, res)
 			// console.log(answer);
 			// console.log(answer.responseJSON);
 		}
+	} else {
+		res.end("Server is running");
 	}
 });
 server.listen(currentServer["port"]);
