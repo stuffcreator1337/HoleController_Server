@@ -1155,7 +1155,13 @@ function postCharacterData(h,u,token,callback,id,data){
 /*****************************************************************
 	запускаем сокет для общения с клиентом
 ******************************************************************/
-const io = new Server(server, { cors: { origin: "*" } });
+const io = require('socket.io')(server, {
+	cors: {
+		origin: "localhost:8080", // разрешаем конкретный фронтенд
+		methods: ["GET", "POST"],
+		credentials: true           // обязательно
+	}
+});
 console.log('\x1b[32m%s\x1b[0m', '_______________________________________');
 console.log('\x1b[32m%s\x1b[0m', '507: Socket.IO running on port:'+currentServer["port"]);
 
