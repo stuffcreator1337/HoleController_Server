@@ -29,7 +29,7 @@ module.exports = {
 			"file": "_tranq",
 			"token" : "stokens",
 			"path": universalPath,
-			"corp": 605796230
+			"corp": 1000167
 		},
 		"server1_sisi": {
 			"client": localSecrets.Servers.server1_sisi.client,
@@ -41,7 +41,7 @@ module.exports = {
 			"file": "_sisi",
 			"token" : "ttokens",
 			"path": universalPath,
-			"corp": 605796230
+			"corp": 1000167
 		}
 	},
 	"homesystemID" : 31001834,
