@@ -7,7 +7,8 @@ const http = require('http');
 // const https = require('https');
 const btoa_func = require('btoa');
 const atob_func = require('atob');
-var io = require('socket.io');
+//var io = require('socket.io');
+const { Server } = require('socket.io');
 const request = require('request');
 const querystring = require('querystring');
 
@@ -1120,7 +1121,7 @@ function postCharacterData(h,u,token,callback,id,data){
 /*****************************************************************
 	запускаем сокет для общения с клиентом
 ******************************************************************/
-io = io.listen(server);
+const io = new Server(server, { cors: { origin: "*" } });
 console.log('\x1b[32m%s\x1b[0m', '_______________________________________');
 console.log('\x1b[32m%s\x1b[0m', '507: Socket.IO running on port:'+currentServer["port"]);
 
