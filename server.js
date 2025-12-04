@@ -91,6 +91,7 @@ var server = http.createServer(function(req, res)
 	var URLparams = new URLSearchParams(req.url);
 	var code1 = parsedUrl["/?code"];
 	console.log(req.url);
+	console.log("Starting server: "+currentServer["port"]+":"+currentServer["port"]);
 	var pars_ = parsedUrl["state"].split('_');
 	var stateCode = pars_[0];
 	var uniqueCode = pars_[1];
