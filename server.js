@@ -1157,7 +1157,11 @@ function postCharacterData(h,u,token,callback,id,data){
 ******************************************************************/
 const io = require('socket.io')(server, {
 	cors: {
-		origin: "localhost:8080", // разрешаем конкретный фронтенд
+		origin: function (origin, callback) {
+			console.log("Incoming origin:", origin);
+			// Разрешаем все origin (или проверяем по whitelist)
+			callback(null, true);
+		},
 		methods: ["GET", "POST"],
 		credentials: true           // обязательно
 	}
