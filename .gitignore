@@ -1,6 +1,6 @@
 node_modules
 server_files
-settings.js
+config.local.js
 TODO.txt
 .gitignore
 nodet2.lnk
