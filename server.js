@@ -1504,7 +1504,7 @@ io.sockets.on('connection', function(socket)
 		// });
 	});
 });
-server.listen(currentServer["port"], () => console.log('\x1b[32m%s\x1b[0m', "Server listening on " + currentServer["port"]));
+server.listen(currentServer["port"], '0.0.0.0', () => console.log('\x1b[32m%s\x1b[0m', "Server listening on " + currentServer["port"]));
 /*****************************************************************
 	отправка сообщений в discord
 ******************************************************************/

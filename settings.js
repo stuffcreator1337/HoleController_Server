@@ -25,7 +25,7 @@ module.exports = {
 			"secret": localSecrets.Servers.server1_tranq.secret,
 			"login" : "login.",
 			"LocalAddr": "185.155.18.75",
-			"port" : "8080",
+			"port" : "3000",
 			"source" : "tranquility",
 			"file": "_tranq",
 			"token" : "stokens",
