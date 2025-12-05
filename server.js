@@ -534,8 +534,8 @@ class swagger{
 	******************************************************************/
 	start_timer(){
 		var that = this;
-		setTimeout(function(){ that.refreshAccess('all');},1000);
-		setInterval(function(){ that.refreshAccess('all');},100000);
+		setTimeout(function(){ that.refreshAccess('all', "001: starting timer");},1000);
+		setInterval(function () { that.refreshAccess('all', "002: inrerval timer");},100000);
 		setInterval(function(){ that.updateChar();},15000);
 		setTimeout(function(){ that.updateZKB();},3000);
 	}
@@ -546,9 +546,13 @@ class swagger{
 	|=|	обновляем токен
 	|=| если для всех то переадресуем в другую функцию
 	******************************************************************/
-	refreshAccess(id){
+	refreshAccess(id, comment){
 		var crestDB = this.crestDB;
-		if(id == 'all'){this.delayRefreshToken(0);return;}
+		if (id == 'all') {
+            console.log(comment);
+			this.delayRefreshToken(0);
+			return;
+		}
 		for(var i=0;i<crestDB.length;i++){
 		// console.log("158: REFRESHING "+crestDB[i]['CharacterID']);
 			var ch_id =  crestDB[i]['CharacterID'];
@@ -1403,7 +1407,7 @@ function getCharacterData(h,u,token,callback,id,name){
 				console.log("802: ERROR"+response.statusCode);
 				if (response.statusCode == 304 || response.statusCode == 401 || response.statusCode == 400 || response.statusCode == 403 || response.statusCode == 502){
 					crest.charStatus[id] = 'fail';
-					crest.refreshAccess(id);
+					crest.refreshAccess(id, "003: refresh after error in GET");
 					return callback(error || ("498 statusCode: "+response.statusCode+", "+response.body),'',id);
 				}
 			}
@@ -1461,7 +1465,7 @@ function putCharacterData(h,u,token,callback,id,data){
 			console.log(error);
 			try{
 				if(response.statusCode == 304 || response.statusCode == 400 || response.statusCode == 403){
-					crest.refreshAccess(id);
+					crest.refreshAccess(id, "003: refresh after error in PUT");
 				}
 			}
 			catch(e){
@@ -1492,7 +1496,7 @@ function postCharacterData(h,u,token,callback,id,data){
 			console.log(error);
 			try{
 				if(response.statusCode == 304 || response.statusCode == 400 || response.statusCode == 403){
-					crest.refreshAccess(id);
+					crest.refreshAccess(id, "003: refresh after error in POST");
 				}
 			}
 			catch(e){
