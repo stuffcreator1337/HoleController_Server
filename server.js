@@ -1399,7 +1399,7 @@ function getCharacterData(h,u,token,callback,id,name){
 			console.log(crest.charStatus);
 			try{
 				console.log("802: ERROR"+response.statusCode);
-				if(response.statusCode == 304 || response.statusCode == 400 || response.statusCode == 403 || response.statusCode == 502){
+				if (response.statusCode == 304 || response.statusCode == 401 || response.statusCode == 400 || response.statusCode == 403 || response.statusCode == 502){
 					crest.charStatus[id] = 'fail';
 					crest.refreshAccess(id);
 					return callback(error || ("498 statusCode: "+response.statusCode+", "+response.body),'',id);
