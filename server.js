@@ -22,7 +22,9 @@ var XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
 const hook = new Webhook(settings.whook.url);
 
 hook.setUsername(settings.whook.name);
-hook.setAvatar(settings.whook.avatar); 
+hook.setAvatar(settings.whook.avatar);
+console.log("Sending welcome message to Discord webhook...");
+//console.log(settings.whook.url);
 hook.send(settings.whook.welcomeMsg);
 
 const homesystemID = settings.homesystemID;
@@ -1334,7 +1336,7 @@ function auth(data,name,callback){
 		form : data
 	};
 	//console.log("133:");
-	console.log(options);
+	//console.log(options);
 	request.post(options, function (error, response, body) {
 		if (error || response.statusCode !== 200) {
 			callback(error || {statusCode: response.statusCode},name);

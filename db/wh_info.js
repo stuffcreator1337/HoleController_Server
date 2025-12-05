@@ -17532,7 +17532,7 @@ module.exports = {
 					"region" : "R01",
 					"class5" : "1",
 					"effect" : "",
-					"statics" : "N110hJ244l"
+					"statics": "N110hZ060n"
 			},
 "31002512" : { 	"name" : "J004791",
 					"const" : "C325", 
