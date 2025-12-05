@@ -605,9 +605,11 @@ class swagger{
 						send('', "token_error", id, crestDB[i]['code']);
 					} else {
 						crest.charStatus[id] = 'refreshed';
-						console.log("old token: ..." + crestDB[i]['access_token'].substring(crestDB[i]['access_token'].length - 5));
+						if (crestDB[i]['access_token']) console.log("old token: ..." + crestDB[i]['access_token'].substring(crestDB[i]['access_token'].length - 5));
+						else { console.log("old token: NONE"); }
 						crestDB[i]['access_token'] = answer['access_token'];
-						console.log("new token: ..." + crestDB[i]['access_token'].substring(crestDB[i]['access_token'].length - 5));
+						if (crestDB[i]['access_token']) console.log("new token: ..." + crestDB[i]['access_token'].substring(crestDB[i]['access_token'].length - 5));
+						else { console.log("new token: NONE"); }
 					}
 				}
 			}
