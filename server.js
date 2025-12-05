@@ -592,8 +592,10 @@ class swagger{
 		// console.log("158: "+crestDB[i]['CharacterID']);
 		
 		var ch_id =  crestDB[i]['CharacterID'];
-		var data = querystring.stringify({ 'grant_type': 'refresh_token',
-										'refresh_token': crestDB[i]['refresh_token'] });
+		var data = {
+			'grant_type': 'refresh_token',
+			'refresh_token': crestDB[i]['refresh_token']
+		};
 		console.log("215: refreshing token for: "+ch_id);
 		auth(data, ch_id, function(err, id, answer) {
 			for(let i=0;i<crestDB.length;i++){
