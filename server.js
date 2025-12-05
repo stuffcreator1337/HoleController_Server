@@ -1320,10 +1320,10 @@ function auth(data,name,callback){
 	var authorizationBasic = Buffer.from(currentServer["client"] + ':' + currentServer["secret"]).toString('base64');
 	var options = {
 		method: 'POST',
-		url: 'https://'+currentServer["login"]+'eveonline.com/oauth/token',
+		url: 'https://login.eveonline.com/v2/oauth/token',
 		headers: {
-			   'Authorization': 'Basic ' + authorizationBasic,
-				'Content-Type': 'application/json'
+				'Authorization': 'Basic ' + authorizationBasic,
+				'Content-Type': 'Content-Type: application/x-www-form-urlencoded'
 			},
 		form : data
 	};
@@ -1401,15 +1401,7 @@ function getCharacterData(what, h,u,token,callback,id,name){
 		}
 	};
 
-	request.get({
-		method: 'GET',
-		url: `https://esi.evetech.net/latest/characters/${id}/location/?datasource=tranquility`,
-		headers: {
-			'Authorization': 'Bearer ' + token,
-			'Accept': 'application/json',
-			'User-Agent': 'Hole Controller by Alpho'
-		}
-	}, function (error, response, body) {
+	request.get(options, function (error, response, body) {
 			// console.log("997:");
 			// console.log(body);
 		// console.log("492:"+id);
@@ -1439,11 +1431,12 @@ function getCharacterData(what, h,u,token,callback,id,name){
 			var tmp1 = tmp0.replace(/^"/,"");
 			var tmp2 = tmp1.replace(/"$/,"");
 			var tmp3 = tmp2.replace(/\\/g,"");
-			//console.log('1028:'+ tmp3);
+			console.log('1028:'+ tmp3);
 			
 			
-			var tst = JSON.parse(tmp3);			
-			callback(null, tst, id, name);  
+			//var tst = JSON.parse(tmp3);		
+			let data = JSON.parse(body);
+			callback(null, data, id, name);  
 			
 		}
 		catch(e){
