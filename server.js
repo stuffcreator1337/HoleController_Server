@@ -138,7 +138,7 @@ const server = http.createServer((req, res) => {
 	};
 
 	auth(data, '', (err, name, json1) => {
-		if (err) {
+		if (err) {6
 			console.log("142: auth() error:", err);
 			return;
 		}
@@ -1396,8 +1396,8 @@ function getAjax(u,callback, token){
 }
 function getCharacterData(what, h,u,token,callback,id,name){
 	if(!token){console.log('890: TOKEN ERROR = '+id+' = '+name); return null;}
-	 //console.log('420: '+h+u+', '+token);
-	console.log('420 token used: ...' + token.substring(token.length - 5) + " for " + what);
+	 //console.log('419: '+h+u+', '+token);
+	//console.log('420: ' + name +' token: ...' + token.substring(token.length - 5) + " for " + what);
 	var u1 = h+u;
 	var options = {
 		method: 'GET',
@@ -1435,11 +1435,11 @@ function getCharacterData(what, h,u,token,callback,id,name){
 		// console.log(response.body);
 		try{			
 			
-			var tmp0 = JSON.stringify(body);
-			var tmp1 = tmp0.replace(/^"/,"");
-			var tmp2 = tmp1.replace(/"$/,"");
-			var tmp3 = tmp2.replace(/\\/g,"");
-			console.log('1028:'+ tmp3);
+			//var tmp0 = JSON.stringify(body);
+			//var tmp1 = tmp0.replace(/^"/,"");
+			//var tmp2 = tmp1.replace(/"$/,"");
+			//var tmp3 = tmp2.replace(/\\/g,"");
+			//console.log('1028:'+ tmp3);
 			
 			
 			//var tst = JSON.parse(tmp3);		
@@ -1459,7 +1459,7 @@ function getCharacterData(what, h,u,token,callback,id,name){
 }		
 function putCharacterData(h,u,token,callback,id,data){
 	if(!token){console.log('935: TOKEN ERROR'); return null;}
-	// console.log('420: '+h+u+', '+token);
+	// console.log('421: '+h+u+', '+token);
 	// console.log(data);
 	var u1 = h+u;
 	var options = {
