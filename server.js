@@ -132,10 +132,10 @@ const server = http.createServer((req, res) => {
 
 	used_code = code;
 
-	const data = querystring.stringify({
+	const data = {
 		'grant_type': 'authorization_code',
 		'code': code
-	});
+	};
 
 	auth(data, '', (err, name, json1) => {
 		if (err) {
@@ -1329,7 +1329,7 @@ function auth(data,name,callback){
 		url: 'https://login.eveonline.com/v2/oauth/token',
 		headers: {
 				'Authorization': 'Basic ' + authorizationBasic,
-				'Content-Type': 'application/x-www-form-urlencoded'
+				'Content-Type': 'application/json'
 			},
 		form : data
 	};
