@@ -550,7 +550,7 @@ class swagger{
 		var crestDB = this.crestDB;
 		if (id == 'all') {
             console.log(comment);
-			this.delayRefreshToken(0);
+			this.delayRefreshToken(0, comment);
 			return;
 		}
 		for(var i=0;i<crestDB.length;i++){
@@ -568,9 +568,9 @@ class swagger{
 								send('', "token_error", id, crestDB[i]['code']);
 							} else {
 								crest.charStatus[id] = 'refreshed';
-								console.log("old token: " + crestDB[i]['access_token']);
+								console.log("old token: ..." + crestDB[i]['access_token'].substring(crestDB[i]['access_token'].length - 5));
 								crestDB[i]['access_token'] = answer['access_token'];
-								console.log("new token: " + crestDB[i]['access_token']);
+								console.log("new token: ..." + crestDB[i]['access_token'].substring(crestDB[i]['access_token'].length - 5));
 							}
 						}
 					}
@@ -581,8 +581,8 @@ class swagger{
 	/*****************************************************************
 	|=|	обновляем токен начиная с i, доходим до конца и заканчиваем
 	******************************************************************/
-	delayRefreshToken(i){
-		// console.log(i);
+	delayRefreshToken(i, comment){
+		console.log("delayRefreshToken "+i+": " + comment);
 		var crestDB = this.crestDB;
 		if(i==crestDB.length)return;
 		
@@ -610,7 +610,7 @@ class swagger{
 		var j = i;
 		
 		// двигаемся дальше, берем для рефреша токена следующего через 100 мс	
-		setTimeout(function(){/* console.log('222: '+j);  */that.delayRefreshToken(j);},100);
+		setTimeout(function(){/* console.log('222: '+j);  */that.delayRefreshToken(j, comment);},100);
 	}
 	/*****************************************************************
 	|=|	обновляем всю инфу о персе, вызывается раз в 15 секунд
