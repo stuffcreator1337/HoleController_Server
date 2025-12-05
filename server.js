@@ -1247,12 +1247,12 @@ function update_crest(token,info,state,unique){//обновляем имеющу
 		}else{//перс найден, исправляем код ищем все записи по его коду и отправляем данные
 			var i = found[0];
 			console.log('464: FOUND CHARACTER');
-			crestDB[i]['code'] = unique;
-			charLoc[i]['code'] = unique;
+			//crestDB[i]['code'] = unique;
 			crestDB[i]['refresh_token'] = token['refresh_token'];
 			crestDB[i]['access_token'] = token['access_token'];
-			console.log(crestDB[i]);
-			sendAuthAll(unique, unique, state);
+			// charLoc[i]['code'] = unique;
+			// console.log(crestDB[i]);
+			sendAuthAll(crestDB[i]['code'],unique,state);
 		}
 	}
 	else if(state == 'addcharacter'){
