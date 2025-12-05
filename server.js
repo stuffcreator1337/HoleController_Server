@@ -132,11 +132,10 @@ const server = http.createServer((req, res) => {
 
 	used_code = code;
 
-	const data = {
+	const data = querystring.stringify({
 		'grant_type': 'authorization_code',
-		'code': code,
-		redirect_uri: 'http://185.155.18.75:3000'
-	};
+		'code': code
+	});
 
 	auth(data, '', (err, name, json1) => {
 		if (err) {
@@ -558,11 +557,10 @@ class swagger{
 			console.log("158: REFRESHING " + crestDB[i]['CharacterID'] + " because of " + comment);
 			var ch_id =  crestDB[i]['CharacterID'];
 			if (id == ch_id) {
-				const data = {
+				const data = querystring.stringify({
 					'grant_type': 'refresh_token',
-					'refresh_token': crestDB[i]['refresh_token'],
-					redirect_uri: 'http://185.155.18.75:3000'
-				};
+					'refresh_token': crestDB[i]['refresh_token']
+				});
 				console.log("188: refreshing token for: "+ch_id);
 				auth(data, ch_id, function(err, id, answer) {
 					for(let i=0;i<crestDB.length;i++){
@@ -596,11 +594,10 @@ class swagger{
 		// console.log("158: "+crestDB[i]['CharacterID']);
 		
 		var ch_id =  crestDB[i]['CharacterID'];
-		const data = {
+		const data = querystring.stringify({
 			'grant_type': 'refresh_token',
-			'refresh_token': crestDB[i]['refresh_token'],
-			redirect_uri: 'http://185.155.18.75:3000'
-		};
+			'refresh_token': crestDB[i]['refresh_token']
+		});
 		console.log("215: refreshing token for: "+ch_id);
 		auth(data, ch_id, function(err, id, answer) {
 			for(let i=0;i<crestDB.length;i++){
