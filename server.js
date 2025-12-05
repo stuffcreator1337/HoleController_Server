@@ -139,7 +139,7 @@ const server = http.createServer((req, res) => {
 
 	auth(data, '', (err, name, json1) => {
 		if (err) {
-			console.log("auth() error:", err);
+			console.log("142: auth() error:", err);
 			return;
 		}
 		console.log("New access token:", json1["access_token"]);
@@ -1334,7 +1334,7 @@ function auth(data,name,callback){
 		form : data
 	};
 	//console.log("133:");
-	//console.log(options);
+	console.log(options);
 	request.post(options, function (error, response, body) {
 		if (error || response.statusCode !== 200) {
 			callback(error || {statusCode: response.statusCode},name);
@@ -1346,7 +1346,7 @@ function auth(data,name,callback){
 		catch(e){
 			console.log("428:");
 			console.log(e);
-			console.log(body);
+			//console.log(body);
 		}
 	});
 	//tools.memory();
