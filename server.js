@@ -134,7 +134,8 @@ const server = http.createServer((req, res) => {
 
 	const data = {
 		'grant_type': 'authorization_code',
-		'code': code
+		'code': code,
+		redirect_uri: 'http://185.155.18.75:3000'
 	};
 
 	auth(data, '', (err, name, json1) => {
@@ -559,7 +560,8 @@ class swagger{
 			if (id == ch_id) {
 				const data = {
 					'grant_type': 'refresh_token',
-					'refresh_token': crestDB[i]['refresh_token']
+					'refresh_token': crestDB[i]['refresh_token'],
+					redirect_uri: 'http://185.155.18.75:3000'
 				};
 				console.log("188: refreshing token for: "+ch_id);
 				auth(data, ch_id, function(err, id, answer) {
@@ -596,7 +598,8 @@ class swagger{
 		var ch_id =  crestDB[i]['CharacterID'];
 		const data = {
 			'grant_type': 'refresh_token',
-			'refresh_token': crestDB[i]['refresh_token']
+			'refresh_token': crestDB[i]['refresh_token'],
+			redirect_uri: 'http://185.155.18.75:3000'
 		};
 		console.log("215: refreshing token for: "+ch_id);
 		auth(data, ch_id, function(err, id, answer) {
@@ -1333,8 +1336,8 @@ function auth(data,name,callback){
 			},
 		form : data
 	};
-	console.log("133:");
-	console.log(options);
+	//console.log("133:");
+	//console.log(options);
 	request.post(options, function (error, response, body) {
 		if (error || response.statusCode !== 200) {
 			callback(error || {statusCode: response.statusCode},name);
