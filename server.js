@@ -1333,6 +1333,8 @@ function auth(data,name,callback){
 			},
 		form : data
 	};
+	console.log("133:");
+	console.log(options);
 	request.post(options, function (error, response, body) {
 		if (error || response.statusCode !== 200) {
 			callback(error || {statusCode: response.statusCode},name);
