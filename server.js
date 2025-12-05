@@ -147,7 +147,7 @@ const server = http.createServer((req, res) => {
 		const host = currentServer["login"] + 'eveonline.com';
 		const url = '/oauth/verify';
 
-		getCharacterData(host, url, json1["access_token"], (err, json2) => {
+		getCharacterData("getting access tokens",host, url, json1["access_token"], (err, json2) => {
 			if (err) {
 				console.log("verify error:", err);
 				return;
@@ -340,12 +340,12 @@ io.on("connection", socket => {
 	******************************************************************/
 	socket.on('map_request', function (user) {
 		console.log('650: ================== map_request from ' + user + ' ==========================');
-		// readF('map1',function(err,data){		
+		// readF('map1',function(err,data){
 		// var crestDB = crest.crestDB;
 		// for(var i=0; i<crestDB.length;i++){
 
 		// if(crestDB[i]['CharacterID'] == user){}
-		// var url = 'https://esi.evetech.net/v1/characters/'+charID+'/location/?datasource='+currentServer["source"];
+		// var url = 'https://esi.evetech.net/latest/characters/'+charID+'/location/?datasource='+currentServer["source"];
 		// getCharacterData(url,token, function(err, data,id) {
 		// if (err) {
 		// console.log(err+' Location for: '+id);
@@ -701,7 +701,7 @@ class swagger{
 			// console.log('======UPDATING CHARACTER ONLINE FOR: '+charID+'=====');
 			var host = 'esi.evetech.net';
 			var url = '/v2/characters/'+charID+'/online/?datasource='+currentServer["source"];
-			getCharacterData(host,url,token, function(err, data,id) {
+			getCharacterData("online",host,url,token, function(err, data,id) {
 				if (err) {
 					console.log(err+' Online for: '+id);
 				} else {
@@ -727,8 +727,8 @@ class swagger{
 	******************************************************************/
 	updateCharFleet(token,charID,charLoc){
 			var host = 'esi.evetech.net';
-			var url = '/v1/characters/'+charID+'/fleet/?datasource='+currentServer["source"];		
-			getCharacterData(host,url,token, function(err, data,id) {
+			var url = '/latest/characters/'+charID+'/fleet/?datasource='+currentServer["source"];		
+			getCharacterData("fleet",host,url,token, function(err, data,id) {
 				if (err) {
 					console.log(err+' Fleet info of: '+id);
 				} else {
@@ -748,8 +748,8 @@ class swagger{
 	******************************************************************/
 	updateCharShip(token,charID,charLoc){
 			var host = 'esi.evetech.net';
-			var url = '/v1/characters/'+charID+'/ship/?datasource='+currentServer["source"];
-			getCharacterData(host,url,token, function(err, data,id) {
+			var url = '/latest/characters/'+charID+'/ship/?datasource='+currentServer["source"];
+			getCharacterData("ship", host,url,token, function(err, data,id) {
 				if (err) {
 					console.log(err+' Ship for: '+id);
 				} else {
@@ -771,8 +771,8 @@ class swagger{
 	******************************************************************/
 	updateCharLoc(token,charID,charLoc){
 			var host = 'esi.evetech.net';
-			var url = '/v1/characters/'+charID+'/location/?datasource='+currentServer["source"];
-			getCharacterData(host,url,token, function(err, data,id) {
+			var url = '/latest/characters/'+charID+'/location/?datasource='+currentServer["source"];
+			getCharacterData("location",host,url,token, function(err, data,id) {
 				if (err) {
 					console.log(err+'257: Location for: '+id);
 				} else {
@@ -895,8 +895,8 @@ class fleet{
 	}
 	reformFleet(charID){
 		var host = 'esi.evetech.net';
-		var url = '/v1/fleets/'+this[charID].id+'/wings/?datasource='+currentServer["source"];		
-		getCharacterData(host,url,this[charID].token, function(err, data,charID) {
+		var url = '/latest/fleets/'+this[charID].id+'/wings/?datasource='+currentServer["source"];		
+		getCharacterData("reformFleet",host,url,this[charID].token, function(err, data,charID) {
 			if (err) {
 				console.log(err+' Fleet info of: '+charID);
 			} else {
@@ -956,7 +956,7 @@ class fleet{
 	}
 	changeSquadName(charID,squadID,newName){
 		var host = 'esi.evetech.net';
-		var url = '/v1/fleets/'+this[charID].id+'/squads/'+squadID+'/?datasource='+currentServer["source"];	
+		var url = '/latest/fleets/'+this[charID].id+'/squads/'+squadID+'/?datasource='+currentServer["source"];	
 		var d1 = {'name' : newName};
 		putCharacterData(host,url,charFleet[charID].token, function(err, data,id) {
 			if (err) {
@@ -968,7 +968,7 @@ class fleet{
 	}
 	createSquad(charID,wingID){
 		var host = 'esi.evetech.net';
-		var url = '/v1/fleets/'+this[charID].id+'/wings/'+wingID+'/squads/?datasource='+currentServer["source"];	
+		var url = '/latest/fleets/'+this[charID].id+'/wings/'+wingID+'/squads/?datasource='+currentServer["source"];	
 		postCharacterData(host,url,charFleet[charID].token, function(err, data,id) {
 			if (err) {
 				console.log(err+' Fleet info of: '+id);
@@ -981,7 +981,7 @@ class fleet{
 	}
 	renameWing(charID,wingID){
 		var host = 'esi.evetech.net';
-		var url = '/v1/fleets/'+this[charID].id+'/wings/'+wingID+'/?datasource='+currentServer["source"];	
+		var url = '/latest/fleets/'+this[charID].id+'/wings/'+wingID+'/?datasource='+currentServer["source"];	
 		var d1 = {'name' : 'ESI wing'};
 		// console.log(d1);
 		putCharacterData(host,url,charFleet[charID].token, function(err, data,id) {
@@ -994,8 +994,8 @@ class fleet{
 	}
 	getMembers(charID){
 		var host = 'esi.evetech.net';
-		var url = '/v1/fleets/'+this[charID].id+'/members/?datasource='+currentServer["source"];		
-		getCharacterData(host,url,this[charID].token, function(err, data,id) {
+		var url = '/latest/fleets/'+this[charID].id+'/members/?datasource='+currentServer["source"];		
+		getCharacterData("getMembers",host,url,this[charID].token, function(err, data,id) {
 			if (err) {
 				console.log(err+' Fleet info of: '+id);
 			} else {
@@ -1017,8 +1017,8 @@ class fleet{
 	}
 	moveMember(charID,character_id,squadName){
 		var host = 'esi.evetech.net';
-		var url = '/v1/fleets/'+this[charID].id+'/wings/?datasource='+currentServer["source"];	
-		getCharacterData(host,url,this[charID].token, function(err, data,character_id) {
+		var url = '/latest/fleets/'+this[charID].id+'/wings/?datasource='+currentServer["source"];	
+		getCharacterData("moveMember",host,url,this[charID].token, function(err, data,character_id) {
 			if (err) {
 				console.log(err+' Fleet info of: '+charID);
 			} else {
@@ -1028,7 +1028,7 @@ class fleet{
 						// console.log(data[0]);//.squads[i]);
 						// console.log(charFleet[charID].id,character_id);
 						var host = 'esi.evetech.net';
-						var url = '/v1/fleets/'+charFleet[charID].id+'/members/'+character_id+'/?datasource='+currentServer["source"];	
+						var url = '/latest/fleets/'+charFleet[charID].id+'/members/'+character_id+'/?datasource='+currentServer["source"];	
 						var d1 = {
 						  "role": "squad_member",
 						  "squad_id": data[0].squads[i].id,
@@ -1139,8 +1139,8 @@ class map{
 		// console.log(destSys);
 		var that = this;
 		if(tools.isWh(this.systems,id1) || tools.isWh(this.systems,id2)) return "no way";
-		var url1 = 'https://esi.evetech.net/v1/route/'+id1+'/'+id2+'/?datasource=tranquility&flag=shortest';
-		var url2 = 'https://esi.evetech.net/v1/route/'+id1+'/'+id2+'/?datasource=tranquility&flag=secure';
+		var url1 = 'https://esi.evetech.net/latest/route/'+id1+'/'+id2+'/?datasource=tranquility&flag=shortest';
+		var url2 = 'https://esi.evetech.net/latest/route/'+id1+'/'+id2+'/?datasource=tranquility&flag=secure';
 		getCCPdata(url1,function(er,data1){//////////////////////<<<<<<<<<<<<<<========----------потом отредактировать и вернуть
 			getCCPdata(url2,function(er,data2){
 				callback(data1,data2,that);
@@ -1238,8 +1238,8 @@ function update_crest(token,info,state,unique){//обновляем имеющу
 				console.log('438: ADDING NEW CHARACTER: '+info['CharacterName']);
 				crestDB.push(data);
 				let host = 'esi.evetech.net';
-				let url = '/v1/characters/'+info['CharacterID']+'/location/?datasource='+currentServer["source"];
-				getCharacterData(host,url,token['access_token'], function(err, data,id,name) {
+				let url = '/latest/characters/'+info['CharacterID']+'/location/?datasource='+currentServer["source"];
+				getCharacterData("getCCPdata",host,url,token['access_token'], function(err, data,id,name) {
 					if (err) {
 						console.log(err+'257: Location for: '+id);
 					} else {
@@ -1281,8 +1281,8 @@ function update_crest(token,info,state,unique){//обновляем имеющу
 			console.log('ADDING NEW CHARACTER: '+info['CharacterName']);
 			crestDB.push(data);	
 			let host = 'esi.evetech.net';
-			let url = '/v1/characters/'+info['CharacterID']+'/location/?datasource='+currentServer["source"];
-			getCharacterData(host,url,token['access_token'], function(err, data,id,name) {
+			let url = '/latest/characters/'+info['CharacterID']+'/location/?datasource='+currentServer["source"];
+			getCharacterData("addcharacter",host,url,token['access_token'], function(err, data,id,name) {
 				if (err) {
 					console.log(err+'257: Location for: '+id);
 				} else {
@@ -1386,17 +1386,18 @@ function getAjax(u,callback, token){
 		}
 	});
 }
-function getCharacterData(h,u,token,callback,id,name){
+function getCharacterData(what, h,u,token,callback,id,name){
 	if(!token){console.log('890: TOKEN ERROR = '+id+' = '+name); return null;}
 	 //console.log('420: '+h+u+', '+token);
-	console.log('420 token used: ...' + token.substring(token.length - 5));
+	console.log('420 token used: ...' + token.substring(token.length - 5) + " for " + what);
 	var u1 = h+u;
 	var options = {
 		method: 'GET',
 		url: 'https://'+h+u, 	
 		headers: { 
 		    'Authorization': 'Bearer ' + token,
-			'Content-Type': 'application/json'
+			'Content-Type': 'application/json',
+			'User-Agent': 'Hole Controller by Alpho'
 		}
 	};
 
