@@ -1323,7 +1323,7 @@ function auth(data,name,callback){
 		url: 'https://login.eveonline.com/v2/oauth/token',
 		headers: {
 				'Authorization': 'Basic ' + authorizationBasic,
-				'Content-Type': 'Content-Type: application/x-www-form-urlencoded'
+				'Content-Type': 'application/x-www-form-urlencoded'
 			},
 		form : data
 	};
