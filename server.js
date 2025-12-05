@@ -554,7 +554,7 @@ class swagger{
 			return;
 		}
 		for(var i=0;i<crestDB.length;i++){
-		// console.log("158: REFRESHING "+crestDB[i]['CharacterID']);
+			console.log("158: REFRESHING " + crestDB[i]['CharacterID'] + " because of " + comment);
 			var ch_id =  crestDB[i]['CharacterID'];
 			if(id == ch_id){
 				var data = querystring.stringify({ 'grant_type': 'refresh_token',
@@ -700,7 +700,7 @@ class swagger{
 	updateCharOnline(token,charID,charLoc){
 			// console.log('======UPDATING CHARACTER ONLINE FOR: '+charID+'=====');
 			var host = 'esi.evetech.net';
-			var url = '/v2/characters/'+charID+'/online/?datasource='+currentServer["source"];
+			var url = '/characters/'+charID+'/online';
 			getCharacterData("online",host,url,token, function(err, data,id) {
 				if (err) {
 					console.log(err+' Online for: '+id);
@@ -748,7 +748,7 @@ class swagger{
 	******************************************************************/
 	updateCharShip(token,charID,charLoc){
 			var host = 'esi.evetech.net';
-			var url = '/latest/characters/'+charID+'/ship/?datasource='+currentServer["source"];
+			var url = '/characters/'+charID+'/ship';
 			getCharacterData("ship", host,url,token, function(err, data,id) {
 				if (err) {
 					console.log(err+' Ship for: '+id);
@@ -771,7 +771,7 @@ class swagger{
 	******************************************************************/
 	updateCharLoc(token,charID,charLoc){
 			var host = 'esi.evetech.net';
-			var url = '/latest/characters/'+charID+'/location/?datasource='+currentServer["source"];
+			var url = '/characters/'+charID+'/location';
 			getCharacterData("location",host,url,token, function(err, data,id) {
 				if (err) {
 					console.log(err+'257: Location for: '+id);
@@ -1411,16 +1411,16 @@ function getCharacterData(what, h,u,token,callback,id,name){
 			// console.log(options.url);
 			console.log(crest.charStatus);
 			try{
-				console.log("802: ERROR"+response.statusCode);
+				console.log("802: ERROR: "+response.statusCode);
 				if (response.statusCode == 304 || response.statusCode == 401 || response.statusCode == 400 || response.statusCode == 403 || response.statusCode == 502){
 					crest.charStatus[id] = 'fail';
 					crest.refreshAccess(id, "003: refresh after error in GET");
-					return callback(error || ("498 statusCode: "+response.statusCode+", "+response.body),'',id);
+					return callback(error || ("498: statusCode: "+response.statusCode+", "+response.body),'',id);
 				}
 			}
 			catch(e){
 				// console.log(response.body);
-				return callback(error || ("498 statusCode: "+response.statusCode+", "+response.body),'',id);
+				return callback(error || ("499: statusCode: "+response.statusCode+", "+response.body),'',id);
 			}
 		}
 		// console.log("500: OK, bodyresponse recieved for: "+id);
