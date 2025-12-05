@@ -584,7 +584,10 @@ class swagger{
 	delayRefreshToken(i, comment){
 		console.log("delayRefreshToken "+i+": " + comment);
 		var crestDB = this.crestDB;
-		if(i==crestDB.length)return;
+		if (i == crestDB.length) {
+            console.log("Finished refreshing tokens.");
+			return
+		};
 		
 		// console.log("158: "+crestDB[i]['CharacterID']);
 		
@@ -600,7 +603,9 @@ class swagger{
 						send('', "token_error", id, crestDB[i]['code']);
 					} else {
 						crest.charStatus[id] = 'refreshed';
+						console.log("old token: ..." + crestDB[i]['access_token'].substring(crestDB[i]['access_token'].length - 5));
 						crestDB[i]['access_token'] = answer['access_token'];
+						console.log("new token: ..." + crestDB[i]['access_token'].substring(crestDB[i]['access_token'].length - 5));
 					}
 				}
 			}
@@ -1383,7 +1388,8 @@ function getAjax(u,callback, token){
 }
 function getCharacterData(h,u,token,callback,id,name){
 	if(!token){console.log('890: TOKEN ERROR = '+id+' = '+name); return null;}
-	 console.log('420: '+h+u+', '+token);
+	 //console.log('420: '+h+u+', '+token);
+	console.log('420 token used: ...' + token.substring(token.length - 5));
 	var u1 = h+u;
 	var options = {
 		method: 'GET',
