@@ -1379,7 +1379,7 @@ function getAjax(u,callback, token){
 }
 function getCharacterData(h,u,token,callback,id,name){
 	if(!token){console.log('890: TOKEN ERROR = '+id+' = '+name); return null;}
-	// console.log('420: '+h+u+', '+token);
+	 console.log('420: '+h+u+', '+token);
 	var u1 = h+u;
 	var options = {
 		method: 'GET',
