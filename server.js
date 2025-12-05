@@ -1401,7 +1401,15 @@ function getCharacterData(what, h,u,token,callback,id,name){
 		}
 	};
 
-	request.get(options, function (error, response, body) {
+	request.get({
+		method: 'GET',
+		url: `https://esi.evetech.net/latest/characters/${id}/location/?datasource=tranquility`,
+		headers: {
+			'Authorization': 'Bearer ' + token,
+			'Accept': 'application/json',
+			'User-Agent': 'Hole Controller by Alpho'
+		}
+	}, function (error, response, body) {
 			// console.log("997:");
 			// console.log(body);
 		// console.log("492:"+id);
