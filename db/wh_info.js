@@ -17658,7 +17658,7 @@ module.exports = {
 					"region" : "R09",
 					"class5" : "3",
 					"effect" : "Magnetar",
-					"statics" : "D845hU210l"
+					"statics": "K346nU210l"
 			},
 "31002530" : { 	"name" : "J001670",
 					"const" : "C327", 
