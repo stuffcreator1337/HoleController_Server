@@ -540,6 +540,7 @@ class swagger{
 		setInterval(function () { that.refreshAccess('all', "002: inrerval timer");},100000);
 		setInterval(function(){ that.updateChar();},15000);
 		setTimeout(function(){ that.updateZKB();},3000);
+		setInterval(function(){ that.updateZKB();},10000);
 	}
 	upd(json){
 		this.crestDB = json;
@@ -559,10 +560,10 @@ class swagger{
 			console.log("158: REFRESHING " + crestDB[i]['CharacterID'] + " because of " + comment);
 			var ch_id =  crestDB[i]['CharacterID'];
 			if (id == ch_id) {
-				const data = querystring.stringify({
+				const data = {
 					'grant_type': 'refresh_token',
 					'refresh_token': crestDB[i]['refresh_token']
-				});
+				};
 				console.log("188: refreshing token for: "+ch_id);
 				auth(data, ch_id, function(err, id, answer) {
 					for(let i=0;i<crestDB.length;i++){
@@ -596,10 +597,10 @@ class swagger{
 		// console.log("158: "+crestDB[i]['CharacterID']);
 		
 		var ch_id =  crestDB[i]['CharacterID'];
-		const data = querystring.stringify({
+		const data = {
 			'grant_type': 'refresh_token',
 			'refresh_token': crestDB[i]['refresh_token']
-		});
+		};
 		console.log("215: refreshing token for: "+ch_id);
 		auth(data, ch_id, function(err, id, answer) {
 			for(let i=0;i<crestDB.length;i++){
@@ -684,23 +685,24 @@ class swagger{
 		var syst_count = Object.keys(this.systemsKB).length;
 		console.log("Starting KB-parse, systems to check: "+syst_count);
 		for(var s in this.systemsKB){	
-			setTimeout(this.requestZkb,tmout+=1000,s,syst_count--);		
+			setTimeout(this.requestZkb,tmout+=1500,s,syst_count--);		
 		}
 	}
-	requestZkb(s,c){		
-		var syst = s.substring(4, 12);
-		var url = "https://zkillboard.com/api/systemID/"+syst+"/";		
-		console.log(url);
-		// var url = "https://zkillboard.com/api/systemID/30000142/pastSeconds/43200/";		
-		getAjax(url,function(er,data1){
-			if(data1.length){				;
+	requestZkb(s, c) {
+		const syst = s.substring(4, 12);
+		const url = "https://zkillboard.com/api/systemID/" + syst + "/";
+
+		console.log("ZKB ->", url);
+
+		getAjax(url, function (err, data1) {
+			if (!err && data1.length) {
 				crest.systemsKB[s] = data1[0].killmail_id;
 			}
-			if(c == 1){
+
+			if (c == 1) {
 				send('', "zkb_data", crest.systemsKB, 'all');
 			}
-		}); 
-		
+		});
 	}
 	/*****************************************************************
 	|=|	обновляем статус онлайн перса
@@ -1371,28 +1373,33 @@ function getCCPdata(u,callback){
 		callback(null, JSON.parse(body));  
 	});
 }
-function getAjax(u,callback, token){
-	var options = {
-		type: 'GET',
+function getAjax(u, callback) {
+	const options = {
 		url: u,
-		crossDomain: true,
-		headers: { 
-			'Authorization': 'Bearer ' + token
+		method: 'GET',
+		gzip: true,
+		headers: {
+			'User-Agent': 'MyEveApp/1.0 (contact: your@email)',
+			'Accept-Encoding': 'gzip'
 		}
-	};	
+	};
+
 	request.get(options, function (error, response, body) {
-		// console.log("492:"+id);
-		if (error || response.statusCode !== 200) {
-			console.log('\x1b[31m%s\x1b[0m', "978: ERROR FOR "+response.statusCode+ " "+error);
-			callback(null,[]);
-			return;
+		if (error) {
+			console.log("ZKB ERROR:", error);
+			return callback(error, []);
 		}
-		try{	
-			if(body != null)callback(null, JSON.parse(body));				
+
+		if (response.statusCode !== 200) {
+			console.log("ZKB HTTP:", response.statusCode, body);
+			return callback(new Error("Status " + response.statusCode), []);
 		}
-		catch(e){
-			console.log('985:');
-			console.log(e);		
+
+		try {
+			callback(null, JSON.parse(body));
+		} catch (e) {
+			console.log("ZKB JSON ERROR:", e);
+			callback(e, []);
 		}
 	});
 }
