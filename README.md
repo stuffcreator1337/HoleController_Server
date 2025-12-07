@@ -1,28 +1,25 @@
 # HoleController_Server
 EVE Online WH-Map server
 
-Last update 30.08.2020
+Complete guide:
+Last update 07.12.2025
 
-1. Install NODE:
-curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.34.0/install.sh | bash
-. ~/.nvm/nvm.sh
-nvm install node
-node -e "console.log('Running Node.js ' + process.version)"
-
-2. Upload server files
-
-3. Generate package.json:
-npm install -g autod
-autod -w
-
-4. Install all dependencies:
+pkg install git
+cd $HOME
+git clone https://github.com/yourname/HoleController_Server
+cd $HOME/HoleController_Server
 npm install
+npm install socket.io
+cd $HOME
+git clone https://github.com/yourname/HoleControllerClient
+cd $HOME/HoleControllerClient
+npm install
+npm install socket.io-client
 
-5. Install pm2:
-npm install pm2 -g
+copy personal config file from some folder in your phone (for example "Download" foler) to server folder:
+cp /storage/emulated/0/Download/config.local.js ~/HoleController_Server/
+
 
 Start server:
-cd;
-cd app;pm2 stop server;
-
-pm2 flush;pm2 stop server;pm2 start server.js;pm2 logs --lines 100;
+cd $HOME/HoleController_Server; git pull;pm2 delete all;pm2 flush;pm2 start server.js;pm2 logs --lines 100;
+cd $HOME/HoleControllerClient; git pull; apachectl restart
