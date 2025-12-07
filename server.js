@@ -1654,7 +1654,7 @@ function atob(b){
 ******************************************************************/
 function send(socket, type, message,user){
 	io.emit(type, [message,user]);
-	console.log("783: <<<<<<<<<<   message of '"+type+"' sent  >>>>>>>>>>>>>>>>");
+	console.log("783:<<<<<<'"+type+"' sent");
 }
 
 /*****************************************************************
