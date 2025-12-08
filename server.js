@@ -692,7 +692,7 @@ class swagger{
 		const syst = s.substring(4, 12);
 		const url = "https://zkillboard.com/api/systemID/" + syst + "/";
 
-		console.log("ZKB ->", url);
+		console.log("ZKB ->", c + " " + syst);
 
 		getAjax(url, function (err, data1) {
 			if (!err && data1.length) {
