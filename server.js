@@ -701,7 +701,7 @@ class swagger{
 			}
 
 			if (c == 1) {
-				console.log("Sending ZKB:", crest.systemsKB.length);
+				console.log("Sending ZKB:", Object.keys(crest.systemsKB).length);
 				send('', "zkb_data", crest.systemsKB, 'all');
 			}
 		});
