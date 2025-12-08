@@ -692,11 +692,11 @@ class swagger{
 		const syst = s.substring(4, 12);
 		const url = "https://zkillboard.com/api/systemID/" + syst + "/";
 
-		console.log("ZKB ->", c + " " + syst);
+		//console.log("ZKB ->", c + " " + syst);
 
 		getAjax(url, function (err, data1) {
 			if (!err && data1.length) {
-				console.log("Got kills for:", c + " " + data1[0].killmail_id);
+				console.log("ZKB ->", c, syst,data1[0].killmail_id);
 				crest.systemsKB[s] = data1[0].killmail_id;
 			}
 
@@ -1662,7 +1662,10 @@ function atob(b){
 	отправка клиенту
 ******************************************************************/
 function send(socket, type, message,user){
-	io.emit(type, [message,user]);
+	io.emit(type, {
+		data: message,
+		user: user
+	});
 	console.log("783:<<<<<<'"+type+"' sent");
 }
 
