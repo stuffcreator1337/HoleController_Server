@@ -696,10 +696,12 @@ class swagger{
 
 		getAjax(url, function (err, data1) {
 			if (!err && data1.length) {
+				console.log("Got kills for:", c + " " + data1[0].killmail_id);
 				crest.systemsKB[s] = data1[0].killmail_id;
 			}
 
 			if (c == 1) {
+				console.log("Sending ZKB:", crest.systemsKB.length);
 				send('', "zkb_data", crest.systemsKB, 'all');
 			}
 		});
