@@ -667,7 +667,8 @@ class swagger{
 				sendData.push(charLoc[i]);
 			}
 		}
-		send('', "new_chars_position", sendData,'all');
+		send('', "new_chars_position", sendData, 'all');
+		send('', "zkb_data", crest.systemsKB, 'all');
 	}
 	/*****************************************************************
 	|=|	обновляем дынные по системам с килборды
