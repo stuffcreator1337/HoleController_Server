@@ -27,7 +27,7 @@ hook.setAvatar(settings.whook.avatar);
 console.log("Sending welcome message to Discord webhook...");
 //console.log(settings.whook.url);
 hook.send(settings.whook.welcomeMsg);
-
+/*
 const embed = new MessageBuilder()
 	.setTitle("Заголовок")
 	.setAuthor("Автор", "https://site/avatar.png")
@@ -42,7 +42,7 @@ const embed = new MessageBuilder()
 	.setTimestamp();
 
 hook.send(embed);
-
+*/
 const homesystemID = settings.homesystemID;
 
 /*****************************************************************
