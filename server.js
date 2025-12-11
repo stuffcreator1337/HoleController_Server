@@ -15,6 +15,7 @@ const querystring = require('querystring');
 const settings = require(path1+'settings');
 
 const { Webhook } = require('discord-webhook-node');
+const { MessageBuilder } = require('discord-webhook-node');
 
 // import { XMLHttpRequest } from 'w3c-xmlhttprequest';
 
@@ -26,6 +27,21 @@ hook.setAvatar(settings.whook.avatar);
 console.log("Sending welcome message to Discord webhook...");
 //console.log(settings.whook.url);
 hook.send(settings.whook.welcomeMsg);
+
+const embed = new MessageBuilder()
+	.setTitle("Заголовок")
+	.setAuthor("Автор", "https://site/avatar.png")
+	.setURL("https://example.com")
+	.setColor("#00b0f4")
+	.setDescription("Описание с **форматированием** и ссылками: https://google.com")
+	.addField("Поле 1", "Значение 1", true)
+	.addField("Поле 2", "Значение 2", true)
+	.setThumbnail("https://site/thumb.png")
+	.setImage("https://site/image.png")
+	.setFooter("Футер", "https://site/footer_icon.png")
+	.setTimestamp();
+
+hook.send(embed);
 
 const homesystemID = settings.homesystemID;
 
@@ -1648,6 +1664,7 @@ function webhooksSend(txt,id,inf,that){
 	//Slack:
 	slackMessage(txt,id,inf,that);
 	//Discord:
+	sendToDiscord(txt, id, inf, that);
 	hook.send(txt);
 }
 /*****************************************************************
