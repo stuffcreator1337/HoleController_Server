@@ -46,7 +46,7 @@ module.exports = {
 			"corp": 1000167
 		}
 	},
-	"homesystemID" : 31001834,
+	"homesystemID" : 31000753,
 	"currentServer" : "server1_tranq"
 	
 };
