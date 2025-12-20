@@ -1710,7 +1710,12 @@ function atob(b){
 	else{return atob_func(b);}
 }
 function cleanLogName(name) {
-	return name.replace(/[^\w \-]/g, ''); // заменяем все спецсимволы
+	const safeName = (name && typeof name === "object" && name.ship_name)
+		? String(name.ship_name).replace(/[^a-zA-Z0-9_]/g, "")
+		: "unknown";
+
+	//return name.replace(/[^\w \-]/g, ''); // заменяем все спецсимволы
+	return safeName; // заменяем все спецсимволы
 }
 
 /*****************************************************************
