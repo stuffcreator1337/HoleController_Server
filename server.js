@@ -22,6 +22,40 @@ const { MessageBuilder } = require('discord-webhook-node');
 var XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
 const hook = new Webhook(settings.whook.url);
 
+
+/*============FORMATTING============*/
+const RESET = "\x1b[0m";
+const FG_RED = "\x1b[38;5;196m";   
+const BG_RED = "\x1b[48;5;196m";  
+
+const FG_WHITE = "\x1b[38;5;15m"; 
+const BG_WHITE = "\x1b[48;5;15m"; 
+
+const FG_BLACK = "\x1b[38;5;0m";
+const BG_BLACK = "\x1b[48;5;0m";
+
+const FG_ORANGE = "\x1b[38;5;208m";
+const BG_ORANGE = "\x1b[48;5;208m";
+
+const FG_YELLOW = "\x1b[38;5;226m";
+const BG_YELLOW = "\x1b[48;5;226m";
+
+const FG_PINK = "\x1b[38;5;200m";
+const BG_PINK = "\x1b[48;5;200m";
+
+const FG_CYAN = "\x1b[38;5;51m";
+const BG_CYAN = "\x1b[48;5;51m";
+
+const FG_SALAD = "\x1b[38;5;118m";
+const BG_SALAD = "\x1b[48;5;118m";
+
+const FG_GREEN = "\x1b[38;5;46m";
+const BG_GREEN = "\x1b[48;5;46m";
+
+const FG_BLUE = "\x1b[38;5;27m";
+const BG_BLUE = "\x1b[48;5;27m";
+
+
 hook.setUsername(settings.whook.name);
 hook.setAvatar(settings.whook.avatar);
 console.log("Sending welcome message to Discord webhook...");
@@ -167,7 +201,7 @@ const server = http.createServer((req, res) => {
 
 		getCharacterData("getting access tokens",host, url, json1["access_token"], (err, json2) => {
 			if (err) {
-				console.log("verify error:", err);
+				console.log(`${FG_RED}${BG_BLACK} verify error: ${err}${RESET}`);
 				return;
 			}
 			console.log("Character data:", json2);
@@ -205,7 +239,7 @@ io.on("connection", socket => {
 		for (var i = 0; i < crestDB.length; i++) {//перебираем персов из данных на соответствие имеющимся
 			console.log('635: code = ' + crestDB[i].code);
 			if (crestDB[i].code == data) {
-				console.log("542: FOUND " + atob(crestDB[i]['CharacterName']) + " with code " + data);
+				console.log("542: FOUND " + cleanLogName(crestDB[i]['CharacterName']) + " with code " + data);
 				// for(var j=0;j<)
 				if (findById(crest.charLoc, crestDB[i]['CharacterID'], 'CharacterID')) {
 					sendData.push(findById(crest.charLoc, crestDB[i]['CharacterID'], 'CharacterID')[1]);
@@ -553,7 +587,7 @@ class swagger{
 	start_timer(){
 		var that = this;
 		setTimeout(function(){ that.refreshAccess('all', "001: starting timer");},1000);
-		setInterval(function () { that.refreshAccess('all', "002: inrerval timer");},100000);
+		setInterval(function () { that.refreshAccess('all', "002: interval timer");},100000);
 		setInterval(function(){ that.updateChar();},15000);
 		setTimeout(function(){ that.updateZKB();},3000);//первоначальный опрос
 		setInterval(function(){ that.updateZKB();},600000);//600 секунд = 10 минут
@@ -580,7 +614,7 @@ class swagger{
 					'grant_type': 'refresh_token',
 					'refresh_token': crestDB[i]['refresh_token']
 				};
-				console.log("188: refreshing token for: "+ch_id);
+				console.log("188: refreshing token for: " + cleanLogName(crestDB[i]['CharacterName']));
 				auth(data, ch_id, function(err, id, answer) {
 					for(let i=0;i<crestDB.length;i++){
 						if(id == crestDB[i]['CharacterID']){								
@@ -658,7 +692,7 @@ class swagger{
 		for(let i=0; i<crestDB.length;i++){
 			if(this.charStatus[crestDB[i]['CharacterID']] == 'refreshed'){
 				if(!crestDB[i]['access_token']){
-					console.log('\x1b[33m%s\x1b[0m', '247: TOKEN ERROR = '+crestDB[i]['CharacterID']+' = '+atob(crestDB[i]['CharacterName']));
+					console.log('\x1b[33m%s\x1b[0m', '247: TOKEN ERROR = ' + crestDB[i]['CharacterID'] + ' = ' + cleanLogName(crestDB[i]['CharacterName']));
 					send('', "token_error", crestDB[i]['CharacterID'], crestDB[i]['code']);
 				}else{			
 					/*
@@ -735,7 +769,7 @@ class swagger{
 			var url = '/characters/'+charID+'/online';
 			getCharacterData("online",host,url,token, function(err, data,id) {
 				if (err) {
-					console.log(err+' Online for: '+id);
+					console.log(`${FG_RED}${BG_BLACK}${err} Online for: ${id}${RESET}`);
 				} else {
 					if(data['error'])return;
 					for(var i=0;i<charLoc.length;i++){
@@ -762,7 +796,7 @@ class swagger{
 			var url = '/latest/characters/'+charID+'/fleet/?datasource='+currentServer["source"];		
 			getCharacterData("fleet",host,url,token, function(err, data,id) {
 				if (err) {
-					console.log(err+' Fleet info of: '+id);
+					console.log(`${FG_RED}${BG_BLACK}${err} Fleet info of: ${id}${RESET}`);
 				} else {
 					if(data['error'])return;
 					// console.log(data);
@@ -783,7 +817,7 @@ class swagger{
 			var url = '/characters/'+charID+'/ship';
 			getCharacterData("ship", host,url,token, function(err, data,id) {
 				if (err) {
-					console.log(err+' Ship for: '+id);
+					console.log(`${FG_RED}${BG_BLACK}${err} Ship for: ${id}${RESET}`);
 				} else {
 					if(data['error'])return;
 					for(let i=0;i<charLoc.length;i++){
@@ -806,7 +840,7 @@ class swagger{
 			var url = '/characters/'+charID+'/location';
 			getCharacterData("location",host,url,token, function(err, data,id) {
 				if (err) {
-					console.log(err+'257: Location for: '+id);
+					console.log(`${FG_RED}${BG_BLACK}${err} 843: Location for: ${id}${RESET}`);
 				} else {
 					var found = false;
 					for(let i=0;i<charLoc.length;i++){
@@ -880,8 +914,8 @@ class swagger{
 					console.log('======UPDATING CHARACTER POSITION FOR: '+id+'=====');
 					console.log(new_id,old_id); 
 					// console.log(map1.jumps,[new_id]);
-					if((tools.isWh(dbfulleden,new_id) == true)||(tools.isWh(dbfulleden,old_id) == true)||(map1.jumps[old_id][new_id]==null)){
-						console.log("%c Old sysID: "+old_id+", new sysID: "+new_id,"background: #336699; color: white");
+					if ((tools.isWh(dbfulleden, new_id) == true) || (tools.isWh(dbfulleden, old_id) == true) || (map1.jumps[old_id][new_id] == null)) {
+						console.log(`${FG_CYAN}${BG_BLACK}Old sysID: ${old_id} new sysID:${new_id}${RESET}`);
 						map1.create_link(new_id,old_id,'',id);
 					}
 				}	
@@ -930,7 +964,7 @@ class fleet{
 		var url = '/latest/fleets/'+this[charID].id+'/wings/?datasource='+currentServer["source"];		
 		getCharacterData("reformFleet",host,url,this[charID].token, function(err, data,charID) {
 			if (err) {
-				console.log(err+' Fleet info of: '+charID);
+				console.log(`${FG_YELLOW}${BG_BLACK}${err} Fleet info of:${charID}${RESET}`);
 			} else {
 				if(data['error'] || !data)return;
 				// console.log(data[0].squads);				
@@ -992,7 +1026,7 @@ class fleet{
 		var d1 = {'name' : newName};
 		putCharacterData(host,url,charFleet[charID].token, function(err, data,id) {
 			if (err) {
-				console.log(err+' Fleet info of: '+id);
+				console.log(`${FG_YELLOW}${BG_BLACK}${err} Fleet info of:${id}${RESET}`);
 			} else {
 				if(data['error'])return;
 			}
@@ -1003,7 +1037,7 @@ class fleet{
 		var url = '/latest/fleets/'+this[charID].id+'/wings/'+wingID+'/squads/?datasource='+currentServer["source"];	
 		postCharacterData(host,url,charFleet[charID].token, function(err, data,id) {
 			if (err) {
-				console.log(err+' Fleet info of: '+id);
+				console.log(`${FG_YELLOW}${BG_BLACK}${err} Fleet info of:${id}${RESET}`);
 			} else {
 				if(data['error'])return;
 				// console.log(data);		
@@ -1018,7 +1052,7 @@ class fleet{
 		// console.log(d1);
 		putCharacterData(host,url,charFleet[charID].token, function(err, data,id) {
 			if (err) {
-				console.log(err+' Fleet info of: '+id);
+				console.log(`${FG_YELLOW}${BG_BLACK}${err} Fleet info of:${id}${RESET}`);
 			} else {
 				if(data['error'])return;
 			}
@@ -1029,7 +1063,7 @@ class fleet{
 		var url = '/latest/fleets/'+this[charID].id+'/members/?datasource='+currentServer["source"];		
 		getCharacterData("getMembers",host,url,this[charID].token, function(err, data,id) {
 			if (err) {
-				console.log(err+' Fleet info of: '+id);
+				console.log(`${FG_YELLOW}${BG_BLACK}${err} Fleet info of:${id}${RESET}`);
 			} else {
 				if(data['error'])return;
 				// console.log('459:');
@@ -1052,7 +1086,7 @@ class fleet{
 		var url = '/latest/fleets/'+this[charID].id+'/wings/?datasource='+currentServer["source"];	
 		getCharacterData("moveMember",host,url,this[charID].token, function(err, data,character_id) {
 			if (err) {
-				console.log(err+' Fleet info of: '+charID);
+				console.log(`${FG_YELLOW}${BG_BLACK}${err} Fleet info of:${charID}${RESET}`);
 			} else {
 				if(data['error'] || !data)return;
 				for(var i=0;i<data[0].squads.length;i++){
@@ -1273,7 +1307,7 @@ function update_crest(token,info,state,unique){//обновляем имеющу
 				let url = '/latest/characters/'+info['CharacterID']+'/location/?datasource='+currentServer["source"];
 				getCharacterData("getCCPdata",host,url,token['access_token'], function(err, data,id,name) {
 					if (err) {
-						console.log(err+'257: Location for: '+id);
+						console.log(`${FG_RED}${BG_BLACK}${err} 311: Location for:${id}${RESET}`);
 					} else {
 						let sendData = {
 							"CharacterName": btoa(name),
@@ -1316,7 +1350,7 @@ function update_crest(token,info,state,unique){//обновляем имеющу
 			let url = '/latest/characters/'+info['CharacterID']+'/location/?datasource='+currentServer["source"];
 			getCharacterData("addcharacter",host,url,token['access_token'], function(err, data,id,name) {
 				if (err) {
-					console.log(err+'257: Location for: '+id);
+					console.log(`${FG_RED}${BG_BLACK}${err} 353: Location for:${id}${RESET}`);
 				} else {
 					let sendData = {
 						"CharacterName": btoa(name),
@@ -1369,10 +1403,8 @@ function auth(data,name,callback){
 			let json = JSON.parse(body);
 				callback(null, name, json);  
 		}
-		catch(e){
-			console.log("428:");
-			console.log(e);
-			//console.log(body);
+		catch (e) {
+			console.log(`${FG_RED}${BG_BLACK} 428: ${e}${RESET}`);
 		}
 	});
 	//tools.memory();
@@ -1420,13 +1452,15 @@ function getAjax(u, callback) {
 		try {
 			callback(null, JSON.parse(body));
 		} catch (e) {
-			console.log("ZKB JSON ERROR:", e);
+			console.log(`${FG_YELLOW}${BG_BLACK} ZKB JSON ERROR: ${e}${RESET}`);
 			callback(e, []);
 		}
 	});
 }
 function getCharacterData(what, h,u,token,callback,id,name){
-	if(!token){console.log('890: TOKEN ERROR = '+id+' = '+name); return null;}
+	if (!token) {
+		console.log(`${FG_RED}${BG_BLACK} 890: TOKEN ERROR = ${id}${name}${RESET}`);return null;
+	}
 	 //console.log('419: '+h+u+', '+token);
 	//console.log('420: ' + name +' token: ...' + token.substring(token.length - 5) + " for " + what);
 	var u1 = h+u;
@@ -1458,7 +1492,6 @@ function getCharacterData(what, h,u,token,callback,id,name){
 				}
 			}
 			catch(e){
-				// console.log(response.body);
 				return callback(error || ("499: statusCode: "+response.statusCode+", "+response.body),'',id);
 			}
 		}
@@ -1478,12 +1511,10 @@ function getCharacterData(what, h,u,token,callback,id,name){
 			callback(null, data, id, name);  
 			
 		}
-		catch(e){
-			console.log('1044:');
-			console.log(e);
-			console.log('876:'+ JSON.stringify(body));
-			console.log(JSON.parse(body),id, name);
-		
+		catch (e) {
+			console.log(`${FG_RED}${BG_BLACK} 1044: ${e}${RESET}`);
+			console.log(`${FG_ORANGE}${BG_BLACK} 876: ${JSON.stringify(body) }${RESET}`);
+			console.log(JSON.parse(body),id, name);		
 		}
 	});
 	// tools.memory();
@@ -1678,6 +1709,9 @@ function atob(b){
 	if(!b){console.log('\x1b[31m%s\x1b[0m', "1390: atob error"); return '';}
 	else{return atob_func(b);}
 }
+function cleanLogName(name) {
+	return name.replace(/[^\w \-]/g, ''); // заменяем все спецсимволы
+}
 
 /*****************************************************************
 	отправка клиенту
@@ -1756,8 +1790,7 @@ function writeF(json,file,callback){
 			});
 		}
 		catch (e) {
-	console.log("825:");
-			console.log(e);			
+			console.log(`${FG_RED}${BG_BLACK} 825: ${e}${RESET}`);
 		}
 	}
 }
@@ -1768,10 +1801,10 @@ function readFsync(file){
 		json_tst = JSON.parse(fs.readFileSync(file, 'utf8'));
 		json = json_tst;
 	}
-	catch(e){
-		console.log('819: creating new file:' +file);
+	catch (e) {
+		console.log(`${FG_PINK}${BG_BLACK} 819: creating new file: ${file}${RESET}`);
 		fs.writeFile(file, "[]", function (err2) {
-			if (err2) return console.log(err2);
+			if (err2) return console.log(`${FG_RED}${BG_BLACK} 819: creating new file: ${err2}${RESET}`);
 			// console.log('824: Saved');			
 		});
 		return [];
@@ -1799,8 +1832,8 @@ function readF(file, callback, var1, var2){
 			var rdata = JSON.parse(data);
 			callback(err,rdata,size,var1,var2);
 		}
-		catch(e){
-			console.log('\x1b[31m%s\x1b[0m', "853: ===ERROR WHILE READING FILE===creating new file\n"+e);
+		catch (e) {
+			console.log(`${FG_RED}${BG_BLACK} 853: ===ERROR WHILE READING FILE===creating new file\n ${e}${RESET}`);
 			// console.log(e);
 			fs.open(path+'/server_files/'+file+currentServer["file"]+'.json', 'w', function (err1, f) {
 			// console.log(f);
