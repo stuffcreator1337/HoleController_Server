@@ -1710,16 +1710,16 @@ function atob(b){
 	else{return atob_func(b);}
 }
 function cleanLogName(name) {
-	const safeName = (name && typeof name === "object" && name.ship_name)
-		? String(name.ship_name).replace(/[^a-zA-Z0-9_]/g, "")
-		: "unknown";
-	if (safeName == "unknown") {
-		console.log("1717:");
-		console.log(name);
-		console.log(typeof name);
+	if (typeof name === "string") {
+		return name.replace(/[^a-zA-Z0-9_]/g, '');
 	}
-	//return name.replace(/[^\w \-]/g, ''); // заменяем все спецсимволы
-	return safeName; // заменяем все спецсимволы
+	if (typeof name === "number" || typeof name === "boolean") {
+		return String(name).replace(/[^a-zA-Z0-9_]/g, '');
+	}
+	if (typeof name === "object" && name !== null) {
+		return JSON.stringify(name).replace(/[^a-zA-Z0-9_]/g, '');
+	}
+	return "unknown";
 }
 
 /*****************************************************************
