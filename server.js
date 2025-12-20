@@ -1475,11 +1475,8 @@ function getCharacterData(what, h,u,token,callback,id,name){
 	};
 
 	request.get(options, function (error, response, body) {
-			// console.log("997:");
-			// console.log(body);
-		// console.log("492:"+id);
 		if (error || (response.statusCode !== 200 && response.statusCode !== 404)) {
-			console.log(`${FG_RED}${BG_BLACK} 797: ERROR FOR: ${cleanLogName(name)}${what} ${crest.charStatus}${RESET}`);
+			console.log(`${FG_RED}${BG_BLACK} 797: ERROR FOR: ${cleanLogName(name)}:${what}${RESET}`);
 			console.log(crest.charStatus);
 			try {
 				console.log(`${FG_RED}${BG_BLACK} 802: ERROR: ${response.statusCode} ${options.url}${RESET}`);
@@ -1494,21 +1491,9 @@ function getCharacterData(what, h,u,token,callback,id,name){
 				return callback(error || ("499: statusCode: "+response.statusCode+", "+response.body),'',id);
 			}
 		}
-		// console.log("500: OK, bodyresponse recieved for: "+id);
-		// console.log(response.body);
-		try{			
-			
-			//var tmp0 = JSON.stringify(body);
-			//var tmp1 = tmp0.replace(/^"/,"");
-			//var tmp2 = tmp1.replace(/"$/,"");
-			//var tmp3 = tmp2.replace(/\\/g,"");
-			//console.log('1028:'+ tmp3);
-			
-			
-			//var tst = JSON.parse(tmp3);		
+		try{				
 			let data = JSON.parse(body);
-			callback(null, data, id, name);  
-			
+			callback(null, data, id, name);  			
 		}
 		catch (e) {
 			console.log(`${FG_RED}${BG_BLACK} 1044: ${e}${RESET}`);
