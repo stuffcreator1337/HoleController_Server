@@ -651,7 +651,7 @@ class swagger{
 			'grant_type': 'refresh_token',
 			'refresh_token': crestDB[i]['refresh_token']
 		};
-		console.log("215: refreshing token for: "+ch_id);
+		console.log("215: refreshing token for: " + cleanLogName(crestDB[i]['CharacterName']));
 		auth(data, ch_id, function(err, id, answer) {
 			for(let i=0;i<crestDB.length;i++){
 				if(id == crestDB[i]['CharacterID']){								
@@ -824,8 +824,8 @@ class swagger{
 						if(charLoc[i]['CharacterID'] == id){
 							// console.log('======UPDATING CHARACTER SHIP FOR: '+id+'=====');
 							charLoc[i]["ship_type_id"] = data['ship_type_id'];
-							charLoc[i]["ship_name"] = btoa(data['ship_name']);
-							charLoc[i]["ship_item_id"] = btoa(data['ship_item_id']);
+							charLoc[i]["ship_name"] = cleanLogName(data['ship_name']);
+							charLoc[i]["ship_item_id"] = cleanLogName(data['ship_item_id']);
 							// console.log(data); 
 						}
 					}
@@ -928,7 +928,7 @@ class swagger{
 		if(!found){
 				console.log('======CREATING NEW ENTRY FOR: '+id+'=====');
 			charLoc.push({
-				"CharacterName" : btoa(charName),
+				"CharacterName": cleanLogName(charName),
 				"CharacterID" : id,
 				"solar_system_id" : dbsysnames[sysName].solarSystemID,//tools.getSysId(sysName);
 				"loc_time" : "",
@@ -1296,7 +1296,7 @@ function update_crest(token,info,state,unique){//обновляем имеющу
 				}
 				let data = {
 					'CharacterID': info['CharacterID'],
-					'CharacterName':btoa(info['CharacterName']),
+					'CharacterName': cleanLogName(info['CharacterName']),
 					'refresh_token':token['refresh_token'],
 					"access_token": token['access_token'],
 					'code': code
@@ -1310,7 +1310,7 @@ function update_crest(token,info,state,unique){//обновляем имеющу
 						console.log(`${FG_RED}${BG_BLACK}${err} 311: Location for:${id}${RESET}`);
 					} else {
 						let sendData = {
-							"CharacterName": btoa(name),
+							"CharacterName": cleanLogName(name),
 							"CharacterID":id,
 							"solar_system_id":data['solar_system_id'],
 							"code":code
@@ -1339,7 +1339,7 @@ function update_crest(token,info,state,unique){//обновляем имеющу
 		if(!found){
 			let data = {
 				'CharacterID': info['CharacterID'],
-				'CharacterName':btoa(info['CharacterName']),
+				'CharacterName': cleanLogName(info['CharacterName']),
 				'refresh_token':token['refresh_token'],
 				"access_token": token['access_token'],
 				'code': unique
@@ -1353,7 +1353,7 @@ function update_crest(token,info,state,unique){//обновляем имеющу
 					console.log(`${FG_RED}${BG_BLACK}${err} 353: Location for:${id}${RESET}`);
 				} else {
 					let sendData = {
-						"CharacterName": btoa(name),
+						"CharacterName": cleanLogName(name),
 						"CharacterID":id,
 						"solar_system_id":data['solar_system_id'],
 						"code":unique
