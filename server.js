@@ -1713,9 +1713,11 @@ function cleanLogName(name) {
 	const safeName = (name && typeof name === "object" && name.ship_name)
 		? String(name.ship_name).replace(/[^a-zA-Z0-9_]/g, "")
 		: "unknown";
-	if (safeName == "unknown")
+	if (safeName == "unknown") {
 		console.log("1717:");
 		console.log(name);
+		console.log(typeof name);
+	}
 	//return name.replace(/[^\w \-]/g, ''); // заменяем все спецсимволы
 	return safeName; // заменяем все спецсимволы
 }
