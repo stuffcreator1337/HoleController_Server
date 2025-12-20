@@ -602,19 +602,19 @@ class swagger{
 	refreshAccess(id, comment){
 		var crestDB = this.crestDB;
 		if (id == 'all') {
-            console.log(comment);
+			console.log(`${FG_PINK}${BG_BLACK} 605: REFRESHING ALL TOKENS ${comment}${RESET}`);
 			this.delayRefreshToken(0, comment);
 			return;
 		}
-		for(var i=0;i<crestDB.length;i++){
-			console.log("158: REFRESHING " + crestDB[i]['CharacterID'] + " because of " + comment);
+		for (var i = 0; i < crestDB.length; i++) {
+			console.log(`${FG_PINK}${BG_BLACK} 610: REFRESHING ${cleanLogName(crestDB[i]['CharacterName']) }because of${comment}${RESET}`);
 			var ch_id =  crestDB[i]['CharacterID'];
 			if (id == ch_id) {
 				const data = {
 					'grant_type': 'refresh_token',
 					'refresh_token': crestDB[i]['refresh_token']
 				};
-				console.log("188: refreshing token for: " + cleanLogName(crestDB[i]['CharacterName']));
+				console.log(`${FG_PINK}${BG_BLACK} 618: refreshing token for: ${cleanLogName(crestDB[i]['CharacterName'])}${RESET}`);
 				auth(data, ch_id, function(err, id, answer) {
 					for(let i=0;i<crestDB.length;i++){
 						if(id == crestDB[i]['CharacterID']){								
@@ -698,10 +698,10 @@ class swagger{
 					/*
 						обновляем локацию, корабль и онлайн
 					*/
-					this.updateCharLoc(crestDB[i]['access_token'],crestDB[i]['CharacterID'],charLoc);
+					this.updateCharLoc(crestDB[i]['access_token'], crestDB[i]['CharacterID'], charLoc, crestDB[i]['CharacterName']);
 					/* this.updateCharFleet(crestDB[i]['access_token'],crestDB[i]['CharacterID'],charLoc); */
-					this.updateCharShip(crestDB[i]['access_token'],crestDB[i]['CharacterID'],charLoc);
-					this.updateCharOnline(crestDB[i]['access_token'],crestDB[i]['CharacterID'],charLoc);
+					this.updateCharShip(crestDB[i]['access_token'], crestDB[i]['CharacterID'], charLoc, crestDB[i]['CharacterName']);
+					this.updateCharOnline(crestDB[i]['access_token'], crestDB[i]['CharacterID'], charLoc, crestDB[i]['CharacterName']);
 				}				
 			}			
 		}
@@ -769,7 +769,7 @@ class swagger{
 			var url = '/characters/'+charID+'/online';
 			getCharacterData("online",host,url,token, function(err, data,id) {
 				if (err) {
-					console.log(`${FG_RED}${BG_BLACK}${err} Online for: ${id}${RESET}`);
+					console.log(`${FG_RED}${BG_BLACK}${err} Online for: ${cleanLogName(charName)}${RESET}`);
 				} else {
 					if(data['error'])return;
 					for(var i=0;i<charLoc.length;i++){
@@ -791,12 +791,12 @@ class swagger{
 	/*****************************************************************
 	|=|	обвновляем статус флота перса
 	******************************************************************/
-	updateCharFleet(token,charID,charLoc){
+	updateCharFleet(token, charID, charLoc, charName){
 			var host = 'esi.evetech.net';
 			var url = '/latest/characters/'+charID+'/fleet/?datasource='+currentServer["source"];		
 			getCharacterData("fleet",host,url,token, function(err, data,id) {
 				if (err) {
-					console.log(`${FG_RED}${BG_BLACK}${err} Fleet info of: ${id}${RESET}`);
+					console.log(`${FG_RED}${BG_BLACK}${err} 799: Fleet info of: ${cleanLogName(charName)}${RESET}`);
 				} else {
 					if(data['error'])return;
 					// console.log(data);
@@ -812,12 +812,12 @@ class swagger{
 	/*****************************************************************
 	|=|	обновляем текущий корабль перса
 	******************************************************************/
-	updateCharShip(token,charID,charLoc){
+	updateCharShip(token, charID, charLoc, charName){
 			var host = 'esi.evetech.net';
 			var url = '/characters/'+charID+'/ship';
 			getCharacterData("ship", host,url,token, function(err, data,id) {
 				if (err) {
-					console.log(`${FG_RED}${BG_BLACK}${err} Ship for: ${id}${RESET}`);
+					console.log(`${FG_RED}${BG_BLACK}${err} 820: Ship for: ${cleanLogName(charName)}${RESET}`);
 				} else {
 					if(data['error'])return;
 					for(let i=0;i<charLoc.length;i++){
@@ -835,12 +835,12 @@ class swagger{
 	/*****************************************************************
 	|=|	обновляем текущую локацию перса
 	******************************************************************/
-	updateCharLoc(token,charID,charLoc){
+	updateCharLoc(token,charID,charLoc, charName){
 			var host = 'esi.evetech.net';
 			var url = '/characters/'+charID+'/location';
 			getCharacterData("location",host,url,token, function(err, data,id) {
 				if (err) {
-					console.log(`${FG_RED}${BG_BLACK}${err} 843: Location for: ${id}${RESET}`);
+					console.log(`${FG_RED}${BG_BLACK}${err} 843: Location for: ${cleanLogName(charName)}${RESET}`);
 				} else {
 					var found = false;
 					for(let i=0;i<charLoc.length;i++){
@@ -861,9 +861,9 @@ class swagger{
 							if((new_id != old_id)&&(new_time < old_time+300000)){
 								var s1info = dbfulleden[new_id];
 								var s2info = dbfulleden[old_id];
-								console.log("425:");
-								console.log(s1info);
-								console.log('\x1b[34m%s\x1b[0m', "Jump through systems detected: "+old_id+" ("+s2info["solarSystemName"]+")-->"+new_id+" ("+s1info["solarSystemName"]+")");
+								//console.log("425:");
+								//console.log(s1info);
+								console.log(`${FG_BLUE}${BG_BLACK} 425: Jump through systems detected: ${old_id}${old_id}(${s2info["solarSystemName"]})-->${new_id}(${s1info["solarSystemName"]})${RESET}`);
 								/*
 									1 проверка, что новая система это вх
 									2 что старая система это вх
@@ -897,7 +897,7 @@ class swagger{
 	/*****************************************************************
 	|=|	обновляем текущую локацию по команде из фантома
 	******************************************************************/
-	updateCharLocPhantom(id,charName,sysName,charLoc){
+	updateCharLocPhantom(id, charName, sysName, charLoc, charName){
 		var found = false;
 		for(let i=0;i<charLoc.length;i++){
 			if(charLoc[i]['CharacterID'] == id){			
@@ -1421,8 +1421,7 @@ function getCCPdata(u,callback){
 	request.get(options, function (error, response, body) {
 		// console.log("492:"+id);
 		if (error || response.statusCode !== 200) {
-			console.log('\x1b[31m%s\x1b[0m', "450: ERROR FOR "+response.statusCode+ " "+error);
-			// console.log(error);
+			console.log(`${FG_RED}${BG_BLACK} 450: ERROR FOR ${response.statusCode}${error}${RESET}`);
 		}
 		callback(null, JSON.parse(body));  
 	});
@@ -1440,12 +1439,12 @@ function getAjax(u, callback) {
 
 	request.get(options, function (error, response, body) {
 		if (error) {
-			console.log("ZKB ERROR:", error);
+			console.log(`${FG_ORANGE}${BG_BLACK} ZKB ERROR: ${error}${RESET}`);
 			return callback(error, []);
 		}
 
 		if (response.statusCode !== 200) {
-			console.log("ZKB HTTP:", response.statusCode, body);
+			console.log(`${FG_YELLOW}${BG_BLACK} ZKB HTTP: ${response.statusCode}${body}${RESET}`);
 			return callback(new Error("Status " + response.statusCode), []);
 		}
 
@@ -1459,7 +1458,7 @@ function getAjax(u, callback) {
 }
 function getCharacterData(what, h,u,token,callback,id,name){
 	if (!token) {
-		console.log(`${FG_RED}${BG_BLACK} 890: TOKEN ERROR = ${id}${name}${RESET}`);return null;
+		console.log(`${FG_RED}${BG_BLACK} 890: TOKEN ERROR = ${id}${what}${cleanLogName(name)}${RESET}`);return null;
 	}
 	 //console.log('419: '+h+u+', '+token);
 	//console.log('420: ' + name +' token: ...' + token.substring(token.length - 5) + " for " + what);
@@ -1479,11 +1478,10 @@ function getCharacterData(what, h,u,token,callback,id,name){
 			// console.log(body);
 		// console.log("492:"+id);
 		if (error || (response.statusCode !== 200 && response.statusCode !== 404)) {
-			console.log("797: ERROR FOR "+id+" | "+options.url);
-			
-			// console.log(options.url);
+			console.log(`${FG_RED}${BG_BLACK} 797: ERROR FOR: ${cleanLogName(name)}${what} ${crest.charStatus}${RESET}`);
 			console.log(crest.charStatus);
-			try{
+			try {
+				console.log(`${FG_RED}${BG_BLACK} 802: ERROR: ${response.statusCode} ${options.url}${RESET}`);
 				console.log("802: ERROR: "+response.statusCode);
 				if (response.statusCode == 304 || response.statusCode == 401 || response.statusCode == 400 || response.statusCode == 403 || response.statusCode == 502){
 					crest.charStatus[id] = 'fail';
