@@ -897,7 +897,7 @@ class swagger{
 	/*****************************************************************
 	|=|	обновляем текущую локацию по команде из фантома
 	******************************************************************/
-	updateCharLocPhantom(id, charName, sysName, charLoc, charName){
+	updateCharLocPhantom(id, charName, sysName, charLoc){
 		var found = false;
 		for(let i=0;i<charLoc.length;i++){
 			if(charLoc[i]['CharacterID'] == id){			
