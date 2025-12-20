@@ -656,6 +656,7 @@ class swagger{
 			for(let i=0;i<crestDB.length;i++){
 				if(id == crestDB[i]['CharacterID']){								
 					if (err) {
+						console.log(`${FG_RED}${BG_BLACK}${err} Fleet info of:${charID}${RESET}`);
 						console.log('\x1b[31m%s\x1b[0m', "Character with the ID="+id+" got error:");console.log('\x1b[31m%s\x1b[0m', err);
 						send('', "token_error", id, crestDB[i]['code']);
 					} else {
@@ -763,7 +764,7 @@ class swagger{
 	/*****************************************************************
 	|=|	обновляем статус онлайн перса
 	******************************************************************/
-	updateCharOnline(token,charID,charLoc){
+	updateCharOnline(token, charID, charLoc, charName){
 			// console.log('======UPDATING CHARACTER ONLINE FOR: '+charID+'=====');
 			var host = 'esi.evetech.net';
 			var url = '/characters/'+charID+'/online';
