@@ -656,8 +656,8 @@ class swagger{
 			for(let i=0;i<crestDB.length;i++){
 				if(id == crestDB[i]['CharacterID']){								
 					if (err) {
-						console.log(`${FG_RED}${BG_BLACK}${err} Fleet info of:${charID}${RESET}`);
-						console.log('\x1b[31m%s\x1b[0m', "Character with the ID="+id+" got error:");console.log('\x1b[31m%s\x1b[0m', err);
+						console.log(`${FG_RED}${BG_BLACK}${err} 659: Token refresh for:${cleanLogName(crestDB[i]['CharacterName'])}${RESET}`);
+						//console.log('\x1b[31m%s\x1b[0m', "Character with the ID="+id+" got error:");console.log('\x1b[31m%s\x1b[0m', err);
 						send('', "token_error", id, crestDB[i]['code']);
 					} else {
 						crest.charStatus[id] = 'refreshed';
