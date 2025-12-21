@@ -748,12 +748,28 @@ class swagger{
 
 		getAjax(url, function (err, data1) {
 			if (!err && data1.length) {
-				console.log(data1[0]);
-				console.log("ZKB ->", c, syst, data1[0].killmail_id, data1[0].killmail_time);
-				crest.systemsKB[s] = {
-					id: data1[0].killmail_id,
-                    time: data1[0].killmail_time
-				};
+
+				const url = `https://esi.evetech.net/latest/killmails/${data1[0].killmail_id}/${data1[0].zkb.hash}/`;
+
+				request.get(url, function (err, response, body) {
+					if (err) return console.error(err);
+
+					const kill = JSON.parse(body);
+					//console.log("killmail_time:", kill.killmail_time);
+
+					//console.log(data1[0]);
+					console.log("ZKB ->", c, syst, data1[0].killmail_id, kill.killmail_time);
+					crest.systemsKB[s] = {
+						id: data1[0].killmail_id,
+						time: kill.killmail_time
+					};
+
+				});
+
+
+
+
+
 				//console.log(crest.systemsKB[s]);
 			}
 
