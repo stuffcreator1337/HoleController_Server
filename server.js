@@ -729,8 +729,8 @@ class swagger{
 		for(var j in mp){
 			var s1 = mp[j]["sys1"];
 			var s2 = mp[j]["sys2"];
-			this.systemsKB["sys_"+s1+""] = "";
-			this.systemsKB["sys_"+s2+""] = "";
+			this.systemsKB["s_"+s1+""] = "";
+			this.systemsKB["s_"+s2+""] = "";
 		}
 
 		var tmout = 0;
@@ -759,11 +759,11 @@ class swagger{
 
 					//console.log(data1[0]);
 					console.log("ZKB ->", c, syst, data1[0].killmail_id, kill.killmail_time);
-					crest.systemsKB[s] = {
-						id: data1[0].killmail_id,
-						time: kill.killmail_time
-					};
-
+					const timestamp = new Date(kill.killmail_time).getTime();
+					crest.systemsKB[s] = [
+						data1[0].killmail_id,
+						timestamp
+					];
 				});
 
 
