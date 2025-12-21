@@ -1308,10 +1308,11 @@ function update_crest(token,info,state,unique){//обновляем имеющу
 			let url = 'https://esi.evetech.net/dev/characters/'+info['CharacterID']+'/?datasource='+currentServer["source"];
 			getCCPdata(url,function(e,response){
 				if(e){console.log('\x1b[31m%s\x1b[0m', '408: error'); return;}
-				if(response.corporation_id != currentServer["corp"]){
-					console.log('\x1b[35m%s\x1b[0m', '430: Not in Another War!');
-					send('', "error_text", {'text':'Not in Another War!'},unique);
-					return;
+				if (response.corporation_id != currentServer["corp"]) {
+					/*включить для отсеивания по корпе*/
+					//console.log('\x1b[35m%s\x1b[0m', '430: Not in Another War!');
+					//send('', "error_text", {'text':'Not in Another War!'},unique);
+					//return;
 				}
 				let data = {
 					'CharacterID': info['CharacterID'],
