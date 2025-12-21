@@ -748,7 +748,7 @@ class swagger{
 
 		getAjax(url, function (err, data1) {
 			if (!err && data1.length) {
-				console.log("ZKB ->", c, syst,data1[0].killmail_id);
+				console.log("ZKB ->", c, syst, data1[0].killmail_id, data1[0].killmail_time);
 				crest.systemsKB[s] = {
 					id: data1[0].killmail_id,
                     time: data1[0].killmail_time
