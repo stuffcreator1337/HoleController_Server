@@ -748,12 +748,13 @@ class swagger{
 
 		getAjax(url, function (err, data1) {
 			if (!err && data1.length) {
+				console.log(data1[0]);
 				console.log("ZKB ->", c, syst, data1[0].killmail_id, data1[0].killmail_time);
 				crest.systemsKB[s] = {
 					id: data1[0].killmail_id,
                     time: data1[0].killmail_time
 				};
-				console.log(crest.systemsKB[s]);
+				//console.log(crest.systemsKB[s]);
 			}
 
 			if (c == 1) {
