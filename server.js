@@ -753,6 +753,7 @@ class swagger{
 					id: data1[0].killmail_id,
                     time: data1[0].killmail_time
 				};
+				console.log(crest.systemsKB[s]);
 			}
 
 			if (c == 1) {
