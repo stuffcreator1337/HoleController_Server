@@ -741,7 +741,7 @@ class swagger{
 		}
 	}
 	requestZkb(s, c) {
-		const syst = s.substring(4, 12);
+		const syst = s.substring(2, 12);
 		const url = "https://zkillboard.com/api/systemID/" + syst + "/";
 
 		//console.log("ZKB ->", c + " " + syst);
