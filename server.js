@@ -863,17 +863,22 @@ class swagger{
 				} else {
 					var found = false;
 					for(let i=0;i<charLoc.length;i++){
-						if(charLoc[i]['CharacterID'] == id){
-							if(data['structure_id']){//console.log('DOCKED IN STATION');
+						if (charLoc[i]['CharacterID'] == id) {
+							charLoc[i]["CharacterName"] = cleanLogName(charName);
+							if (data['structure_id'])
+							{//console.log('DOCKED IN STATION');
 								charLoc[i]["solar_system_id"] = data['solar_system_id'];
 								//console.log(data);							
-								return;}
+								return;
+							}
 							var old_id = tools.clone(charLoc[i]["solar_system_id"]);
 							var new_id = data['solar_system_id'];
 							var old_time = charLoc[i]["loc_time"];
-							if(!new_id){console.log('UNDEFINED NEW SYSTEM ID');
+							if (!new_id) {
+								console.log('UNDEFINED NEW SYSTEM ID');
 								console.log(data);
-								return;}
+								return;
+							}
 							var new_time = new Date().getTime();
 							charLoc[i]["solar_system_id"] = data['solar_system_id'];
 							found = true;
@@ -892,7 +897,9 @@ class swagger{
 								var s1wh 	= tools.isWh(dbfulleden,new_id);
 								var s2wh 	= tools.isWh(dbfulleden,old_id);
 								var sJumps = null;
-								if(!s1wh && !s2wh){sJumps = map1.jumps[old_id][new_id];}
+								if (!s1wh && !s2wh) {
+									sJumps = map1.jumps[old_id][new_id];
+								}
 								if((tools.isWh(dbfulleden,new_id) == true)||(tools.isWh(dbfulleden,old_id) == true)||(map1.jumps[old_id][new_id]==null)){
 									console.log('\x1b[34m%s\x1b[0m', 'Old sysID: '+old_id+', new sysID: '+new_id);
 									map1.create_link(new_id,old_id,'',id);
@@ -925,6 +932,7 @@ class swagger{
 				var new_id = dbsysnames[sysName].solarSystemID;//tools.getSysId(sysName);
 				var old_time = charLoc[i]["loc_time"];
 				var new_time = new Date().getTime();
+				charLoc[i]["CharacterName"] = cleanLogName(charName);
 				charLoc[i]['online'] = true;
 				charLoc[i]["loc_time"] = new_time;
 				charLoc[i]["solar_system_id"] = dbsysnames[sysName].solarSystemID;//tools.getSysId(sysName);
