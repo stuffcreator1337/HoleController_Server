@@ -88,7 +88,7 @@ const dbfulleden = require(path1+'/db/mapofeden');
 const dbsysnames = require(path1+'/db/sysnames');
 // const dbregions = require(path1+'/db/regions');
 // const dbholes = require(path1+'/db/wh_holes');
-const dbinfo = require(path1+'/db/wh_info');
+// const dbinfo = require(path1+'/db/wh_info');
 const  tools = require(path1+'/tools');
 // console.log(dbsysnames['J115031']);
 
@@ -1156,7 +1156,7 @@ class map{
 		this.jumps 		= dbjumps;
 		// this.regions 	= dbregions;
 		// this.holes 		= dbholes;
-		this.info 		= dbinfo;
+		// this.info 		= dbinfo;
 		this.sigs 		= readFsync(path+'/server_files/sigs'+currentServer["file"]+'.json');
 		this.names 		= readFsync(path+'/server_files/names'+currentServer["file"]+'.json');
 	}
