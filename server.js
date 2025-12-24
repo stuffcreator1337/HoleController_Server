@@ -703,6 +703,7 @@ class swagger{
 					/* this.updateCharFleet(crestDB[i]['access_token'],crestDB[i]['CharacterID'],charLoc); */
 					this.updateCharShip(crestDB[i]['access_token'], crestDB[i]['CharacterID'], charLoc, crestDB[i]['CharacterName']);
 					this.updateCharOnline(crestDB[i]['access_token'], crestDB[i]['CharacterID'], charLoc, crestDB[i]['CharacterName']);
+					this.updateCharName(crestDB[i]['access_token'], crestDB[i]['CharacterID'], i);
 				}				
 			}			
 		}
@@ -846,6 +847,26 @@ class swagger{
 							charLoc[i]["ship_name"] = cleanLogName(data['ship_name']);
 							charLoc[i]["ship_item_id"] = cleanLogName(data['ship_item_id']);
 							// console.log(data); 
+						}
+					}
+				}
+			},charID);
+	}
+	/*****************************************************************
+	|=|	обновляем имя перса
+	******************************************************************/
+	updateCharName(token, charID, j){
+			var host = 'esi.evetech.net';
+			var url = '/characters/'+charID+'/';
+			getCharacterData("name", host,url,token, function(err, data,id) {
+				if (err) {
+					console.log(`${FG_RED}${BG_BLACK}${err} 820: Name for: ${charID}${RESET}`);
+				} else {
+					if (data['error']) return;
+                    crestDB[j]['CharacterName'] = cleanLogName(data['name']);
+					for(let i=0;i<charLoc.length;i++){
+						if(charLoc[i]['CharacterID'] == id){
+							charLoc[i]['CharacterName'] = cleanLogName(data['name']);
 						}
 					}
 				}
@@ -1714,13 +1735,13 @@ function atob(b){
 }
 function cleanLogName(name) {
 	if (typeof name === "string") {
-		return name.replace(/[^a-zA-Z0-9_]/g, '');
+		return name.replace(/[^a-zA-Z0-9_ ]/g, '');
 	}
 	if (typeof name === "number" || typeof name === "boolean") {
-		return String(name).replace(/[^a-zA-Z0-9_]/g, '');
+		return String(name).replace(/[^a-zA-Z0-9_ ]/g, '');
 	}
 	if (typeof name === "object" && name !== null) {
-		return JSON.stringify(name).replace(/[^a-zA-Z0-9_]/g, '');
+		return JSON.stringify(name).replace(/[^a-zA-Z0-9_ ]/g, '');
 	}
 	return "unknown";
 }
