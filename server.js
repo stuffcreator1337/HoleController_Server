@@ -234,7 +234,7 @@ io.on("connection", socket => {
 		console.log('\x1b[34m%s\x1b[0m', '====================');
 		// data = JSON.parse(data);
 		var crestDB = crest.crestDB;
-		// console.log("542: we need id: "+data[i]['CharacterID']);
+		// console.log("237: we need id: "+data[i]['CharacterID']);
 		var sendData = [];
 		for (var i = 0; i < crestDB.length; i++) {//перебираем персов из данных на соответствие имеющимся
 			console.log('635: code = ' + crestDB[i].code);
@@ -246,7 +246,10 @@ io.on("connection", socket => {
 				}
 			}
 		}
-		console.log(sendData);
+		if (sendData.length == 0) {
+			console.log(`${FG_ORANGE}${BG_BLACK} 550: No chars found for code : ${data}${RESET}`);
+		}
+		//console.log(sendData);
 		if (sendData.length == 0) {
 			send('', "privat_char_update", sendData, data);
 		} else {
