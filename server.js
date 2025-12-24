@@ -703,7 +703,7 @@ class swagger{
 					/* this.updateCharFleet(crestDB[i]['access_token'],crestDB[i]['CharacterID'],charLoc); */
 					this.updateCharShip(crestDB[i]['access_token'], crestDB[i]['CharacterID'], charLoc, crestDB[i]['CharacterName']);
 					this.updateCharOnline(crestDB[i]['access_token'], crestDB[i]['CharacterID'], charLoc, crestDB[i]['CharacterName']);
-					this.updateCharName(crestDB[i]['access_token'], crestDB[i]['CharacterID'], i);
+					this.updateCharName(crestDB[i]['access_token'], crestDB[i]['CharacterID'], crestDB,i);
 				}				
 			}			
 		}
@@ -855,7 +855,7 @@ class swagger{
 	/*****************************************************************
 	|=|	обновляем имя перса
 	******************************************************************/
-	updateCharName(token, charID, j){
+	updateCharName(token, charID, crestDB,j){
 			var host = 'esi.evetech.net';
 			var url = '/characters/'+charID+'/';
 			getCharacterData("name", host,url,token, function(err, data,id) {
