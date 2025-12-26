@@ -7,15 +7,15 @@ const http = require('http');
 // const https = require('https');
 const btoa_func = require('btoa');
 const atob_func = require('atob');
-var io = require('socket.io');
+// var io = require('socket.io');
 const request = require('request');
-const querystring = require('querystring');
+// const querystring = require('querystring');
 var fs = require('fs');
 var XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
 
 // const path = 'D:/totalz_github/map_30.08.2020/db_parser';
-const universalPath = path.join(__dirname);
 const path = require("path");
+const universalPath = path.join(__dirname);
 // const path = 'E:/nodejs/db_parser';
 
 const currentStage = 0;
@@ -32,7 +32,7 @@ const currentStage = 0;
 
 var stage2 = 0;
 
-const kSpaceLastSystem = 30045354;
+const kSpaceLastSystem = 0;
 var mapofeden = {};
 var nIntervId;
 
@@ -40,7 +40,7 @@ var nIntervId;
 getsystems();
 
 // var skip_stage_1 = false;
-var skip_stage_2 = true;
+var skip_stage_2 = false;
 var skip_stage_3 = false;
 var skip_stage_4 = false;
 var skip_stage_5 = false;
@@ -133,6 +133,38 @@ function getsysinf(systems){
 		});	
 	});	
 }
+function getSystemClass(sys) {
+	const id = Number(sys.system_id);
+
+	// Pochven (Triglavian Systems)
+	if (id >= 33000001 && id <= 33003000) {
+		return "Pochven";
+	}
+
+	// Thera (Особая вормхольная система)
+	if (id === 31001497) {
+		return "Thera";
+	}
+
+	// Abyssal Space
+	if (id >= 32000001 && id <= 32000200) {
+		return "Abyss";
+	}
+
+	// Wormhole (C1–C6) Space
+	if (id >= 31000001 && id <= 31002533) {
+		if (sys.name.startsWith("J")) {
+			return `C${id - 31000000}`;
+		}
+	}
+
+	// High Sec
+	if (sys.security >= 0.45) return "High";
+	// Low Sec
+	if (sys.security > 0) return "Low";
+	// Null Sec
+	return "Null";
+}
 function getsysclass(secstatus){
 	if(secstatus>0.45){return ["High","#00CCFF"];}
 	else if(secstatus>0){return ["Low","#FFFF00"];}
@@ -147,6 +179,8 @@ function filldisthubjadrh(){
 	var dbfulleden = require(path1+'/db/mapofeden');	
 	if(skip_stage_3 == true){fillsysnamestable(dbfulleden);return;};
 	var hubID = 30000142; var type = "J";
+	//console.log("kSpaceLastSystem", kSpaceLastSystem);
+	//console.log("data", dbfulleden[kSpaceLastSystem]);
 	if(dbfulleden[kSpaceLastSystem].hubj != "-1"){hubID = 30000142; type = "A";}
 	if(dbfulleden[kSpaceLastSystem].huba != "-1"){hubID = 30002187; type = "D";}
 	if(dbfulleden[kSpaceLastSystem].hubd != "-1"){hubID = 30002659; type = "R";}
@@ -369,23 +403,27 @@ function atob(b){
 /*****************************************************************
 	работа с файлами сохраняем обработанный кеш для креста, локации персов и карты
 ******************************************************************/
-function writeF(json,file,callback){
-
-	fs = require('fs');
-	if(json != "[]"){
-		try {
-			var test = JSON.parse(JSON.stringify(json));
-			fs.writeFile(path+'/db/'+file+'.json', JSON.stringify(json,null,'\t'), function (err) {
-				if (err) return console.log(err);
-				callback();				
-			});
-		}
-		catch (e) {
-	console.log("825:");
-			console.log(e);			
-		}
-	}
+function writeF(json, file, callback) {
+    if (json != "[]") {
+        try {
+            var test = JSON.parse(JSON.stringify(json));
+            
+            // Используем path.join для кроссплатформенного пути
+            const filePath = path.join(__dirname, 'db', `${file}.json`);
+            
+            // Записываем файл по пути
+            fs.writeFile(filePath, JSON.stringify(json, null, '\t'), function (err) {
+                if (err) return console.log(err);
+                callback();
+            });
+        }
+        catch (e) {
+            console.log("825:");
+            console.log(e);
+        }
+    }
 }
+
 function readFsync(file){
 	var json = [];
 	// console.log(path+'/db/'+file+currentServer["file"]+'.json');
