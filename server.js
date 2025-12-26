@@ -752,34 +752,29 @@ class swagger{
 
 		getAjax(url, function (err, data1) {
 			if (!err && data1.length) {
-
 				const url = `https://esi.evetech.net/latest/killmails/${data1[0].killmail_id}/${data1[0].zkb.hash}/`;
-
 				request.get(url, function (err, response, body) {
 					if (err) return console.error(err);
 
-					const kill = JSON.parse(body);
-					//console.log("killmail_time:", kill.killmail_time);
+					try {
+						const kill = JSON.parse(body);
+						console.log("ZKB ->", c, syst, data1[0].killmail_id, kill.killmail_time);
+						const timestamp = new Date(kill.killmail_time).getTime();
+						crest.systemsKB[s] = [
+							data1[0].killmail_id,
+							timestamp
+						];
+					}
+					catch (e) {
+						console.log(`${FG_ORANGE}${BG_BLACK}${e} ZKB JSON.parse error for ${data1[0].killmail_id}from ${syst}${RESET}`);
+					}
 
-					//console.log(data1[0]);
-					console.log("ZKB ->", c, syst, data1[0].killmail_id, kill.killmail_time);
-					const timestamp = new Date(kill.killmail_time).getTime();
-					crest.systemsKB[s] = [
-						data1[0].killmail_id,
-						timestamp
-					];
+					if (c == 1) {
+						console.log("Sending ZKB:", Object.keys(crest.systemsKB).length);
+						send('', "zkb_data", crest.systemsKB, 'all');
+					}
 				});
-
-
-
-
-
 				//console.log(crest.systemsKB[s]);
-			}
-
-			if (c == 1) {
-				console.log("Sending ZKB:", Object.keys(crest.systemsKB).length);
-				send('', "zkb_data", crest.systemsKB, 'all');
 			}
 		});
 	}

@@ -14,7 +14,9 @@ var fs = require('fs');
 var XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
 
 // const path = 'D:/totalz_github/map_30.08.2020/db_parser';
-const path = 'E:/nodejs/db_parser';
+const universalPath = path.join(__dirname);
+const path = require("path");
+// const path = 'E:/nodejs/db_parser';
 
 const currentStage = 0;
 
