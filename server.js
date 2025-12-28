@@ -347,7 +347,18 @@ io.on("connection", socket => {
 
 		send(socket, "sending_names", { "names": map1.names, "data": data }, data["user"]);
 	});
-
+	/*****************************************************************
+	|=|		запрос на дест A<>B
+	******************************************************************/
+	socket.on('dest_request', function (data) {
+		console.log('588: ================== system_names_request ==========================');
+		console.log('dest_request requested from ' + data["user"]);
+		//{ 'user': activeCharTab, 'id1': parseInt($jit.id('current_id').innerHTML), 'id2': parseInt(destSys) }
+		getDistance(data["id1"], data["id2"], function (data1, data2, that) {
+			//data2.length+" ("+data1.length+")_jumps";
+			send(socket, "sending_dest", { "id1": data["id1"], "id2": data["id2"], "short": data2.length, "secure": data1.length }, data["user"]);
+		});		
+	});
 	// socket.on('new_char_location', function(data) {
 	// console.log('recieved new_char_location for: '+data["user"]);
 	// var find = false;
@@ -750,7 +761,7 @@ class swagger{
 
 		//console.log("ZKB ->", c + " " + syst);
 
-		getAjax(url, function (err, data1) {
+		getAjaxZKB(url, function (err, data1) {
 			if (!err && data1.length) {
 				const url = `https://esi.evetech.net/latest/killmails/${data1[0].killmail_id}/${data1[0].zkb.hash}/`;
 				request.get(url, function (err, response, body) {
@@ -1465,7 +1476,7 @@ function getCCPdata(u,callback){
 		callback(null, JSON.parse(body));  
 	});
 }
-function getAjax(u, callback) {
+function getAjaxZKB(u, callback) {
 	const options = {
 		url: u,
 		method: 'GET',
@@ -1492,6 +1503,30 @@ function getAjax(u, callback) {
 		} catch (e) {
 			console.log(`${FG_YELLOW}${BG_BLACK} ZKB JSON ERROR: ${e}${RESET}`);
 			callback(e, []);
+		}
+	});
+}
+function getAjax(url, token, task, name) {
+	//if(charTokens[char_index[name]])	token = charTokens[char_index[name]].access_token;
+	// console.log(token.substring(0, 10));
+	return $.ajax({
+		method: 'GET',
+		url: url,
+		crossDomain: true,
+		headers: {
+			//'Authorization': 'Bearer ' + token
+			"User-Agent": "Hole Controller"
+		},
+		success: function (result) {
+			// console.log(errorCount[name]);
+			console.log("%c Success AJAX request from server", "background:green;color:white");
+		},
+		error: function (req, status, error) {
+			var tokenStatus = $("text[class^='tdText'][id^='status']");
+			console.log(
+				`e:${req.status}; task:${task}; char:${name}; token:${token?.substring(0, 10) || "none"}`//; error:${errorCount[name]}`
+			);
+			// startTrack();
 		}
 	});
 }
