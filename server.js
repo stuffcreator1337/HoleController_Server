@@ -354,7 +354,7 @@ io.on("connection", socket => {
 		console.log('588: ================== system_names_request ==========================');
 		console.log('dest_request requested from ' + data["user"]);
 		//{ 'user': activeCharTab, 'id1': parseInt($jit.id('current_id').innerHTML), 'id2': parseInt(destSys) }
-		getDistance(data["id1"], data["id2"], function (data1, data2, that) {
+		map1.getDistance(data["id1"], data["id2"], function (data1, data2, that) {
 			//data2.length+" ("+data1.length+")_jumps";
 			send(socket, "sending_dest", { "id1": data["id1"], "id2": data["id2"], "short": data2.length, "secure": data1.length }, data["user"]);
 		});		
