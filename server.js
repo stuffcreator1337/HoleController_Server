@@ -356,7 +356,7 @@ io.on("connection", socket => {
 		//{ 'user': activeCharTab, 'id1': parseInt($jit.id('current_id').innerHTML), 'id2': parseInt(destSys) }
 		map1.getDistance(data["id1"], data["id2"], function (data1, data2, that) {
 			//data2.length+" ("+data1.length+")_jumps";
-			send(socket, "sending_dest", { "id1": data["id1"], "id2": data["id2"], "short": data2.length, "secure": data1.length }, data["user"]);
+			send(socket, "sending_dest", { "id1": data["id1"], "id2": data["id2"], "secure": data2.length, "short": data1.length }, data["user"]);
 		});		
 	});
 	// socket.on('new_char_location', function(data) {
