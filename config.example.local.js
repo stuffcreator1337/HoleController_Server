@@ -10,5 +10,6 @@ module.exports = {
             secret: ""
         }
     },
-    DiscordWHK: ""
+    DiscordWHK: "",
+    telegrambot: ""
 };

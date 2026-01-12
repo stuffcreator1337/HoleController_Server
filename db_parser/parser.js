@@ -125,7 +125,8 @@ async function getsysinf(systems) {
                 "secur_r": "-1",
                 "secur_h": "-1",
                 "sysclass": sysclass[0],
-                "color": sysclass[1]
+                "color": "data.color_",
+                "color_org": sysclass[1]
             };
 
             filled_info++;
