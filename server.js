@@ -21,7 +21,7 @@ const { MessageBuilder } = require('discord-webhook-node');
 
 var XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
 const hook = new Webhook(settings.whook.url);
-
+const { Telegraf } = require('telegraf');
 
 /*============FORMATTING============*/
 const RESET = "\x1b[0m";
@@ -56,11 +56,15 @@ const FG_BLUE = "\x1b[38;5;27m";
 const BG_BLUE = "\x1b[48;5;27m";
 
 
+const Telebot = new Telegraf(settings.telegrambot.token);
+const channelId = settings.telegrambot.channelID;
+
 hook.setUsername(settings.whook.name);
 hook.setAvatar(settings.whook.avatar);
 console.log("Sending welcome message to Discord webhook...");
 //console.log(settings.whook.url);
 hook.send(settings.whook.welcomeMsg);
+sendMessageToChannel("Server restarted.");
 /*
 const embed = new MessageBuilder()
 	.setTitle("Заголовок")
@@ -78,6 +82,7 @@ const embed = new MessageBuilder()
 hook.send(embed);
 */
 const homesystemID = settings.homesystemID;
+
 
 /*****************************************************************
 	creating datas
@@ -1654,6 +1659,12 @@ var backup = setInterval(saveFile, 10000);
 server.listen(3000, "0.0.0.0", () => {
 	console.log("Backend listening on 0.0.0.0:3000");
 });
+/*****************************************************************
+	отправка сообщений в telegram
+******************************************************************/
+function sendMessageToChannel(message) {
+	Telebot.telegram.sendMessage(channelId, message);
+}
 /*****************************************************************
 	отправка сообщений в discord
 ******************************************************************/
