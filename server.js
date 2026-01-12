@@ -58,6 +58,7 @@ const BG_BLUE = "\x1b[48;5;27m";
 
 const Telebot = new Telegraf(settings.telegrambot.token);
 const channelId = settings.telegrambot.channelID;
+Telebot.launch();
 
 hook.setUsername(settings.whook.name);
 hook.setAvatar(settings.whook.avatar);
@@ -1664,6 +1665,7 @@ server.listen(3000, "0.0.0.0", () => {
 ******************************************************************/
 function sendMessageToChannel(message) {
 	Telebot.telegram.sendMessage(channelId, message);
+	console.log(`${FG_GREEN}${BG_BLACK}Telegram msg ${message} sent to ${channelId} from ${settings.telegrambot.token}`);
 }
 /*****************************************************************
 	отправка сообщений в discord
