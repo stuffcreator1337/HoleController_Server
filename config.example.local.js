@@ -11,5 +11,6 @@ module.exports = {
         }
     },
     DiscordWHK: "",
-    telegrambot: ""
+    telegrambot_token: "",
+    telegrambot_channelID: ""
 };
