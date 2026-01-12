@@ -19,6 +19,10 @@ module.exports = {
 		"avatar": "https://imageserver.eveonline.com/Type/2062_64.png",
 		"welcomeMsg": "Hole Controller restarted."
 	},
+	"telegrambot": {
+		"token": localSecrets.telegrambot_token,
+        "channelID": localSecrets.telegrambot_channelID
+	},
 	"Servers":{
 		"server1_tranq" : {
 			"client": localSecrets.Servers.server1_tranq.client,

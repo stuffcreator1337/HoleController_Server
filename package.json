@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "atob": "2.1.2",
+    "axios": "^1.13.2",
     "backo2": "1.0.2",
     "base64-arraybuffer": "0.2.0",
     "btoa": "1.2.1",

@@ -10,5 +10,7 @@ module.exports = {
             secret: ""
         }
     },
-    DiscordWHK: ""
+    DiscordWHK: "",
+    telegrambot_token: "",
+    telegrambot_channelID: ""
 };
