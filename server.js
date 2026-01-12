@@ -1695,6 +1695,31 @@ function sendToDiscord(txt,id,inf,that){
 	if(data != "" ){hook.send(data);return;}
 	
 }
+function sendToTelegram(txt,id,inf,that){
+	var icon_url = "https://imageserver.eveonline.com/Type/2062_64.png";
+	var cl = inf.sysclass;
+	var sec = inf.security;
+	var data = "";
+	if(sec > 0.45){
+		that.getDistance(homesystemID,id,function(data1,data2){
+			var data = "Дома хайсек <https://zkillboard.com/system/" + id + "> |" + inf.solarSystemName;
+			sendMessageToChannel(data);
+			return;			
+		});
+	}else if(sec > 0){
+		data = "Дома лоусек <https://zkillboard.com/system/" + id +"> |"+inf.solarSystemName;
+	// }else if(inf.hubj == '-1' && cl == 'C4'){
+		// data = "Новый статик <https://zkillboard.com/system/"+id+"> |"+inf.solarSystemName;
+	}else if(inf.regionID == '10000070'){
+		data = "Дома почвень " + cl + " <https://zkillboard.com/system/" + id +"> |"+inf.solarSystemName;//10000070
+	}else if(inf.hubj == '-1'){
+		data = "Дома новая дыра " + cl + " <https://zkillboard.com/system/" + id +"> |"+inf.solarSystemName;
+	}else {
+		data = "Дома нули <https://zkillboard.com/system/" + id +"> |"+inf.solarSystemName;
+	}
+	if (data != "") { sendMessageToChannel(data);return;}
+	
+}
 
 
 /*****************************************************************
@@ -1766,6 +1791,8 @@ function webhooksSend(txt,id,inf,that){
 	slackMessage(txt,id,inf,that);
 	//Discord:
 	sendToDiscord(txt, id, inf, that);
+	//Telegram
+    sendToTelegram(txt, id, inf, that);
 	//hook.send(txt);
 }
 /*****************************************************************
