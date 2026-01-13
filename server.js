@@ -597,7 +597,7 @@ class zkbmon {
 	constructor(old) {
 		this.data = old || readFsync(path + '/server_files/ZKBmonitor' + currentServer["file"] + '.json', '{}');
 		if (this.data == []) this.data = {};
-		writeF(zkbmonitor.data, "ZKBmonitor", function () {});
+		writeF(this.data, "ZKBmonitor", function () {});
 	}
 
 	start_timer() {
