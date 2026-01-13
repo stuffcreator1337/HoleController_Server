@@ -646,11 +646,11 @@ class zkbmon {
 					if (err) return console.error(err);
 
 					if (argument == "officer") {
-						console.log(`Officer ZKB: ${data1[0].killmail_id}`);
+						//console.log(`Officer ZKB: ${data1[0].killmail_id}`);
 
 						try {
 							const kill = JSON.parse(body);
-							console.log("ZKB ->", argument, syst, data1[0].killmail_id, kill.killmail_time);
+							//console.log("ZKB ->", argument, syst, data1[0].killmail_id, kill.killmail_time);
 							const timestamp = new Date(kill.killmail_time).getTime();
 							callback(data1[0].killmail_id, timestamp);
 						}
