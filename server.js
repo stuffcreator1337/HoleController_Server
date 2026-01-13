@@ -619,7 +619,7 @@ class zkbmon {
 		const argument = "officer";
 		const urls = [4796, 4798, 4800, 4802, 4804];
 		for (let i = 0; i < urls.length; i++) {
-			const url1 = `https://zkillboard.com/group/${i}`;
+			const url1 = `https://zkillboard.com/api/groupID/${i}`;
 			that.requestZkb(url1, syst, argument, function (id, date) {
 				const url = `https://zkillboard.com/kill/${id}`;
 				console.log("ZKB officer last kill->", url);
@@ -631,7 +631,7 @@ class zkbmon {
 			});
 		}
 		writeF(this.data, "ZKBmonitor", function () {
-			var size = fileSize("ZKBmonitor");
+			//var size = fileSize("ZKBmonitor");
 			// console.log("| ["+addLength(file,8,' ')+"]   --- "+addLength(size,10,'-')+" bytes  |");
 		});
 	}
