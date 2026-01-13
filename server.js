@@ -625,14 +625,14 @@ class zkbmon {
 				const url = `https://zkillboard.com/kill/${id}`;
 				console.log("ZKB officer last kill->", url);
 				if (that.data[group] != undefined && that.data[group].id != id) sendMessageToChannel(url);
-				that.data[group] = [
+				zkbmonitor.data[group] = [
 					id,
 					date
 				];
 			});
 		}
-		writeF(that.data, "ZKBmonitor", function () {
-			console.log(that.data);
+		writeF(zkbmonitor.data, "ZKBmonitor", function () {
+			console.log(zkbmonitor.data);
 			//var size = fileSize("ZKBmonitor");
 			// console.log("| ["+addLength(file,8,' ')+"]   --- "+addLength(size,10,'-')+" bytes  |");
 		});
