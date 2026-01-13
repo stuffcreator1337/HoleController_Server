@@ -619,6 +619,7 @@ class zkbmon {
 		const argument = "officer";
 		const groups = [4796, 4798, 4800, 4802, 4804];
 		for (let group in groups) {
+			console.log("group ->", group);
 			const url1 = `https://zkillboard.com/api/groupID/${group}`;
 			that.requestZkb(url1, syst, argument, function (id, date) {
 				const url = `https://zkillboard.com/kill/${id}`;
