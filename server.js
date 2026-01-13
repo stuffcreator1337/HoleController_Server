@@ -637,7 +637,7 @@ class zkbmon {
 		});
 	}
 	requestZkb(url, syst, argument, callback) {
-		console.log("ZKB ->", argument + " " + syst + " " + url);
+		//console.log("ZKB ->", argument + " " + syst + " " + url);
 
 		getAjaxZKB(url, function (err, data1) {
 			if (!err && data1.length) {
@@ -1571,7 +1571,7 @@ function getAjaxZKB(u, callback) {
 		}
 
 		try {
-			console.log(body);
+			//console.log(body);
 			callback(null, JSON.parse(body));
 		} catch (e) {
 			console.log(`${FG_YELLOW}${BG_BLACK} ZKB JSON ERROR: ${e}${RESET}`);
