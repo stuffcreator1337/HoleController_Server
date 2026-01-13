@@ -637,7 +637,7 @@ class zkbmon {
 			});
 		}
 		writeF(zkbmonitor.data, "ZKBmonitor", function () {
-			console.log(zkbmonitor.data);
+			//console.log(zkbmonitor.data);
 			//var size = fileSize("ZKBmonitor");
 			// console.log("| ["+addLength(file,8,' ')+"]   --- "+addLength(size,10,'-')+" bytes  |");
 		});
@@ -827,7 +827,7 @@ class swagger{
 					/* this.updateCharFleet(crestDB[i]['access_token'],crestDB[i]['CharacterID'],charLoc); */
 					this.updateCharShip(crestDB[i]['access_token'], crestDB[i]['CharacterID'], charLoc, crestDB[i]['CharacterName']);
 					this.updateCharOnline(crestDB[i]['access_token'], crestDB[i]['CharacterID'], charLoc, crestDB[i]['CharacterName']);
-					/* this.updateCharName(crestDB[i]['access_token'], crestDB[i]['CharacterID'], charLoc,crestDB,i);*/
+					this.updateCharName(crestDB[i]['access_token'], crestDB[i]['CharacterID'], charLoc,crestDB,i);
 				}				
 			}			
 		}
