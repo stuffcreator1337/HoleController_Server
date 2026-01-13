@@ -950,6 +950,7 @@ class swagger{
 					console.log(`${FG_RED}${BG_BLACK}${err} 820: Name for: ${charID}${RESET}`);
 				} else {
 					if (data['error']) return;
+					console.log(`${FG_YELLOW}${BG_BLACK} 953: Restoring name: ${charID} for ${data['name']}${RESET}`);
                     crestDB[j]['CharacterName'] = cleanLogName(data['name']);
 					for(let i=0;i<charLoc.length;i++){
 						if(charLoc[i]['CharacterID'] == id){
