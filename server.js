@@ -1,7 +1,7 @@
 var busy = false;
 const path1 = './';
 
-var crest,map1,charFleet;
+var crest,map1,charFleet,zkbmonitor;
 
 const http = require('http');
 // const https = require('https');
@@ -122,9 +122,14 @@ readF('crestDB',function(err,old_db){
 	crest = new swagger(old_db);
 	crest.start_timer();
 });
-readF('map1',function(err,old_db){
+readF('map1', function (err, old_db) {
 	map1 = new map(old_db);
 	map1.clean_timer();
+	// console.log(map1);
+});
+readF('ZKBmonitor', function (err, old_db) {
+	zkbmonitor = new zkbmon(old_db);
+	zkbmonitor.start_timer();
 	// console.log(map1);
 });
 
@@ -586,6 +591,98 @@ io.on("connection", socket => {
 
 
 /*****************************************************************
+	monitor of Zkillboard class
+******************************************************************/
+class zkbmon {
+	constructor(old) {
+		this.data = old || readFsync(path + '/server_files/ZKBmonitor' + currentServer["file"] + '.json', {});
+	}
+
+	start_timer() {
+		var that = this;
+		setTimeout(function () { that.checkOfficers(); }, 3000);//первоначальный опрос
+		setInterval(function () { that.checkOfficers(); }, 600000);//600 секунд = 10 минут
+	}
+	checkOfficers() {
+		/**********************************
+		 * 4796 - Guristas Officer
+		 * 4798 - Blood Raider Officer
+		 * 4800 - Serpentis Officer
+		 * 4802 - Angel Cartel Officer
+		 * 4804 - Sansha's Nation Officer	
+		 * 
+		 * you can add as much as you need
+		 **********************************/
+
+		var that = this;
+		const syst = "unknown";
+		const argument = "officer";
+		const urls = [4796, 4798, 4800, 4802, 4804];
+		for (let i = 0; i < urls.length; i++) {
+			const url1 = `https://zkillboard.com/group/${i}`;
+			requestZkb(url1, syst, argument, function (id, date) {
+				const url = `https://zkillboard.com/kill/${id}`;
+				console.log("ZKB officer last kill->", url);
+				if (that.data[i] != undefined && that.data[i].id != id) sendMessageToChannel(url);
+				that.data[i] = [
+					id,
+					date
+				];
+			});
+		}
+		writeF(this.data, "ZKBmonitor", function () {
+			var size = fileSize("ZKBmonitor");
+			// console.log("| ["+addLength(file,8,' ')+"]   --- "+addLength(size,10,'-')+" bytes  |");
+		});
+	}
+	requestZkb(url, syst, argument, callback) {
+		//console.log("ZKB ->", argument + " " + syst);
+
+		getAjaxZKB(url, function (err, data1) {
+			if (!err && data1.length) {
+				const url = `https://esi.evetech.net/latest/killmails/${data1[0].killmail_id}/${data1[0].zkb.hash}/`;
+				request.get(url, function (err, response, body) {
+					if (err) return console.error(err);
+
+					if (argument == "officer") {
+						console.log(`Officer ZKB: ${data1[0].killmail_id}`);
+
+						try {
+							const kill = JSON.parse(body);
+							console.log("ZKB ->", argument, syst, data1[0].killmail_id, kill.killmail_time);
+							const timestamp = new Date(kill.killmail_time).getTime();
+							callback(data1[0].killmail_id, timestamp);
+						}
+						catch (e) {
+							console.log(`${FG_ORANGE}${BG_BLACK}${e} ZKB JSON.parse error for ${data1[0].killmail_id}from ${syst}${RESET}`);
+						}	
+						return;
+					}
+
+					try {
+						const kill = JSON.parse(body);
+						console.log("ZKB ->", argument, syst, data1[0].killmail_id, kill.killmail_time);
+						const timestamp = new Date(kill.killmail_time).getTime();
+						crest.systemsKB[s] = [
+							data1[0].killmail_id,
+							timestamp
+						];
+					}
+					catch (e) {
+						console.log(`${FG_ORANGE}${BG_BLACK}${e} ZKB JSON.parse error for ${data1[0].killmail_id}from ${syst}${RESET}`);
+					}
+
+					if (argument == 1) {
+						console.log("Sending ZKB:", Object.keys(crest.systemsKB).length);
+						send('', "zkb_data", crest.systemsKB, 'all');
+					}
+				});
+				//console.log(crest.systemsKB[s]);
+			}
+		});
+	}
+}
+/*****************************************************************
 	создаем класс для базы с крест-инфой о персах
 ******************************************************************/
 class swagger{
@@ -757,43 +854,11 @@ class swagger{
 		var tmout = 0;
 		var syst_count = Object.keys(this.systemsKB).length;
 		console.log("Starting KB-parse, systems to check: "+syst_count);
-		for(var s in this.systemsKB){	
-			setTimeout(this.requestZkb,tmout+=1500,s,syst_count--);		
+		for (var s in this.systemsKB) {
+			const syst = s.substring(2, 10);
+			const url = "https://zkillboard.com/api/systemID/" + syst + "/";
+			setTimeout(zkbmonitor.requestZkb,tmout+=1500,url,syst, syst_count--);		
 		}
-	}
-	requestZkb(s, c) {
-		const syst = s.substring(2, 10);
-		const url = "https://zkillboard.com/api/systemID/" + syst + "/";
-
-		//console.log("ZKB ->", c + " " + syst);
-
-		getAjaxZKB(url, function (err, data1) {
-			if (!err && data1.length) {
-				const url = `https://esi.evetech.net/latest/killmails/${data1[0].killmail_id}/${data1[0].zkb.hash}/`;
-				request.get(url, function (err, response, body) {
-					if (err) return console.error(err);
-
-					try {
-						const kill = JSON.parse(body);
-						console.log("ZKB ->", c, syst, data1[0].killmail_id, kill.killmail_time);
-						const timestamp = new Date(kill.killmail_time).getTime();
-						crest.systemsKB[s] = [
-							data1[0].killmail_id,
-							timestamp
-						];
-					}
-					catch (e) {
-						console.log(`${FG_ORANGE}${BG_BLACK}${e} ZKB JSON.parse error for ${data1[0].killmail_id}from ${syst}${RESET}`);
-					}
-
-					if (c == 1) {
-						console.log("Sending ZKB:", Object.keys(crest.systemsKB).length);
-						send('', "zkb_data", crest.systemsKB, 'all');
-					}
-				});
-				//console.log(crest.systemsKB[s]);
-			}
-		});
 	}
 	/*****************************************************************
 	|=|	обновляем статус онлайн перса
@@ -1900,7 +1965,7 @@ function writeF(json,file,callback){
 		}
 	}
 }
-function readFsync(file){
+function readFsync(file, towrite = []){
 	var json = [];
 	// console.log(path+'/server_files/'+file+currentServer["file"]+'.json');
 	try{
@@ -1909,7 +1974,7 @@ function readFsync(file){
 	}
 	catch (e) {
 		console.log(`${FG_PINK}${BG_BLACK} 819: creating new file: ${file}${RESET}`);
-		fs.writeFile(file, "[]", function (err2) {
+		fs.writeFile(file, towrite, function (err2) {
 			if (err2) return console.log(`${FG_RED}${BG_BLACK} 819: creating new file: ${err2}${RESET}`);
 			// console.log('824: Saved');			
 		});
@@ -1939,7 +2004,7 @@ function readF(file, callback, var1, var2){
 			callback(err,rdata,size,var1,var2);
 		}
 		catch (e) {
-			console.log(`${FG_RED}${BG_BLACK} 853: ===ERROR WHILE READING FILE===creating new file\n ${e}${RESET}`);
+			console.log(`${FG_ORANGE}${BG_BLACK} 853: ERROR WHILE READING FILE ${file} \n creating new file\n ${e}${RESET}`);
 			// console.log(e);
 			fs.open(path+'/server_files/'+file+currentServer["file"]+'.json', 'w', function (err1, f) {
 			// console.log(f);
