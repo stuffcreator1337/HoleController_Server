@@ -631,8 +631,8 @@ class zkbmon {
 				];
 			});
 		}
-		writeF(this.data, "ZKBmonitor", function () {
-			console.log(this.data);
+		writeF(that.data, "ZKBmonitor", function () {
+			console.log(that.data);
 			//var size = fileSize("ZKBmonitor");
 			// console.log("| ["+addLength(file,8,' ')+"]   --- "+addLength(size,10,'-')+" bytes  |");
 		});
