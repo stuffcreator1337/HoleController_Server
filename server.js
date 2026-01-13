@@ -599,8 +599,8 @@ class zkbmon {
 		if (Array.isArray(this.data) && this.data.length === 0) {
 			this.data = {};
 		}
-		console.log('this.data:');
-		console.log(this.data);
+		//console.log('this.data:');
+		//console.log(this.data);
 		writeF(this.data, "ZKBmonitor", function () {});
 	}
 
