@@ -596,6 +596,8 @@ io.on("connection", socket => {
 class zkbmon {
 	constructor(old) {
 		this.data = old || readFsync(path + '/server_files/ZKBmonitor' + currentServer["file"] + '.json', '{}');
+		console.log('this.data:');
+		console.log(this.data);
 		if (this.data == []) this.data = {};
 		writeF(this.data, "ZKBmonitor", function () {});
 	}
