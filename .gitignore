@@ -1,9 +1,7 @@
 node_modules
-server_files
+server_files/
 config.local.js
 TODO.txt
 .gitignore
 nodet2.lnk
-server_files/crestDB_tranq.json
-server_files/charLoc_tranq.json
 /.vs
