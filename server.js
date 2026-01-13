@@ -636,7 +636,7 @@ class zkbmon {
 		});
 	}
 	requestZkb(url, syst, argument, callback) {
-		//console.log("ZKB ->", argument + " " + syst);
+		console.log("ZKB ->", argument + " " + syst + " " + url);
 
 		getAjaxZKB(url, function (err, data1) {
 			if (!err && data1.length) {
