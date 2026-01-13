@@ -595,7 +595,7 @@ io.on("connection", socket => {
 ******************************************************************/
 class zkbmon {
 	constructor(old) {
-		this.data = old || readFsync(path + '/server_files/ZKBmonitor' + currentServer["file"] + '.json', {});
+		this.data = old || readFsync(path + '/server_files/ZKBmonitor' + currentServer["file"] + '.json', '{}');
 	}
 
 	start_timer() {
@@ -632,6 +632,7 @@ class zkbmon {
 			});
 		}
 		writeF(this.data, "ZKBmonitor", function () {
+			console.log(this.data);
 			//var size = fileSize("ZKBmonitor");
 			// console.log("| ["+addLength(file,8,' ')+"]   --- "+addLength(size,10,'-')+" bytes  |");
 		});
