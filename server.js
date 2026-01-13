@@ -624,7 +624,8 @@ class zkbmon {
 			that.requestZkb(url1, syst, argument, function (id, date) {
 				const url = `https://zkillboard.com/kill/${id}`;
 				console.log("ZKB officer last kill->", url);
-				if (that.data[group] != undefined && that.data[group].id != id) sendMessageToChannel(url);
+				if (that.data[group] != undefined && that.data[group][0] != id) sendMessageToChannel(url);
+					//console.log("Officer kill old&new:", that.data[group].id, id);
 				zkbmonitor.data[group] = [
 					id,
 					date
