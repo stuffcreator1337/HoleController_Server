@@ -1570,6 +1570,7 @@ function getAjaxZKB(u, callback) {
 		}
 
 		try {
+			console.log(body);
 			callback(null, JSON.parse(body));
 		} catch (e) {
 			console.log(`${FG_YELLOW}${BG_BLACK} ZKB JSON ERROR: ${e}${RESET}`);
