@@ -617,14 +617,14 @@ class zkbmon {
 		var that = this;
 		const syst = "unknown";
 		const argument = "officer";
-		const urls = [4796, 4798, 4800, 4802, 4804];
-		for (let i = 0; i < urls.length; i++) {
-			const url1 = `https://zkillboard.com/api/groupID/${i}`;
+		const groups = [4796, 4798, 4800, 4802, 4804];
+		for (let group in groups) {
+			const url1 = `https://zkillboard.com/api/groupID/${group}`;
 			that.requestZkb(url1, syst, argument, function (id, date) {
 				const url = `https://zkillboard.com/kill/${id}`;
 				console.log("ZKB officer last kill->", url);
-				if (that.data[i] != undefined && that.data[i].id != id) sendMessageToChannel(url);
-				that.data[i] = [
+				if (that.data[group] != undefined && that.data[group].id != id) sendMessageToChannel(url);
+				that.data[group] = [
 					id,
 					date
 				];
