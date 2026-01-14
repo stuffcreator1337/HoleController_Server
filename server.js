@@ -1448,6 +1448,7 @@ function update_crest(token,info,state,unique){//обновляем имеющу
 							"code":code
 						};
 						charLoc.push(sendData);
+						console.log(`${FG_YELLOW}${BG_BLACK}438: success! state:${state}code:${code}unique:${unique}${RESET}`);
 						send('', "auth_success_"+state, [code,map1.map1,[sendData]],unique);
 					}
 				},info['CharacterID'],info['CharacterName']);				
