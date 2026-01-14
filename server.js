@@ -827,7 +827,7 @@ class swagger{
 					/* this.updateCharFleet(crestDB[i]['access_token'],crestDB[i]['CharacterID'],charLoc); */
 					this.updateCharShip(crestDB[i]['access_token'], crestDB[i]['CharacterID'], charLoc, crestDB[i]['CharacterName']);
 					this.updateCharOnline(crestDB[i]['access_token'], crestDB[i]['CharacterID'], charLoc, crestDB[i]['CharacterName']);
-					this.updateCharName(crestDB[i]['access_token'], crestDB[i]['CharacterID'], charLoc,crestDB,i);
+					/* this.updateCharName(crestDB[i]['access_token'], crestDB[i]['CharacterID'], charLoc,crestDB,i);*/
 				}				
 			}			
 		}
