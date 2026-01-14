@@ -205,7 +205,7 @@ const server = http.createServer((req, res) => {
 			console.log("142: auth() error:", err);
 			return;
 		}
-		console.log("New access token:", json1["access_token"]);
+		console.log("New access token: ...", json1["access_token"].substring(json1["access_token"].length - 5));
 
 		const host = currentServer["login"] + 'eveonline.com';
 		const url = '/oauth/verify';
@@ -827,7 +827,7 @@ class swagger{
 					/* this.updateCharFleet(crestDB[i]['access_token'],crestDB[i]['CharacterID'],charLoc); */
 					this.updateCharShip(crestDB[i]['access_token'], crestDB[i]['CharacterID'], charLoc, crestDB[i]['CharacterName']);
 					this.updateCharOnline(crestDB[i]['access_token'], crestDB[i]['CharacterID'], charLoc, crestDB[i]['CharacterName']);
-					this.updateCharName(crestDB[i]['access_token'], crestDB[i]['CharacterID'], charLoc,crestDB,i);
+					/* this.updateCharName(crestDB[i]['access_token'], crestDB[i]['CharacterID'], charLoc,crestDB,i);*/
 				}				
 			}			
 		}
@@ -1452,7 +1452,7 @@ function update_crest(token,info,state,unique){//обновляем имеющу
 		
 		}else{//перс найден, исправляем код ищем все записи по его коду и отправляем данные
 			var i = found[0];
-			console.log('464: FOUND CHARACTER');
+			console.log('464: FOUND CHARACTER FOR CODE: ' + crestDB[i]['code']);
 			//crestDB[i]['code'] = unique;
 			crestDB[i]['refresh_token'] = token['refresh_token'];
 			crestDB[i]['access_token'] = token['access_token'];
