@@ -1409,8 +1409,14 @@ function update_crest(token,info,state,unique){//обновляем имеющу
 	};
 	//задаем код чтобы не повторялся
 	var code = Math.floor(Math.random() * 10000000);
-	while(findById(crest.crestDB,code,'code')){
-		code = Math.floor(Math.random() * 10000000);
+	if (!findById(crest.crestDB, unique, 'code'))
+	{
+		code = unique;
+	}
+	else {
+		while(findById(crest.crestDB,code,'code')){
+			code = Math.floor(Math.random() * 10000000);
+		}
 	}
 	if(state == 'firstlogin'){
 		//ищем перса, вдруг уже зареган
