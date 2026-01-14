@@ -119,15 +119,18 @@ var used_code = "";
 	reading saved files with map and ESI-keys
 ******************************************************************/
 readF('ZKBmonitor', function (err, old_db) {
+	console.log(`${FG_GREEN}${BG_BLACK} 122: Creating 'zkbmonitor' object...${RESET}`);
 	zkbmonitor = new zkbmon(old_db);
 	zkbmonitor.start_timer();
 	// console.log(map1);
 });
-readF('crestDB',function(err,old_db){
+readF('crestDB', function (err, old_db) {
+	console.log(`${FG_GREEN}${BG_BLACK} 122: Creating 'crest' object...${RESET}`);
 	crest = new swagger(old_db);
 	crest.start_timer();
 });
 readF('map1', function (err, old_db) {
+	console.log(`${FG_GREEN}${BG_BLACK} 122: Creating 'map1' object...${RESET}`);
 	map1 = new map(old_db);
 	map1.clean_timer();
 	// console.log(map1);
