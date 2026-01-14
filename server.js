@@ -1433,7 +1433,7 @@ function update_crest(token,info,state,unique){//обновляем имеющу
 					"access_token": token['access_token'],
 					'code': code
 				};
-				console.log('438: ADDING NEW CHARACTER: '+info['CharacterName']);
+				console.log(`${FG_YELLOW}${BG_BLACK}438: ADDING NEW CHARACTER: ${info['CharacterName']}${RESET}`);
 				crestDB.push(data);
 				let host = 'esi.evetech.net';
 				let url = '/latest/characters/'+info['CharacterID']+'/location/?datasource='+currentServer["source"];
