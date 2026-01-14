@@ -125,12 +125,12 @@ readF('ZKBmonitor', function (err, old_db) {
 	// console.log(map1);
 });
 readF('crestDB', function (err, old_db) {
-	console.log(`${FG_GREEN}${BG_BLACK} 122: Creating 'crest' object...${RESET}`);
+	console.log(`${FG_GREEN}${BG_BLACK} 128: Creating 'crest' object...${RESET}`);
 	crest = new swagger(old_db);
 	crest.start_timer();
 });
 readF('map1', function (err, old_db) {
-	console.log(`${FG_GREEN}${BG_BLACK} 122: Creating 'map1' object...${RESET}`);
+	console.log(`${FG_GREEN}${BG_BLACK} 133: Creating 'map1' object...${RESET}`);
 	map1 = new map(old_db);
 	map1.clean_timer();
 	// console.log(map1);
@@ -1977,7 +1977,7 @@ function writeF(json,file,callback){
 		}
 	}
 }
-function readFsync(file, towrite = []){
+function readFsync(file, towrite = '[]'){
 	var json = [];
 	// console.log(path+'/server_files/'+file+currentServer["file"]+'.json');
 	try{
@@ -1987,10 +1987,10 @@ function readFsync(file, towrite = []){
 	catch (e) {
 		console.log(`${FG_PINK}${BG_BLACK} 819: creating new file: ${file}${RESET}`);
 		fs.writeFile(file, towrite, function (err2) {
-			if (err2) return console.log(`${FG_RED}${BG_BLACK} 819: creating new file: ${err2}${RESET}`);
+			if (err2) return console.log(`${FG_RED}${BG_BLACK} 890: creating new file: ${err2}${RESET}`);
 			// console.log('824: Saved');			
 		});
-		return [];
+		return json;
 	}
 	return json;
 }
