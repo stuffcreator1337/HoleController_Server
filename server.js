@@ -117,18 +117,18 @@ var used_code = "";
 	reading saved files with map and ESI-keys
 ******************************************************************/
 readF('ZKBmonitor', function (err, old_db) {
-	console.log(`${FG_GREEN}${BG_BLACK} 122: Creating 'zkbmonitor' object...${RESET}`);
+	console.log(`${FG_GREEN}${BG_BLACK}122: Creating 'zkbmonitor' object...${RESET}`);
 	zkbmonitor = new zkbmon(old_db);
 	zkbmonitor.start_timer();
 	// console.log(map1);
 });
 readF('crestDB', function (err, old_db) {
-	console.log(`${FG_GREEN}${BG_BLACK} 128: Creating 'crest' object...${RESET}`);
+	console.log(`${FG_GREEN}${BG_BLACK}128: Creating 'crest' object...${RESET}`);
 	crest = new swagger(old_db);
 	crest.start_timer();
 });
 readF('map1', function (err, old_db) {
-	console.log(`${FG_GREEN}${BG_BLACK} 133: Creating 'map1' object...${RESET}`);
+	console.log(`${FG_GREEN}${BG_BLACK}133: Creating 'map1' object...${RESET}`);
 	map1 = new map(old_db);
 	map1.clean_timer();
 	// console.log(map1);
@@ -213,7 +213,7 @@ const server = http.createServer((req, res) => {
 
 		getCharacterData("getting access tokens",host, url, json1["access_token"], (err, json2) => {
 			if (err) {
-				console.log(`${FG_RED}${BG_BLACK} verify error: ${err}${RESET}`);
+				console.log(`${FG_RED}${BG_BLACK}verify error: ${err}${RESET}`);
 				return;
 			}
 			console.log("Character data:", json2);
@@ -259,7 +259,7 @@ io.on("connection", socket => {
 			}
 		}
 		if (sendData.length == 0) {
-			console.log(`${FG_ORANGE}${BG_BLACK} 550: No chars found for code : ${data}${RESET}`);
+			console.log(`${FG_ORANGE}${BG_BLACK}550: No chars found for code : ${data}${RESET}`);
 		}
 		//console.log(sendData);
 		if (sendData.length == 0) {
@@ -685,19 +685,19 @@ class swagger{
 	refreshAccess(id, comment){
 		var crestDB = this.crestDB;
 		if (id == 'all') {
-			console.log(`${FG_PINK}${BG_BLACK} 605: REFRESHING ALL TOKENS ${comment}${RESET}`);
+			console.log(`${FG_PINK}${BG_BLACK}605: REFRESHING ALL TOKENS ${comment}${RESET}`);
 			this.delayRefreshToken(0, comment);
 			return;
 		}
 		for (var i = 0; i < crestDB.length; i++) {
-			console.log(`${FG_PINK}${BG_BLACK} 610: REFRESHING ${cleanLogName(crestDB[i]['CharacterName']) }because of${comment}${RESET}`);
+			console.log(`${FG_PINK}${BG_BLACK}610: REFRESHING ${cleanLogName(crestDB[i]['CharacterName']) }because of${comment}${RESET}`);
 			var ch_id =  crestDB[i]['CharacterID'];
 			if (id == ch_id) {
 				const data = {
 					'grant_type': 'refresh_token',
 					'refresh_token': crestDB[i]['refresh_token']
 				};
-				console.log(`${FG_PINK}${BG_BLACK} 618: refreshing token for: ${cleanLogName(crestDB[i]['CharacterName'])}${RESET}`);
+				console.log(`${FG_PINK}${BG_BLACK}618: refreshing token for: ${cleanLogName(crestDB[i]['CharacterName'])}${RESET}`);
 				auth(data, ch_id, function(err, id, answer) {
 					for(let i=0;i<crestDB.length;i++){
 						if(id == crestDB[i]['CharacterID']){								
@@ -909,7 +909,7 @@ class swagger{
 					console.log(`${FG_RED}${BG_BLACK}${err} 820: Name for: ${charID}${RESET}`);
 				} else {
 					if (data['error']) return;
-					console.log(`${FG_YELLOW}${BG_BLACK} 953: Restoring name: ${charID} for ${data['name']}${RESET}`);
+					console.log(`${FG_YELLOW}${BG_BLACK}953: Restoring name: ${charID} for ${data['name']}${RESET}`);
                     crestDB[j]['CharacterName'] = cleanLogName(data['name']);
 					for(let i=0;i<charLoc.length;i++){
 						if(charLoc[i]['CharacterID'] == id){
@@ -950,7 +950,7 @@ class swagger{
 								var s2info = dbfulleden[old_id];
 								//console.log("425:");
 								//console.log(s1info);
-								console.log(`${FG_BLUE}${BG_BLACK} 425: Jump through systems detected: ${old_id}${old_id}(${s2info["solarSystemName"]})-->${new_id}(${s1info["solarSystemName"]})${RESET}`);
+								console.log(`${FG_BLUE}${BG_BLACK}425: Jump through systems detected: ${old_id}${old_id}(${s2info["solarSystemName"]})-->${new_id}(${s1info["solarSystemName"]})${RESET}`);
 								/*
 									1 проверка, что новая система это вх
 									2 что старая система это вх
@@ -1499,7 +1499,7 @@ function auth(data,name,callback){
 				callback(null, name, json);  
 		}
 		catch (e) {
-			console.log(`${FG_RED}${BG_BLACK} 428: ${e}${RESET}`);
+			console.log(`${FG_RED}${BG_BLACK}428: ${e}${RESET}`);
 		}
 	});
 	//tools.memory();
@@ -1516,7 +1516,7 @@ function getCCPdata(u,callback){
 	request.get(options, function (error, response, body) {
 		// console.log("492:"+id);
 		if (error || response.statusCode !== 200) {
-			console.log(`${FG_RED}${BG_BLACK} 450: ERROR FOR ${response.statusCode}${error}${RESET}`);
+			console.log(`${FG_RED}${BG_BLACK}450: ERROR FOR ${response.statusCode}${error}${RESET}`);
 		}
 		callback(null, JSON.parse(body));  
 	});
@@ -1534,12 +1534,12 @@ function getAjaxZKB(u, callback) {
 
 	request.get(options, function (error, response, body) {
 		if (error) {
-			console.log(`${FG_ORANGE}${BG_BLACK} ZKB ERROR: ${error}${RESET}`);
+			console.log(`${FG_ORANGE}${BG_BLACK}537: ZKB ERROR: ${error}${RESET}`);
 			return callback(error, []);
 		}
 
 		if (response.statusCode !== 200) {
-			console.log(`${FG_YELLOW}${BG_BLACK} ZKB HTTP: ${response.statusCode}${body}${RESET}`);
+			console.log(`${FG_YELLOW}${BG_BLACK}542: ZKB HTTP: ${response.statusCode}${body}${RESET}`);
 			return callback(new Error("Status " + response.statusCode), []);
 		}
 
@@ -1547,7 +1547,7 @@ function getAjaxZKB(u, callback) {
 			//console.log(body);
 			callback(null, JSON.parse(body));
 		} catch (e) {
-			console.log(`${FG_YELLOW}${BG_BLACK} ZKB JSON ERROR: ${e}${RESET}`);
+			console.log(`${FG_YELLOW}${BG_BLACK}550: ZKB JSON ERROR: ${e}${RESET}`);
 			callback(e, []);
 		}
 	});
@@ -1578,7 +1578,7 @@ function getAjax(url, token, task, name) {
 }
 function getCharacterData(what, h,u,token,callback,id,name){
 	if (!token) {
-		console.log(`${FG_RED}${BG_BLACK} 890: TOKEN ERROR = ${id}${what}${cleanLogName(name)}${RESET}`);return null;
+		console.log(`${FG_RED}${BG_BLACK}890: TOKEN ERROR = ${id}${what}${cleanLogName(name)}${RESET}`);return null;
 	}
 	 //console.log('419: '+h+u+', '+token);
 	//console.log('420: ' + name +' token: ...' + token.substring(token.length - 5) + " for " + what);
@@ -1595,10 +1595,10 @@ function getCharacterData(what, h,u,token,callback,id,name){
 
 	request.get(options, function (error, response, body) {
 		if (error || (response.statusCode !== 200 && response.statusCode !== 404)) {
-			console.log(`${FG_RED}${BG_BLACK} 797: ERROR FOR: ${cleanLogName(name)}:${what}${RESET}`);
+			console.log(`${FG_RED}${BG_BLACK}797: ERROR FOR: ${cleanLogName(name)}:${what}${RESET}`);
 			console.log(crest.charStatus);
 			try {
-				console.log(`${FG_RED}${BG_BLACK} 802: ERROR: ${response.statusCode} ${options.url}${RESET}`);
+				console.log(`${FG_RED}${BG_BLACK}802: ERROR: ${response.statusCode} ${options.url}${RESET}`);
 				console.log("802: ERROR: "+response.statusCode);
 				if (response.statusCode == 304 || response.statusCode == 401 || response.statusCode == 400 || response.statusCode == 403 || response.statusCode == 502){
 					crest.charStatus[id] = 'fail';
@@ -1615,15 +1615,18 @@ function getCharacterData(what, h,u,token,callback,id,name){
 			callback(null, data, id, name);  			
 		}
 		catch (e) {
-			console.log(`${FG_RED}${BG_BLACK} 1044: ${e}${RESET}`);
-			console.log(`${FG_ORANGE}${BG_BLACK} 876: ${JSON.stringify(body) }${RESET}`);
+			console.log(`${FG_RED}${BG_BLACK}1044: ${e}${RESET}`);
+			console.log(`${FG_ORANGE}${BG_BLACK}876: ${JSON.stringify(body) }${RESET}`);
 			console.log(JSON.parse(body),id, name);		
 		}
 	});
 	// tools.memory();
 }		
-function putCharacterData(h,u,token,callback,id,data){
-	if(!token){console.log('935: TOKEN ERROR'); return null;}
+function putCharacterData(h, u, token, callback, id, data) {
+	if (!token) {
+		console.log(`${FG_RED}${BG_BLACK}626: TOKEN ERROR${RESET}`);
+		return null;
+	}
 	// console.log('421: '+h+u+', '+token);
 	// console.log(data);
 	var u1 = h+u;
@@ -1641,7 +1644,7 @@ function putCharacterData(h,u,token,callback,id,data){
 	request.put(options, function (error, response) {
 		// console.log("492:"+id);
 		if (error || (response.statusCode !== 200 && response.statusCode !== 404 && response.statusCode !== 204)) {
-			console.log("709: ERROR FOR "+id);
+			console.log(`${FG_RED}${BG_BLACK}644: ERROR FOR PUT ${id}${RESET}`);
 			console.log(response.statusCode);
 			console.log(error);
 			try{
@@ -1659,7 +1662,10 @@ function putCharacterData(h,u,token,callback,id,data){
 	// tools.memory();
 }		
 function postCharacterData(h,u,token,callback,id,data){
-	if(!token){console.log('971: TOKEN ERROR'); return null;}
+	if (!token) {
+		console.log(`${FG_RED}${BG_BLACK}663: TOKEN ERROR${RESET}`);
+		return null;
+	}
 	var u1 = h+u;
 	var options = {
 		method: 'POST',
@@ -1672,7 +1678,7 @@ function postCharacterData(h,u,token,callback,id,data){
 	};
 	request.post(options, function (error, response) {
 		if (error || (response.statusCode !== 200 && response.statusCode !== 404 && response.statusCode !== 204 && response.statusCode !== 201)) {
-			console.log("709: ERROR FOR "+id);
+			console.log(`${FG_RED}${BG_BLACK}644: ERROR FOR POST ${id}${RESET}`);
 			console.log(response.statusCode);
 			console.log(error);
 			try{
@@ -1856,7 +1862,7 @@ function writeF(json,file,callback){
 			});
 		}
 		catch (e) {
-			console.log(`${FG_RED}${BG_BLACK} 825: ${e}${RESET}`);
+			console.log(`${FG_RED}${BG_BLACK}825: ${e}${RESET}`);
 		}
 	}
 }
@@ -1868,9 +1874,9 @@ function readFsync(file, towrite = '[]'){
 		json = json_tst;
 	}
 	catch (e) {
-		console.log(`${FG_PINK}${BG_BLACK} 819: creating new file: ${file}${RESET}`);
+		console.log(`${FG_PINK}${BG_BLACK}819: creating new file: ${file}${RESET}`);
 		fs.writeFile(file, towrite, function (err2) {
-			if (err2) return console.log(`${FG_RED}${BG_BLACK} 890: creating new file: ${err2}${RESET}`);
+			if (err2) return console.log(`${FG_RED}${BG_BLACK}890: creating new file: ${err2}${RESET}`);
 			// console.log('824: Saved');			
 		});
 		return json;
@@ -1899,7 +1905,7 @@ function readF(file, callback, var1, var2){
 			callback(err,rdata,size,var1,var2);
 		}
 		catch (e) {
-			console.log(`${FG_ORANGE}${BG_BLACK} 853: ERROR WHILE READING FILE ${file} \n creating new file\n ${e}${RESET}`);
+			console.log(`${FG_ORANGE}${BG_BLACK}853: ERROR WHILE READING FILE ${file} \n creating new file\n ${e}${RESET}`);
 			// console.log(e);
 			fs.open(path+'/server_files/'+file+currentServer["file"]+'.json', 'w', function (err1, f) {
 			// console.log(f);
