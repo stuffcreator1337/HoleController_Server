@@ -620,7 +620,7 @@ class zkbmon {
 							callback(data1[0].killmail_id, timestamp);
 						}
 						catch (e) {
-							console.log(`${FG_ORANGE}${BG_BLACK}${e} ZKB JSON.parse error for ${data1[0].killmail_id}from ${syst}${RESET}`);
+							console.log(`${FG_ORANGE}${BG_BLACK}${e} 623: ZKB JSON.parse error for ${data1[0].killmail_id}from ${syst}${RESET}`);
 						}	
 						return;
 					}
@@ -629,17 +629,17 @@ class zkbmon {
 						const kill = JSON.parse(body);
 						console.log("ZKB ->", argument, syst, data1[0].killmail_id, kill.killmail_time);
 						const timestamp = new Date(kill.killmail_time).getTime();
-						crest.systemsKB[s] = [
+						crest.systemsKB["s_" +s] = [
 							data1[0].killmail_id,
 							timestamp
 						];
 					}
 					catch (e) {
-						console.log(`${FG_ORANGE}${BG_BLACK}${e} ZKB JSON.parse error for ${data1[0].killmail_id}from ${syst}${RESET}`);
+						console.log(`${FG_ORANGE}${BG_BLACK}${e} 638: ZKB JSON.parse error for ${data1[0].killmail_id} from ${syst}${RESET}`);
 					}
 
 					if (argument == 1) {
-						console.log("Sending ZKB:", Object.keys(crest.systemsKB).length);
+						console.log("642: Sending ZKB:", Object.keys(crest.systemsKB).length);
 						send('', "zkb_data", crest.systemsKB, 'all');
 					}
 				});
