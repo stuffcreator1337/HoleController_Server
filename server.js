@@ -5,8 +5,6 @@ var crest,map1,charFleet,zkbmonitor;
 
 const http = require('http');
 // const https = require('https');
-const btoa_func = require('btoa');
-const atob_func = require('atob');
 //var io = require('socket.io');
 const { Server } = require('socket.io');
 const request = require('request');
@@ -373,48 +371,6 @@ io.on("connection", socket => {
 			send(socket, "sending_dest", { "id1": data["id1"], "id2": data["id2"], "secure": data2.length, "short": data1.length }, data["user"]);
 		});		
 	});
-	// socket.on('new_char_location', function(data) {
-	// console.log('recieved new_char_location for: '+data["user"]);
-	// var find = false;
-	// // readF('users', function(err,old_j){
-	// var old_j = json_files["users"];
-	// for(var i=0; i<old_j.length; i++){
-	// if(old_j[i]["name"] == data["user"]){
-	// // console.log('sys old: '+old_j[i]["solar_system_id"]+" sys new: "+data["solar_system_id"]);
-	// old_j[i]["solar_system_id"] 		= data["solar_system_id"] || old_j[i]["solar_system_id"];	
-	// old_j[i]["ship_type_id"] 	= data["ship_type_id"] || old_j[i]["ship_type_id"];		
-	// old_j[i]["ship_name"] 	= data["ship_name"] || old_j[i]["ship_name"];		
-	// old_j[i]["ship_item_id"] 		= data["ship_item_id"] || old_j[i]["ship_item_id"];		
-	// old_j[i]["loc_time"] 		= data["loc_time"] || old_j[i]["loc_time"];		
-	// old_j[i]["last_time"] 		= data["last_time"] || old_j[i]["last_time"];		
-	// find = true;		
-	// // console.log("char entry found, we choose: "+old_j[i]["solar_system_id"]);
-	// }
-	// }
-	// if(find == false){
-	// console.log("creating new entry for a char: "+data["user"]);
-	// for(var i=0; i<old_j.length; i++){
-	// console.log(old_j[i]["name"]);
-	// }
-	// var newEntry = {'name'		: data["user"] || '',
-	// 'solar_system_id'		: data["solar_system_id"] || '',
-	// 'ship_type_id'	: data["ship_type_id"] || '',
-	// 'ship_name'	: data["ship_name"] || '',
-	// 'loc_time'	: data["loc_time"] || '',
-	// 'last_time'	: data["last_time"] || '',
-	// 'ship_item_id'	: data["ship_item_id"] || ''};
-	// old_j[old_j.length] = newEntry;
-	// }
-	// // console.log(newEntry);
-	// // console.log(old_j);
-	// send(socket, "new_chars_position", old_j,"all");
-	// if(old_j != "[]"){
-	// // writeF(old_j,'users');
-	// json_files["users"] = old_j;
-	// }else{console.log("empty json from new_char_location");}
-	// // });
-	// });
-
 	/*****************************************************************
 	|=|		возвращение карты по запросу юзера
 	******************************************************************/
@@ -1752,61 +1708,6 @@ function sendMessageToChannel(message) {
 	console.log(`${FG_GREEN}${BG_BLACK}Telegram msg ${message} sent to ${channelId} from ${settings.telegrambot.token}`);
 }
 /*****************************************************************
-	отправка сообщений в discord
-******************************************************************/
-function sendToDiscord(txt,id,inf,that){
-	var icon_url = "https://imageserver.eveonline.com/Type/2062_64.png";
-	var cl = inf.sysclass;
-	var sec = inf.security;
-	var data = "";
-	if(sec > 0.45){
-		that.getDistance(homesystemID,id,function(data1,data2){
-			var data = "Дома хайсек <https://zkillboard.com/system/"+id+"> |"+inf.solarSystemName;
-			hook.send(data);
-			return;			
-		});
-	}else if(sec > 0){
-		data = "Дома лоусек <https://zkillboard.com/system/" + id +"> |"+inf.solarSystemName;
-	// }else if(inf.hubj == '-1' && cl == 'C4'){
-		// data = "Новый статик <https://zkillboard.com/system/"+id+"> |"+inf.solarSystemName;
-	}else if(inf.regionID == '10000070'){
-		data = "Дома почвень " + cl + " <https://zkillboard.com/system/" + id +"> |"+inf.solarSystemName;//10000070
-	}else if(inf.hubj == '-1'){
-		data = "Дома новая дыра " + cl + " <https://zkillboard.com/system/" + id +"> |"+inf.solarSystemName;
-	}else {
-		data = "Дома нули <https://zkillboard.com/system/" + id +"> |"+inf.solarSystemName;
-	}
-	if(data != "" ){hook.send(data);return;}
-	
-}
-function sendToTelegram(txt,id,inf,that){
-	var icon_url = "https://imageserver.eveonline.com/Type/2062_64.png";
-	var cl = inf.sysclass;
-	var sec = inf.security;
-	var data = "";
-	if(sec > 0.45){
-		that.getDistance(homesystemID,id,function(data1,data2){
-			var data = "Дома хайсек <https://zkillboard.com/system/" + id + "> |" + inf.solarSystemName;
-			sendMessageToChannel(data);
-			return;			
-		});
-	}else if(sec > 0){
-		data = "Дома лоусек <https://zkillboard.com/system/" + id +"> |"+inf.solarSystemName;
-	// }else if(inf.hubj == '-1' && cl == 'C4'){
-		// data = "Новый статик <https://zkillboard.com/system/"+id+"> |"+inf.solarSystemName;
-	}else if(inf.regionID == '10000070'){
-		data = "Дома почвень " + cl + " <https://zkillboard.com/system/" + id +"> |"+inf.solarSystemName;//10000070
-	}else if(inf.hubj == '-1'){
-		data = "Дома новая дыра " + cl + " <https://zkillboard.com/system/" + id +"> |"+inf.solarSystemName;
-	}else {
-		data = "Дома нули <https://zkillboard.com/system/" + id +"> |"+inf.solarSystemName;
-	}
-	if (data != "") { sendMessageToChannel(data);return;}
-	
-}
-
-
-/*****************************************************************
 	отправка сообщений в слак
 ******************************************************************/
 function sendToSlack(data){
@@ -1829,67 +1730,42 @@ function sendToSlack(data){
 		}  
 	});
 }
-function slackMessage(txt,id,inf,that){
+/*****************************************************************
+	вспомогательные функции будут здесь
+******************************************************************/
+function webhooksSend(txt, id, inf, that) {
 	var icon_url = "https://imageserver.eveonline.com/Type/2062_64.png";
-		var cl = inf.sysclass;
-		var sec = inf.security;
-		var data = {};
-		if(sec > 0.45){
-			var data = {
-				"icon_url": icon_url,
-				"text": "Дома хайсек <https://zkillboard.com/system/"+id+"|"+inf.solarSystemName+">"
-			};
-		}else if(sec > 0){
-			data = {
-				"icon_url": icon_url,
-				"text": "Дома лоусек <https://zkillboard.com/system/"+id+"|"+inf.solarSystemName+">"
-			};		
-		}else if(inf.hubj == '-1' && cl == 'C4'){
-			data = {
-				"icon_url": icon_url,
-				"text": "Новый статик <https://zkillboard.com/system/"+id+"|"+inf.solarSystemName+">"
-			};
-		}else if(inf.hubj == '-1'){
-			data = {
-				"icon_url": icon_url,
-				"text": "Дома входяшка "+cl+" <https://zkillboard.com/system/"+id+"|"+inf.solarSystemName+">"
-			};
-		}else {
-			data = {
-				"icon_url": icon_url,
-				"text": "Дома нули <https://zkillboard.com/system/"+id+"|"+inf.solarSystemName+">"
-			};
-		}
-		if(data){sendToSlack(data);return;}
-		
-		// {
-		// "text": "<https://alert-system.com/alerts/1234|Click here> for details!"
-	// }
-}
-
-/*****************************************************************
-	вспомогательные функции будут здесь
-******************************************************************/
-function webhooksSend(txt,id,inf,that){	
-	//Slack:
-	slackMessage(txt,id,inf,that);
-	//Discord:
-	sendToDiscord(txt, id, inf, that);
-	//Telegram
-    sendToTelegram(txt, id, inf, that);
-	//hook.send(txt);
+	var cl = inf.sysclass;
+	var sec = inf.security;
+	var data = "";
+	if (sec > 0.45) {
+		data = "Дома хайсек https://zkillboard.com/system/" + id + " | " + inf.solarSystemName;
+	} else if (sec > 0) {
+		data = "Дома лоусек https://zkillboard.com/system/" + id + " | " + inf.solarSystemName;
+	} else if (inf.regionID == '11000031') {
+		data = "Дома Thera  https://zkillboard.com/system/" + id + " | " + inf.solarSystemName;
+	} else if (inf.regionID == '10000070') {
+		data = "Дома Pochven  https://zkillboard.com/system/" + id + " | " + inf.solarSystemName;
+	} else if (cl == 'Abyss') {
+		data = "";
+	} else if (inf.hubj == '-1') {
+		data = "Дома новая дыра " + cl + " https://zkillboard.com/system/" + id + " | " + inf.solarSystemName;
+	} else {
+		data = "Дома нули https://zkillboard.com/system/" + id + " | " + inf.solarSystemName;
+	}
+	if (data != "") {
+		//Slack:
+		sendToSlack(data);
+		//Discord:
+		hook.send(data)
+		//Telegram
+		sendMessageToChannel(data);;
+		//hook.send(txt);
+	}
 }
 /*****************************************************************
 	вспомогательные функции будут здесь
 ******************************************************************/
-function btoa(b){
-	if(!b){console.log('\x1b[31m%s\x1b[0m', "1366: btoa error"); return '';}
-	else{return btoa_func(b);}
-}
-function atob(b){
-	if(!b){console.log('\x1b[31m%s\x1b[0m', "1390: atob error"); return '';}
-	else{return atob_func(b);}
-}
 function cleanLogName(name) {
 	if (typeof name === "string") {
 		return name.replace(/[^a-zA-Z0-9_ ]/g, '');
