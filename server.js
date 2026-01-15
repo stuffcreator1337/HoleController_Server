@@ -629,7 +629,7 @@ class zkbmon {
 						const kill = JSON.parse(body);
 						console.log("ZKB ->", argument, syst, data1[0].killmail_id, kill.killmail_time);
 						const timestamp = new Date(kill.killmail_time).getTime();
-						crest.systemsKB["s_" +s] = [
+						crest.systemsKB["s_" +syst] = [
 							data1[0].killmail_id,
 							timestamp
 						];
