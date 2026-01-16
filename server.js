@@ -89,9 +89,9 @@ const path = currentServer["path"];
 	creating datas
 ******************************************************************/
 // const dbconst = require(path1+'/db/constellations');
-const dbjumps = readFsync(path +'/db/jumps.json');
-const dbfulleden = readFsync(path + '/db/mapofeden.json');
-const dbsysnames = readFsync(path+'/db/sysnames.json');
+const dbjumps = require(path1 +'/db/jumps');
+const dbfulleden = require(path1 + '/db/mapofeden');
+const dbsysnames = require(path1+'/db/sysnames');
 // const dbregions = require(path1+'/db/regions');
 // const dbholes = require(path1+'/db/wh_holes');
 // const dbinfo = require(path1+'/db/wh_info');
