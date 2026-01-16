@@ -87,9 +87,9 @@ const homesystemID = settings.homesystemID;
 	creating datas
 ******************************************************************/
 // const dbconst = require(path1+'/db/constellations');
-const dbjumps = require(path1+'/db/jumps');
-const dbfulleden = require(path1+'/db/mapofeden');
-const dbsysnames = require(path1+'/db/sysnames');
+const dbjumps = readFsync(path1 +'/db/jumps.json');
+const dbfulleden = readFsync(path1 + '/db/mapofeden.json');
+const dbsysnames = readFsync(path1+'/db/sysnames.json');
 // const dbregions = require(path1+'/db/regions');
 // const dbholes = require(path1+'/db/wh_holes');
 // const dbinfo = require(path1+'/db/wh_info');
