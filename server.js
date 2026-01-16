@@ -249,7 +249,7 @@ io.on("connection", socket => {
 		// console.log("237: we need id: "+data[i]['CharacterID']);
 		var sendData = [];
 		for (var i = 0; i < crestDB.length; i++) {//перебираем персов из данных на соответствие имеющимся
-			console.log('635: code = ' + crestDB[i].code);
+			//console.log('635: code = ' + crestDB[i].code);
 			if (crestDB[i].code == data) {
 				console.log("542: FOUND " + cleanLogName(crestDB[i]['CharacterName']) + " with code " + data);
 				// for(var j=0;j<)
