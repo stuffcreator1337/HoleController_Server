@@ -1743,6 +1743,7 @@ function webhooksSend(txt, id, inf, that) {
 	var icon_url = "https://imageserver.eveonline.com/Type/2062_64.png";
 	var cl = inf.sysclass;
 	var sec = inf.security;
+    var regionID = inf.regionID;
 	var data = "";
 	if (id == '30000142') {
 		data = "";
