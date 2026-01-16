@@ -16292,22 +16292,25 @@ module.exports = {
 	"Reitsato": {
 		"solarSystemID": 30045354
 	},
-	"J055520": {
+	"Zarzakh": {
+		"solarSystemID": 30100000
+	},
+	"Sentinel MZ": {
 		"solarSystemID": 31000001
 	},
-	"J110145": {
+	"Liberated Barbican": {
 		"solarSystemID": 31000002
 	},
-	"J164710": {
+	"Sanctified Vidette": {
 		"solarSystemID": 31000003
 	},
-	"J200727": {
+	"Conflux Eyrie": {
 		"solarSystemID": 31000004
 	},
 	"Thera": {
 		"solarSystemID": 31000005
 	},
-	"J174618": {
+	"Azdaja Redoubt": {
 		"solarSystemID": 31000006
 	},
 	"J105443": {
@@ -25303,5 +25306,8 @@ module.exports = {
 	},
 	"V-200": {
 		"solarSystemID": 34000200
+	},
+	"GPMS-01": {
+		"solarSystemID": 36000001
 	}
 };
