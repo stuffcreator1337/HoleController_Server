@@ -1874,7 +1874,8 @@ function readFsync(file, towrite = '[]'){
 		json = json_tst;
 	}
 	catch (e) {
-		console.log(`${FG_PINK}${BG_BLACK}819: creating new file: ${file}${RESET}`);
+		console.log(`${FG_RED}${BG_BLACK}877: ERROR READING FILE: ${file}${e}${RESET}`);
+		console.log(`${FG_PINK}${BG_BLACK}878: creating new file: ${file}${RESET}`);
 		fs.writeFile(file, towrite, function (err2) {
 			if (err2) return console.log(`${FG_RED}${BG_BLACK}890: creating new file: ${err2}${RESET}`);
 			// console.log('824: Saved');			
