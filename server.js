@@ -83,6 +83,8 @@ hook.send(embed);
 const homesystemID = settings.homesystemID;
 
 
+const currentServer = settings.Servers.server1_tranq;
+const path = currentServer["path"];
 /*****************************************************************
 	creating datas
 ******************************************************************/
@@ -100,8 +102,6 @@ const  tools = require(path+'/tools');
 	connection settings
 ******************************************************************/
 	
-const currentServer = settings.Servers.server1_tranq;
-const path = currentServer["path"];
 
 process.on('uncaughtException', function (err) {
   console.error(err);
