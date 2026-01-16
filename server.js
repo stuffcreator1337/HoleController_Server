@@ -92,7 +92,7 @@ const path = currentServer["path"];
 const dbjumps = require(path1 +'/db/jumps');
 const dbfulleden = require(path1 + '/db/mapofeden');
 const dbsysnames = require(path1+'/db/sysnames');
-// const dbregions = require(path1+'/db/regions');
+const dbregions = require(path1+'/db/regions');
 // const dbholes = require(path1+'/db/wh_holes');
 // const dbinfo = require(path1+'/db/wh_info');
 const  tools = require(path+'/tools');
@@ -1222,7 +1222,7 @@ class map{
 		this.systems 	= dbfulleden;
 		// this.consts 	= dbconst;
 		this.jumps 		= dbjumps;
-		// this.regions 	= dbregions;
+		this.regions 	= dbregions;
 		// this.holes 		= dbholes;
 		// this.info 		= dbinfo;
 		this.sigs 		= readFsync(path+'/server_files/sigs'+currentServer["file"]+'.json');
@@ -1744,20 +1744,30 @@ function webhooksSend(txt, id, inf, that) {
 	var cl = inf.sysclass;
 	var sec = inf.security;
 	var data = "";
-	if (sec > 0.45) {
-		data = "Дома хайсек https://zkillboard.com/system/" + id + " | " + inf.solarSystemName;
+	if (id == '30000142') {
+		data = "";
+	} else if (sec > 0.45) {
+		data = "Дома хайсек https://zkillboard.com/system/" + id + " | " + inf.solarSystemName +
+			"\n" + map1.regions[regionID].regionName +
+			"\n Jita" + inf.secur_j + " (" + inf.short_j + ")" +
+			"\n Amarr" + inf.secur_a + " (" + inf.short_a + ")" +
+			"\n Dodixie" + inf.secur_d + " (" + inf.short_d + ")" +
+			"\n Rens" + inf.secur_r + " (" + inf.short_r + ")" +
+			"\n Hek" + inf.secur_h + " (" + inf.short_h + ")";
 	} else if (sec > 0) {
-		data = "Дома лоусек https://zkillboard.com/system/" + id + " | " + inf.solarSystemName;
+		data = "Дома лоусек https://zkillboard.com/system/" + id + " | " + inf.solarSystemName +
+			"\n" + map1.regions[regionID].regionName;
 	} else if (inf.regionID == '11000031') {
 		data = "Дома Thera  https://zkillboard.com/system/" + id + " | " + inf.solarSystemName;
 	} else if (inf.regionID == '10000070') {
 		data = "Дома Pochven  https://zkillboard.com/system/" + id + " | " + inf.solarSystemName;
 	} else if (cl == 'Abyss') {
 		data = "";
-	} else if (inf.hubj == '-1') {
+	} else if (inf.short_j == '-1') {
 		data = "Дома новая дыра " + cl + " https://zkillboard.com/system/" + id + " | " + inf.solarSystemName;
 	} else {
-		data = "Дома нули https://zkillboard.com/system/" + id + " | " + inf.solarSystemName;
+		data = "Дома нули https://zkillboard.com/system/" + id + " | " + inf.solarSystemName +
+			"\n" + map1.regions[regionID].regionName;
 	}
 	if (data != "") {
 		//Slack:
