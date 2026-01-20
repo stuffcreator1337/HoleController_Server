@@ -224,7 +224,7 @@ const server = http.createServer((req, res) => {
 // инициализация Socket.IO
 const io = new Server(server, {
 	cors: {
-		origin: settings.server_addr+":8080", // адрес фронтенда
+		origin: ["http://" + settings.server_addr + ":8080", "http://127.0.0.1:8080","http://localhost:8080"], // адрес фронтенда
 		methods: ["GET", "POST"],
 		credentials: true
 	}
