@@ -28,7 +28,7 @@ module.exports = {
 			"client": localSecrets.Servers.server1_tranq.client,
 			"secret": localSecrets.Servers.server1_tranq.secret,
 			"login" : "login.",
-			"LocalAddr": "185.155.18.75",
+			"LocalAddr": localSecrets.server_addr, 
 			"port" : "3000",
 			"source" : "tranquility",
 			"file": "_tranq",
@@ -40,7 +40,7 @@ module.exports = {
 			"client": localSecrets.Servers.server1_sisi.client,
 			"secret": localSecrets.Servers.server1_sisi.secret,
 			"login": "sisilogin.test",
-			"LocalAddr": "185.155.18.75",
+			"LocalAddr": localSecrets.server_addr,
 			"port" : "8080",
 			// "source" : "singularity", //<-- CCP removed it 2020-01-13
 			"source" : "tranquility",

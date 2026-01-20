@@ -400,6 +400,14 @@ io.on("connection", socket => {
 	/*****************************************************************
 	|=|	
 	******************************************************************/
+	socket.on('addr_request', function (local_code) {
+		// readF('map1',function(err,data){		
+		send(socket, "addr_response", currentServer["LocalAddr"], local_code);
+		// });
+	});
+	/*****************************************************************
+	|=|	
+	******************************************************************/
 	socket.on('routes_request', function (user) {
 		// readF('map1',function(err,data){		
 		send(socket, "routes", map1.map1, user);
