@@ -1765,11 +1765,11 @@ function webhooksSend(txt, id, inf, that) {
 	} else if (sec > 0.45) {
 		data = "Дома хайсек https://zkillboard.com/system/" + id + " | " + inf.solarSystemName +
 			"\n" + map1.regions[regionID].regionName +
-			"\n Jita -> " + inf.secur_j + " (" + inf.short_j + ")" +
-			"\n Amarr -> " + inf.secur_a + " (" + inf.short_a + ")" +
-			"\n Dodixie -> " + inf.secur_d + " (" + inf.short_d + ")" +
-			"\n Rens -> " + inf.secur_r + " (" + inf.short_r + ")" +
-			"\n Hek -> " + inf.secur_h + " (" + inf.short_h + ")";
+			"\n Jita -> " + (inf.secur_j - 1) + " (" + (inf.short_j - 1) + ")" +
+			"\n Amarr -> " + (inf.secur_a - 1) + " (" + (inf.short_a - 1) + ")" +
+			"\n Dodixie -> " + (inf.secur_d - 1) + " (" + (inf.short_d - 1) + ")" +
+			"\n Rens -> " + (inf.secur_r - 1) + " (" + (inf.short_r - 1) + ")" +
+			"\n Hek -> " + (inf.secur_h - 1) + " (" + (inf.short_h - 1) + ")";
 	} else if (sec > 0) {
 		data = "Дома лоусек https://zkillboard.com/system/" + id + " | " + inf.solarSystemName +
 			"\n" + map1.regions[regionID].regionName;
