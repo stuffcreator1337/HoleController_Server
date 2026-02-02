@@ -12,5 +12,7 @@ module.exports = {
     },
     DiscordWHK: "",
     telegrambot_token: "",
-    telegrambot_channelID: ""
+    telegrambot_channelID: "",
+    server_addr: "0.0.0.0",
+    server_addr_alt: "http://url.address.com/"
 };
