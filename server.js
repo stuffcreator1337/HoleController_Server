@@ -4,23 +4,27 @@ const path1 = './';
 var crest,map1,charFleet,zkbmonitor;
 
 const http = require('http');
-// const https = require('https');
-//var io = require('socket.io');
 const { Server } = require('socket.io');
 const request = require('request');
 const querystring = require('querystring');
-
-const settings = require(path1+'settings');
-
 const { Webhook } = require('discord-webhook-node');
 const { MessageBuilder } = require('discord-webhook-node');
-
-// import { XMLHttpRequest } from 'w3c-xmlhttprequest';
-
 var XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
-const hook = new Webhook(settings.whook.url);
 const { Telegraf } = require('telegraf');
+const upath = require("path");
 
+let localSettings = {};
+
+try {
+	localSettings = require("./config.local.js"); //
+} catch (e) {
+	console.error("config.local.js not found");
+	process.exit(1);
+}
+
+const hook = new Webhook(localSettings.Hooks.DiscordWHK);
+//
+const path = upath.join(__dirname);
 /*============FORMATTING============*/
 const RESET = "\x1b[0m";
 const FG_RED = "\x1b[38;5;196m";   
@@ -54,15 +58,15 @@ const FG_BLUE = "\x1b[38;5;27m";
 const BG_BLUE = "\x1b[48;5;27m";
 
 
-const Telebot = new Telegraf(settings.telegrambot.token);
-const channelId = settings.telegrambot.channelID;
+const Telebot = new Telegraf(localSettings.Hooks.telegrambot_token);
+const channelId = localSettings.Hooks.telegrambot_channelID;
 Telebot.launch();
 
-hook.setUsername(settings.whook.name);
-hook.setAvatar(settings.whook.avatar);
+hook.setUsername(localSettings.Hooks.name);
+hook.setAvatar(localSettings.Hooks.avatar);
 console.log("Sending welcome message to Discord webhook...");
-//console.log(settings.whook.url);
-hook.send(settings.whook.welcomeMsg);
+//console.log(localSettings.Hooks.DiscordWHK);
+hook.send(localSettings.Hooks.welcomeMsg);
 sendMessageToChannel("Server restarted.");
 /*
 const embed = new MessageBuilder()
@@ -80,11 +84,8 @@ const embed = new MessageBuilder()
 
 hook.send(embed);
 */
-const homesystemID = settings.homesystemID;
+const homesystemID = localSettings.Map.homesystemID;
 
-
-const currentServer = settings.Servers.server1_tranq;
-const path = currentServer["path"];
 /*****************************************************************
 	creating datas
 ******************************************************************/
@@ -208,7 +209,7 @@ const server = http.createServer((req, res) => {
 		}
 		console.log("New access token: ...", json1["access_token"].substring(json1["access_token"].length - 5));
 
-		const host = currentServer["login"] + 'eveonline.com';
+		const host = 'login.eveonline.com';
 		const url = '/oauth/verify';
 
 		getCharacterData("getting access tokens",host, url, json1["access_token"], (err, json2) => {
@@ -225,7 +226,7 @@ const server = http.createServer((req, res) => {
 const io = new Server(server, {
 	cors: {
 		origin: [
-			"http://" + settings.server_addr + ":8080",
+			"http://" + localSettings.Server.server_addr + ":8080",
 			"http://localhost:8080",
 			"http://127.0.0.1:8080",
 			"http://localhost:3000",
@@ -388,7 +389,7 @@ io.on("connection", socket => {
 		// for(var i=0; i<crestDB.length;i++){
 
 		// if(crestDB[i]['CharacterID'] == user){}
-		// var url = 'https://esi.evetech.net/latest/characters/'+charID+'/location/?datasource='+currentServer["source"];
+		// var url = 'https://esi.evetech.net/latest/characters/'+charID+'/location/?datasource=tranquility';
 		// getCharacterData(url,token, function(err, data,id) {
 		// if (err) {
 		// console.log(err+' Location for: '+id);
@@ -409,7 +410,7 @@ io.on("connection", socket => {
 	******************************************************************/
 	socket.on('addr_request', function (local_code) {
 		// readF('map1',function(err,data){		
-		send(socket, "addr_response", currentServer["LocalAddr"], local_code);
+		send(socket, "addr_response", {"addr":localSettings.Server.server_addr,"client":localSettings.App.client, "home":homesystemID}, local_code);
 		// });
 	});
 	/*****************************************************************
@@ -552,24 +553,12 @@ io.on("connection", socket => {
 	});
 });
 
-///*****************************************************************
-//	запускаем сокет для общения с клиентом
-//******************************************************************/
-//const io = new Server(server, {
-//	cors: {
-//		origin: "http://" + currentServer["LocalAddr"] + ":" + currentServer["port"],
-//		methods: ["GET", "POST"],
-//		credentials: true           // обязательно
-//	}
-//});
-
-
 /*****************************************************************
 	monitor of Zkillboard class
 ******************************************************************/
 class zkbmon {
 	constructor(old) {
-		this.data = old || readFsync(path + '/server_files/ZKBmonitor' + currentServer["file"] + '.json', '{}');
+		this.data = old || readFsync(path + '/server_files/ZKBmonitor_tranq.json', '{}');
 		if (Array.isArray(this.data) && this.data.length === 0) {
 			this.data = {};
 		}
@@ -579,7 +568,7 @@ class zkbmon {
 	start_timer() {
 		var that = this;
 		setTimeout(function () { that.checkOfficers(); }, 3000);//первоначальный опрос
-		setInterval(function () { that.checkOfficers(); }, 600000);//600 секунд = 10 минут
+		setInterval(function () { that.checkOfficers(); }, 300000);//300 секунд = 5 минут
 	}
 	checkOfficers() {
 		/**********************************
@@ -671,13 +660,13 @@ class swagger{
 	|=|	загруэаем инфу с файлов в кеш
 	******************************************************************/
 	constructor(old){
-		this.crestDB = old || readFsync(path+'/server_files/crestDB'+currentServer["file"]+'.json');
-		this.charLoc = readFsync(path+'/server_files/charLoc'+currentServer["file"]+'.json');
+		this.crestDB = old || readFsync(path+'/server_files/crestDB_tranq.json');
+		this.charLoc = readFsync(path+'/server_files/charLoc_tranq.json');
 		this.charStatus = {};
 		this.systemsKB = {};
 	}
 	/*****************************************************************
-	|=|	запускаем таймера, первоначальный через секунду, дл обновления токенов
+	|=|	запускаем таймера, первоначальный через секунду, для обновления токенов
 	|=| затем каждые 100 секунд = 1,6 минут (макс 20)
 	|=| обновляем инфу о персах каждые 15 сек
 	|=| обновляем данные о системах с КБ каждые 600 секунд = 10 минут
@@ -874,7 +863,7 @@ class swagger{
 	******************************************************************/
 	updateCharFleet(token, charID, charLoc, charName){
 			var host = 'esi.evetech.net';
-			var url = '/latest/characters/'+charID+'/fleet/?datasource='+currentServer["source"];		
+			var url = '/latest/characters/'+charID+'/fleet/?datasource=tranquility';		
 			getCharacterData("fleet",host,url,token, function(err, data,id) {
 				if (err) {
 					console.log(`${FG_RED}${BG_BLACK}${err} 799: Fleet info of: ${cleanLogName(charName)}${RESET}`);
@@ -1063,7 +1052,7 @@ class fleet{
 	}
 	reformFleet(charID){
 		var host = 'esi.evetech.net';
-		var url = '/latest/fleets/'+this[charID].id+'/wings/?datasource='+currentServer["source"];		
+		var url = '/latest/fleets/'+this[charID].id+'/wings/?datasource=tranquility';		
 		getCharacterData("reformFleet",host,url,this[charID].token, function(err, data,charID) {
 			if (err) {
 				console.log(`${FG_YELLOW}${BG_BLACK}${err} Fleet info of:${charID}${RESET}`);
@@ -1124,7 +1113,7 @@ class fleet{
 	}
 	changeSquadName(charID,squadID,newName){
 		var host = 'esi.evetech.net';
-		var url = '/latest/fleets/'+this[charID].id+'/squads/'+squadID+'/?datasource='+currentServer["source"];	
+		var url = '/latest/fleets/'+this[charID].id+'/squads/'+squadID+'/?datasource=tranquility';	
 		var d1 = {'name' : newName};
 		putCharacterData(host,url,charFleet[charID].token, function(err, data,id) {
 			if (err) {
@@ -1136,7 +1125,7 @@ class fleet{
 	}
 	createSquad(charID,wingID){
 		var host = 'esi.evetech.net';
-		var url = '/latest/fleets/'+this[charID].id+'/wings/'+wingID+'/squads/?datasource='+currentServer["source"];	
+		var url = '/latest/fleets/'+this[charID].id+'/wings/'+wingID+'/squads/?datasource=tranquility';	
 		postCharacterData(host,url,charFleet[charID].token, function(err, data,id) {
 			if (err) {
 				console.log(`${FG_YELLOW}${BG_BLACK}${err} Fleet info of:${id}${RESET}`);
@@ -1149,7 +1138,7 @@ class fleet{
 	}
 	renameWing(charID,wingID){
 		var host = 'esi.evetech.net';
-		var url = '/latest/fleets/'+this[charID].id+'/wings/'+wingID+'/?datasource='+currentServer["source"];	
+		var url = '/latest/fleets/'+this[charID].id+'/wings/'+wingID+'/?datasource=tranquility';	
 		var d1 = {'name' : 'ESI wing'};
 		// console.log(d1);
 		putCharacterData(host,url,charFleet[charID].token, function(err, data,id) {
@@ -1162,7 +1151,7 @@ class fleet{
 	}
 	getMembers(charID){
 		var host = 'esi.evetech.net';
-		var url = '/latest/fleets/'+this[charID].id+'/members/?datasource='+currentServer["source"];		
+		var url = '/latest/fleets/'+this[charID].id+'/members/?datasource=tranquility';		
 		getCharacterData("getMembers",host,url,this[charID].token, function(err, data,id) {
 			if (err) {
 				console.log(`${FG_YELLOW}${BG_BLACK}${err} Fleet info of:${id}${RESET}`);
@@ -1185,7 +1174,7 @@ class fleet{
 	}
 	moveMember(charID,character_id,squadName){
 		var host = 'esi.evetech.net';
-		var url = '/latest/fleets/'+this[charID].id+'/wings/?datasource='+currentServer["source"];	
+		var url = '/latest/fleets/'+this[charID].id+'/wings/?datasource=tranquility';	
 		getCharacterData("moveMember",host,url,this[charID].token, function(err, data,character_id) {
 			if (err) {
 				console.log(`${FG_YELLOW}${BG_BLACK}${err} Fleet info of:${charID}${RESET}`);
@@ -1196,7 +1185,7 @@ class fleet{
 						// console.log(data[0]);//.squads[i]);
 						// console.log(charFleet[charID].id,character_id);
 						var host = 'esi.evetech.net';
-						var url = '/latest/fleets/'+charFleet[charID].id+'/members/'+character_id+'/?datasource='+currentServer["source"];	
+						var url = '/latest/fleets/'+charFleet[charID].id+'/members/'+character_id+'/?datasource=tranquility';	
 						var d1 = {
 						  "role": "squad_member",
 						  "squad_id": data[0].squads[i].id,
@@ -1231,17 +1220,17 @@ charFleet = new fleet();
 ******************************************************************/
 class map{
 	constructor(json){
-		this.map1 		= json || readFsync(path+'/server_files/map1'+currentServer["file"]+'.json');
+		this.map1 		= json || readFsync(path+'/server_files/map1_tranq.json');
 		// for(var i=0;i<16;i++){
-		// this.map1.push(json[i]);}// || readFsync(path+'/server_files/map1'+currentServer["file"]+'.json')[i]
+		// this.map1.push(json[i]);}// || readFsync(path+'/server_files/map1_tranq.json')[i]
 		this.systems 	= dbfulleden;
 		// this.consts 	= dbconst;
 		this.jumps 		= dbjumps;
 		this.regions 	= dbregions;
 		// this.holes 		= dbholes;
 		// this.info 		= dbinfo;
-		this.sigs 		= readFsync(path+'/server_files/sigs'+currentServer["file"]+'.json');
-		this.names 		= readFsync(path+'/server_files/names'+currentServer["file"]+'.json');
+		this.sigs 		= readFsync(path+'/server_files/sigs_tranq.json');
+		this.names 		= readFsync(path+'/server_files/names_tranq.json');
 	}
 	// getSysId(name){
 		// this.systems
@@ -1364,7 +1353,7 @@ class map{
 function update_crest(token,info,state,unique){//обновляем имеющуюся инфу, либо добавляем новую
 	var crestDB = crest.crestDB;
 	var charLoc = crest.charLoc;
-	var sendAuthAll = function(c,uni,st){
+	var sendAuthAll = function(c,uni,tst){
 		var sendData = [];
 		var charLoc = crest.charLoc;
 		console.log('409:' + state);
@@ -1376,7 +1365,7 @@ function update_crest(token,info,state,unique){//обновляем имеющу
 		}
 		console.log('416:');
 		console.log(sendData);
-		send('', "auth_success_"+st, [c,map1.map1,sendData],uni);
+		send('', "auth_success_"+tst, [c,map1.map1,sendData],uni);
 	};
 	//задаем код чтобы не повторялся
 	var code = Math.floor(Math.random() * 10000000);
@@ -1394,13 +1383,13 @@ function update_crest(token,info,state,unique){//обновляем имеющу
 		let found = findById(crest.crestDB,info['CharacterID'],'CharacterID');//ищем нужного перса
 		//если перс не найден, значит всё новое - узнаем корпу, делаем новую запись, узнаем локацию
 		if(!found){
-			let url = 'https://esi.evetech.net/dev/characters/'+info['CharacterID']+'/?datasource='+currentServer["source"];
+			let url = 'https://esi.evetech.net/dev/characters/'+info['CharacterID']+'/?datasource=tranquility';
 			getCCPdata(url,function(e,response){
 				if(e){console.log('\x1b[31m%s\x1b[0m', '408: error'); return;}
-				if (response.corporation_id != currentServer["corp"]) {
+				if (response.corporation_id != localSettings.Map.corporation) {
 					/*включить для отсеивания по корпе*/
-					//console.log('\x1b[35m%s\x1b[0m', '430: Not in Another War!');
-					//send('', "error_text", {'text':'Not in Another War!'},unique);
+					//console.log('\x1b[35m%s\x1b[0m', '430: Restricted by corp!');
+					//send('', "error_text", {'text':'Restricted by corp!'},unique);
 					//return;
 				}
 				let data = {
@@ -1413,7 +1402,7 @@ function update_crest(token,info,state,unique){//обновляем имеющу
 				console.log(`${FG_YELLOW}${BG_BLACK}438: ADDING NEW CHARACTER: ${info['CharacterName']}${RESET}`);
 				crestDB.push(data);
 				let host = 'esi.evetech.net';
-				let url = '/latest/characters/'+info['CharacterID']+'/location/?datasource='+currentServer["source"];
+				let url = '/latest/characters/'+info['CharacterID']+'/location/?datasource=tranquility';
 				getCharacterData("getCCPdata",host,url,token['access_token'], function(err, data,id,name) {
 					if (err) {
 						console.log(`${FG_RED}${BG_BLACK}${err} 311: Location for:${id}${RESET}`);
@@ -1457,7 +1446,7 @@ function update_crest(token,info,state,unique){//обновляем имеющу
 			console.log('ADDING NEW CHARACTER: '+info['CharacterName']);
 			crestDB.push(data);	
 			let host = 'esi.evetech.net';
-			let url = '/latest/characters/'+info['CharacterID']+'/location/?datasource='+currentServer["source"];
+			let url = '/latest/characters/'+info['CharacterID']+'/location/?datasource=tranquility';
 			getCharacterData("addcharacter",host,url,token['access_token'], function(err, data,id,name) {
 				if (err) {
 					console.log(`${FG_RED}${BG_BLACK}${err} 353: Location for:${id}${RESET}`);
@@ -1493,7 +1482,7 @@ function findById(base,value,type){
 	
 
 function auth(data,name,callback){
-	var authorizationBasic = Buffer.from(currentServer["client"] + ':' + currentServer["secret"]).toString('base64');
+	var authorizationBasic = Buffer.from(localSettings.App.client + ':' + localSettings.App.secret).toString('base64');
 	var options = {
 		method: 'POST',
 		url: 'https://login.eveonline.com/v2/oauth/token',
@@ -1708,11 +1697,11 @@ function postCharacterData(h,u,token,callback,id,data){
 	});
 }		
 console.log('\x1b[32m%s\x1b[0m', '_______________________________________');
-console.log('\x1b[32m%s\x1b[0m', '507: Socket.IO running on port:'+currentServer["port"]);
+console.log('\x1b[32m%s\x1b[0m', '507: Socket.IO running on port:'+localSettings.Server.port);
 
 var fs = require('fs');
 var json_files = {};
-json_files["users"] =  readFsync(path+'/server_files/users'+currentServer["file"]+'.json');
+json_files["users"] =  readFsync(path+'/server_files/users_tranq.json');
 json_files["locals"] = [];
 
 var backup = setInterval(saveFile, 10000);
@@ -1726,7 +1715,7 @@ server.listen(3000, "0.0.0.0", () => {
 ******************************************************************/
 function sendMessageToChannel(message) {
 	Telebot.telegram.sendMessage(channelId, message);
-	console.log(`${FG_GREEN}${BG_BLACK}Telegram msg ${message} sent to ${channelId} from ${settings.telegrambot.token}`);
+	console.log(`${FG_GREEN}${BG_BLACK}Telegram msg ${message} sent to ${channelId} from ${localSettings.Hooks.telegrambot_token}`);
 }
 /*****************************************************************
 	отправка сообщений в слак
@@ -1830,7 +1819,7 @@ function saveFile(){
 	// console.log("\n");
 
 	var fileSize = function(file) {
-		const stats = fs.statSync(path+'/server_files/'+file+currentServer["file"]+'.json')
+		const stats = fs.statSync(path+'/server_files/'+file+'_tranq.json')
 		const fileSizeInBytes = stats.size
 		return fileSizeInBytes
 	};
@@ -1879,9 +1868,9 @@ function writeF(json,file,callback){
 	if(json != "[]"){
 		try {
 			var test = JSON.parse(JSON.stringify(json));
-			// fs.writeFile(path+file+currentServer["file"]+'.json', JSON.stringify(json,null,'\t'), function (err) {
-			fs.writeFile(path+'/server_files/'+file+currentServer["file"]+'.json', JSON.stringify(json,null,'\t'), function (err) {
-			//fs.writeFile(path+'/server_files/'+file+currentServer["file"]+'.json', '[]', function (err) {
+			// fs.writeFile(path+file+'_tranq.json', JSON.stringify(json,null,'\t'), function (err) {
+			fs.writeFile(path+'/server_files/'+file+'_tranq.json', JSON.stringify(json,null,'\t'), function (err) {
+			//fs.writeFile(path+'/server_files/'+'_tranq.json', '[]', function (err) {
 				if (err) return console.log(err);
 				// var size = fileSize(file);
 				callback();				
@@ -1894,7 +1883,7 @@ function writeF(json,file,callback){
 }
 function readFsync(file, towrite = '[]'){
 	var json = [];
-	// console.log(path+'/server_files/'+file+currentServer["file"]+'.json');
+	// console.log(path+'/server_files/'+file+'_tranq.json');
 	try{
 		json_tst = JSON.parse(fs.readFileSync(file, 'utf8'));
 		json = json_tst;
@@ -1919,12 +1908,12 @@ function readF(file, callback, var1, var2){
 	var readData;
 	
 	var fileSize = function(file) {
-		const stats = fs.statSync(path+'/server_files/'+file+currentServer["file"]+'.json')
+		const stats = fs.statSync(path+'/server_files/'+file+'_tranq.json')
 		const fileSizeInBytes = stats.size
 		return fileSizeInBytes
 	};
-	// fs.readFile(path+file+currentServer["file"]+'.json', 'utf8', function(err, data) {
-	fs.readFile(path+'/server_files/'+file+currentServer["file"]+'.json', 'utf8', function(err, data) {
+	// fs.readFile(path+file+'_tranq.json', 'utf8', function(err, data) {
+	fs.readFile(path+'/server_files/'+file+'_tranq.json', 'utf8', function(err, data) {
 		try{		
 			var size = fileSize(file);	
 			// console.log("842: "+var1);	
@@ -1934,7 +1923,7 @@ function readF(file, callback, var1, var2){
 		catch (e) {
 			console.log(`${FG_ORANGE}${BG_BLACK}853: ERROR WHILE READING FILE ${file} \n creating new file\n ${e}${RESET}`);
 			// console.log(e);
-			fs.open(path+'/server_files/'+file+currentServer["file"]+'.json', 'w', function (err1, f) {
+			fs.open(path+'/server_files/'+file+'_tranq.json', 'w', function (err1, f) {
 			// console.log(f);
 				if (err1) throw err1;
 				fs.writeFile(f, "[]", function (err2) {
