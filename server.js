@@ -410,7 +410,12 @@ io.on("connection", socket => {
 	******************************************************************/
 	socket.on('addr_request', function (local_code) {
 		// readF('map1',function(err,data){		
-		send(socket, "addr_response", {"addr":localSettings.Server.server_addr,"client":localSettings.App.client, "home":homesystemID}, local_code);
+		send(socket, "addr_response", {
+			"addr":localSettings.Server.server_addr,
+			"port":localSettings.Server.port, 
+			"client":localSettings.App.client, 
+			"home":homesystemID
+		}, local_code);
 		// });
 	});
 	/*****************************************************************
@@ -1386,11 +1391,15 @@ function update_crest(token,info,state,unique){//обновляем имеющу
 			let url = 'https://esi.evetech.net/dev/characters/'+info['CharacterID']+'/?datasource=tranquility';
 			getCCPdata(url,function(e,response){
 				if(e){console.log('\x1b[31m%s\x1b[0m', '408: error'); return;}
-				if (response.corporation_id != localSettings.Map.corporation) {
-					/*включить для отсеивания по корпе*/
-					//console.log('\x1b[35m%s\x1b[0m', '430: Restricted by corp!');
-					//send('', "error_text", {'text':'Restricted by corp!'},unique);
-					//return;
+				if (localSettings.Map.restrict_access_by_corp == true && response.corporation_id != localSettings.Map.corporation) {
+					console.log(`${FG_ORANGE}${BG_BLACK}430: Restricted by corp!`);
+					send('', "error_text", {'text':'Restricted by corp!'},unique);
+					return;
+				}
+				if (localSettings.Map.restrict_access_by_alli == true && response.alliance_id != localSettings.Map.alliance) {
+					console.log(`${FG_ORANGE}${BG_BLACK}431: Restricted by alliance!`);
+					send('', "error_text", {'text':'Restricted by alliance!'},unique);
+					return;
 				}
 				let data = {
 					'CharacterID': info['CharacterID'],
