@@ -275,7 +275,12 @@ io.on("connection", socket => {
 		} else {
 			send('', "privat_char_update", sendData, data);
 			map1.map1 = tools.correctJS(map1.map1);
-			send(socket, "map_connections", { 'map': map1.map1, 'custom_sys_names': map1.names, 'residents': json_files["locals"] }, data);
+				send(socket, "map_connections", { 
+				'map': map1.map1, 
+				'home' : homesystemID,
+				'custom_sys_names': map1.names, 
+				'residents': json_files["locals"] 
+			}, data);
 		}
 	});
 	/*****************************************************************
@@ -401,7 +406,12 @@ io.on("connection", socket => {
 		// console.log(map1.map1);
 		// console.log(tools.correctJS(map1.map1));
 		map1.map1 = tools.correctJS(map1.map1);
-		send(socket, "map_connections", { 'map': map1.map1, 'custom_sys_names': map1.names, 'residents': json_files["locals"] }, user);
+		send(socket, "map_connections", { 
+			'map': map1.map1, 
+			'home' : homesystemID,
+			'custom_sys_names': map1.names, 
+			'residents': json_files["locals"] 
+		}, user);
 		// });
 
 	});
