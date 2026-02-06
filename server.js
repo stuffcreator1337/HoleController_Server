@@ -102,18 +102,15 @@ const  tools = require(path+'/tools');
 /*****************************************************************
 	connection settings
 ******************************************************************/
-	
 
 process.on('uncaughtException', function (err) {
-  console.error(err);
-  console.log('\x1b[31m%s\x1b[0m', "Node NOT Exiting...");
+	console.error(err);
+	console.log(`${FG_RED}${BG_BLACK}000: "Node NOT Exiting...${RESET}`);
 });
 
 var json = '';
 var used_code = "";
 
-// var crestDB = [];
-// var charsLoc = [];
 /*****************************************************************
 	reading saved files with map and ESI-keys
 ******************************************************************/
@@ -134,10 +131,6 @@ readF('map1', function (err, old_db) {
 	map1.clean_timer();
 	// console.log(map1);
 });
-
-//'\x1b[31m%s\x1b[0m' - red
-//'\x1b[32m%s\x1b[0m' - green
-//'\x1b[33m%s\x1b[0m' - dark yellow
 
 /*****************************************************************
 	creating server
@@ -249,9 +242,9 @@ io.on("connection", socket => {
 	******************************************************************/
 	socket.on('user_auth', function (data) {
 		data = data.replace(/"/g, '');
-		console.log('\x1b[34m%s\x1b[0m', '====================');
-		console.log('\x1b[34m%s\x1b[0m', '532: USER AUTH CODE:', data);
-		console.log('\x1b[34m%s\x1b[0m', '====================');
+	console.log(`${FG_BLUE}${BG_BLACK}====================${RESET}`);
+	console.log(`${FG_BLUE}${BG_BLACK}532: USER AUTH CODE:${data}${RESET}`);
+	console.log(`${FG_BLUE}${BG_BLACK}====================${RESET}`);
 		// data = JSON.parse(data);
 		var crestDB = crest.crestDB;
 		// console.log("237: we need id: "+data[i]['CharacterID']);
@@ -795,7 +788,7 @@ class swagger{
 		for(let i=0; i<crestDB.length;i++){
 			if(this.charStatus[crestDB[i]['CharacterID']] == 'refreshed'){
 				if(!crestDB[i]['access_token']){
-					console.log('\x1b[33m%s\x1b[0m', '247: TOKEN ERROR = ' + crestDB[i]['CharacterID'] + ' = ' + cleanLogName(crestDB[i]['CharacterName']));
+					console.log(`${FG_RED}${BG_BLACK}247: TOKEN ERROR = ${crestDB[i]['CharacterID']} = ${cleanLogName(crestDB[i]['CharacterName'])}${RESET}`);
 					send('', "token_error", crestDB[i]['CharacterID'], crestDB[i]['code']);
 				}else{			
 					/*
@@ -981,7 +974,7 @@ class swagger{
 								var sJumps = null;
 								if(!s1wh && !s2wh){sJumps = map1.jumps[old_id][new_id];}
 								if((tools.isWh(dbfulleden,new_id) == true)||(tools.isWh(dbfulleden,old_id) == true)||(map1.jumps[old_id][new_id]==null)){
-									console.log('\x1b[34m%s\x1b[0m', 'Old sysID: '+old_id+', new sysID: '+new_id);
+									console.log(`${FG_BLUE}${BG_BLACK}${err} Old sysID: ${old_id} new sysID: ${new_id}${RESET}`);
 									map1.create_link(new_id,old_id,'',id);
 								}
 							}
@@ -1400,14 +1393,14 @@ function update_crest(token,info,state,unique){//обновляем имеющу
 		if(!found){
 			let url = 'https://esi.evetech.net/dev/characters/'+info['CharacterID']+'/?datasource=tranquility';
 			getCCPdata(url,function(e,response){
-				if(e){console.log('\x1b[31m%s\x1b[0m', '408: error'); return;}
+				if(e){console.log(`${FG_RED}${BG_BLACK}${err} 408: error ${RESET}`);); return;}
 				if (localSettings.Map.restrict_access_by_corp == true && response.corporation_id != localSettings.Map.corporation) {
-					console.log(`${FG_ORANGE}${BG_BLACK}430: Restricted by corp!`);
+					console.log(`${FG_ORANGE}${BG_BLACK}430: Restricted by corp!${RESET}`);
 					send('', "error_text", {'text':'Restricted by corp!'},unique);
 					return;
 				}
 				if (localSettings.Map.restrict_access_by_alli == true && response.alliance_id != localSettings.Map.alliance) {
-					console.log(`${FG_ORANGE}${BG_BLACK}431: Restricted by alliance!`);
+					console.log(`${FG_ORANGE}${BG_BLACK}431: Restricted by alliance!${RESET}`);
 					send('', "error_text", {'text':'Restricted by alliance!'},unique);
 					return;
 				}
@@ -1715,8 +1708,8 @@ function postCharacterData(h,u,token,callback,id,data){
 		}
 	});
 }		
-console.log('\x1b[32m%s\x1b[0m', '_______________________________________');
-console.log('\x1b[32m%s\x1b[0m', '507: Socket.IO running on port:'+localSettings.Server.port);
+console.log(`${FG_SALAD}${BG_BLACK}_______________________________________${RESET}`);
+console.log(`${FG_SALAD}${BG_BLACK}507: Socket.IO running on port: ${localSettings.Server.port}${RESET}`);
 
 var fs = require('fs');
 var json_files = {};
@@ -1755,7 +1748,7 @@ function sendToSlack(data){
 			console.log ("812: sendingToSlack ");// + txt);
 			}
 		else {
-			console.log ('\x1b[31m%s\x1b[0m', "815: sendToSlack: error, code == " + response.statusCode + ", " + response.body + ".\n");
+			console.log(`${FG_RED}${BG_BLACK}815: sendToSlack: error, code == ${response.statusCode}${response.body}${RESET}`);
 		}  
 	});
 }
