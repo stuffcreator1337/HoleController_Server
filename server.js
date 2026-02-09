@@ -576,7 +576,7 @@ class zkbmon {
 	start_timer() {
 		var that = this;
 		setTimeout(function () { that.checkOfficers(); }, 3000);//первоначальный опрос
-		setInterval(function () { that.checkOfficers(); }, 300000);//300 секунд = 5 минут
+		setInterval(function () { that.checkOfficers(); }, 60000);//60 sec = 1 min
 	}
 	checkOfficers() {
 		/**********************************
@@ -677,7 +677,7 @@ class swagger{
 	|=|	запускаем таймера, первоначальный через секунду, для обновления токенов
 	|=| затем каждые 100 секунд = 1,6 минут (макс 20)
 	|=| обновляем инфу о персах каждые 15 сек
-	|=| обновляем данные о системах с КБ каждые 60 секунд = 1 минута
+	|=| обновляем данные о системах с КБ каждые 300 sec = 5 min
 	******************************************************************/
 	start_timer(){
 		var that = this;
@@ -685,7 +685,7 @@ class swagger{
 		setInterval(function () { that.refreshAccess('all', "002: interval timer");},100000);
 		setInterval(function(){ that.updateChar();},15000);
 		setTimeout(function(){ that.updateZKB();},3000);//первоначальный опрос
-		setInterval(function(){ that.updateZKB();},60000);//60 секунд = 1 минута
+		setInterval(function(){ that.updateZKB();},300000);//300 sec = 5 min
 	}
 	upd(json){
 		this.crestDB = json;
