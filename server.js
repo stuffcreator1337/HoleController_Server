@@ -1393,7 +1393,7 @@ function update_crest(token,info,state,unique){//обновляем имеющу
 		if(!found){
 			let url = 'https://esi.evetech.net/dev/characters/'+info['CharacterID']+'/?datasource=tranquility';
 			getCCPdata(url,function(e,response){
-				if(e){console.log(`${FG_RED}${BG_BLACK}${err} 408: error ${RESET}`);); return;}
+				if(e){console.log(`${FG_RED}${BG_BLACK}${err} 408: error ${RESET}`); return;}
 				if (localSettings.Map.restrict_access_by_corp == true && response.corporation_id != localSettings.Map.corporation) {
 					console.log(`${FG_ORANGE}${BG_BLACK}430: Restricted by corp!${RESET}`);
 					send('', "error_text", {'text':'Restricted by corp!'},unique);
