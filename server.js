@@ -685,7 +685,7 @@ class swagger{
 		setInterval(function () { that.refreshAccess('all', "002: interval timer");},100000);
 		setInterval(function(){ that.updateChar();},15000);
 		setTimeout(function(){ that.updateZKB();},3000);//первоначальный опрос
-		setInterval(function(){ that.updateZKB();},600000);//600 секунд = 10 минут
+		setInterval(function(){ that.updateZKB();},60000);//60 секунд = 1 минута
 	}
 	upd(json){
 		this.crestDB = json;
