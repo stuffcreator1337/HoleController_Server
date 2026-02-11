@@ -1290,7 +1290,7 @@ class map{
 				}
 		if(type == 'labelline'){
 			this.getDistance(new_id,old_id,function(data1,data2,that){
-				jsonReady.labelCenter = data2.length+" ("+data1.length+")_jumps";
+				jsonReady.labelCenter = (data2.length-1)+" ("+(data1.length-1)+")_jumps";
 				// console.log(jsonReady);
 				that.newLinkCheck(charID,jsonReady);
 			});	
