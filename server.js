@@ -217,18 +217,13 @@ const server = http.createServer((req, res) => {
 });
 // инициализация Socket.IO
 const io = new Server(server, {
-	cors: {
-		origin: [
-			"http://" + localSettings.Server.server_addr + ":8080",
-			"http://localhost:8080",
-			"http://127.0.0.1:8080",
-			"http://localhost:3000",
-			"http://127.0.0.1:3000",
-			"http://0.0.0.0:3000"
-		],
-		methods: ["GET", "POST"],
-		credentials: true
-	}
+    cors: {
+        origin: (origin, callback) => {
+            console.log("Origin:", origin);
+            callback(null, true);
+        },
+        credentials: true
+    }
 });
 // обработка подключений
 io.on("connection", socket => {
