@@ -4,6 +4,7 @@ const path1 = './';
 var crest,map1,charFleet,zkbmonitor;
 
 const http = require('http');
+const https = require('https');
 const { Server } = require('socket.io');
 const request = require('request');
 const querystring = require('querystring');
@@ -135,7 +136,7 @@ readF('map1', function (err, old_db) {
 /*****************************************************************
 	creating server
 ******************************************************************/
-const server = http.createServer((req, res) => {
+const server = https.createServer((req, res) => {
 
 	// --- Если запрос к Socket.IO, пропускаем его ---
 	if (req.url.startsWith("/socket.io/")) {
