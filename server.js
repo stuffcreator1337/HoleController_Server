@@ -136,7 +136,11 @@ readF('map1', function (err, old_db) {
 /*****************************************************************
 	creating server
 ******************************************************************/
-const server = https.createServer((req, res) => {
+const SSLoptions = {
+	key: fs.readFileSync('./ssl/key.pem'),
+	cert: fs.readFileSync('./ssl/cert.pem')
+};
+const server = https.createServer(SSLoptions,(req, res) => {
 
 	// --- Если запрос к Socket.IO, пропускаем его ---
 	if (req.url.startsWith("/socket.io/")) {
