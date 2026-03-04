@@ -137,7 +137,10 @@ readF('map1', function (err, old_db) {
 	creating server
 ******************************************************************/
 const server = https.createServer((req, res) => {
+	console.log("Request:", req.url);
 
+	res.writeHead(200, { "Content-Type": "text/plain" });
+	return res.end("OK");
 	//// --- Если запрос к Socket.IO, пропускаем его ---
 	//if (req.url.startsWith("/socket.io/")) {
 	//	// socket.io обработает этот запрос сам
