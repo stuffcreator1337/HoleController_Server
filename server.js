@@ -1760,7 +1760,9 @@ function webhooksSend(txt, id, inf, that) {
 	if (id == '30000142') {
 		data = "";
 	} else if (sec > 0.45) {
-		data = "Дома хайсек https://zkillboard.com/system/" + id + " | " + inf.solarSystemName +
+		data = "Дома хайсек " +
+			"\n" + inf.solarSystemName +
+			"\n https://zkillboard.com/system/" + id + "/" +
 			"\n" + map1.regions[regionID].regionName +
 			"\n Jita -> " + (inf.secur_j - 1) + " (" + (inf.short_j - 1) + ")" +
 			"\n Amarr -> " + (inf.secur_a - 1) + " (" + (inf.short_a - 1) + ")" +
@@ -1768,18 +1770,27 @@ function webhooksSend(txt, id, inf, that) {
 			"\n Rens -> " + (inf.secur_r - 1) + " (" + (inf.short_r - 1) + ")" +
 			"\n Hek -> " + (inf.secur_h - 1) + " (" + (inf.short_h - 1) + ")";
 	} else if (sec > 0) {
-		data = "Дома лоусек https://zkillboard.com/system/" + id + " | " + inf.solarSystemName +
+		data = "Дома лоусек " +
+			"\n" + inf.solarSystemName +
+			"\n https://zkillboard.com/system/" + id + "/" +
 			"\n" + map1.regions[regionID].regionName;
 	} else if (inf.regionID == '11000031') {
-		data = "Дома Thera  https://zkillboard.com/system/" + id + " | " + inf.solarSystemName;
+		data = "Дома Thera  " +
+			"\n https://zkillboard.com/system/" + id + "/";
 	} else if (inf.regionID == '10000070') {
-		data = "Дома Pochven  https://zkillboard.com/system/" + id + " | " + inf.solarSystemName;
+		data = "Дома Pochven  " +
+			"\n" + inf.solarSystemName +
+			"\n https://zkillboard.com/system/" + id + "/";
 	} else if (cl == 'Abyss') {
 		data = "";
 	} else if (inf.short_j == '-1') {
-		data = "Дома новая дыра " + cl + " https://zkillboard.com/system/" + id + " | " + inf.solarSystemName;
+		data = "Дома новая дыра " + cl +
+			"\n" + inf.solarSystemName +
+			"\n https://zkillboard.com/system/" + id + "/";
 	} else {
-		data = "Дома нули https://zkillboard.com/system/" + id + " | " + inf.solarSystemName +
+		data = "Дома нули " +
+			"\n" + inf.solarSystemName +
+			"\n https://zkillboard.com/system/" + id + "/" +
 			"\n" + map1.regions[regionID].regionName;
 	}
 	if (data != "") {
