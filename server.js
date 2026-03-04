@@ -141,7 +141,7 @@ const server = https.createServer((req, res) => {
 	// --- Если запрос к Socket.IO, пропускаем его ---
 	if (req.url.startsWith("/socket.io/")) {
 		// socket.io обработает этот запрос сам
-		return; // ничего не делаем
+		return res.end("test string return"); // ничего не делаем
 	}
 
 	console.log("=== Incoming request ===");
