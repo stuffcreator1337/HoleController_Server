@@ -138,11 +138,11 @@ readF('map1', function (err, old_db) {
 ******************************************************************/
 const server = https.createServer((req, res) => {
 
-	// --- Если запрос к Socket.IO, пропускаем его ---
-	if (req.url.startsWith("/socket.io/")) {
-		// socket.io обработает этот запрос сам
-		return; // ничего не делаем
-	}
+	//// --- Если запрос к Socket.IO, пропускаем его ---
+	//if (req.url.startsWith("/socket.io/")) {
+	//	// socket.io обработает этот запрос сам
+	//	return; // ничего не делаем
+	//}
 
 	console.log("=== Incoming request ===");
 	console.log("URL:", req.url);
