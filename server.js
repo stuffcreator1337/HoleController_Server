@@ -718,10 +718,10 @@ class swagger{
 								send('', "token_error", id, crestDB[i]['code']);
 							} else {
 								crest.charStatus[id] = 'refreshed';
+								send('', "token_refreshed", id, crestDB[i]['code']);
 								console.log("old token: ..." + crestDB[i]['access_token'].substring(crestDB[i]['access_token'].length - 5));
 								crestDB[i]['access_token'] = answer['access_token'];
 								console.log("new token: ..." + crestDB[i]['access_token'].substring(crestDB[i]['access_token'].length - 5));
-								send('', "token_refreshed", id, crestDB[i]['code']);
 							}
 						}
 					}
@@ -752,11 +752,12 @@ class swagger{
 			for(let i=0;i<crestDB.length;i++){
 				if(id == crestDB[i]['CharacterID']){								
 					if (err) {
-						console.log(`${FG_RED}${BG_BLACK}${err} 659: Token refresh for:${cleanLogName(crestDB[i]['CharacterName'])}${RESET}`);
+						console.log(`${FG_RED}${BG_BLACK}659: Token refresh for:${cleanLogName(crestDB[i]['CharacterName'])}${err}${RESET}`);
 						//console.log('\x1b[31m%s\x1b[0m', "Character with the ID="+id+" got error:");console.log('\x1b[31m%s\x1b[0m', err);
 						send('', "token_error", id, crestDB[i]['code']);
 					} else {
 						crest.charStatus[id] = 'refreshed';
+						send('', "token_refreshed", id, crestDB[i]['code']);
 						if (crestDB[i]['access_token']) console.log("old token: ..." + crestDB[i]['access_token'].substring(crestDB[i]['access_token'].length - 5));
 						else { console.log("old token: NONE"); }
 						crestDB[i]['access_token'] = answer['access_token'];
