@@ -1373,7 +1373,12 @@ function update_crest(token,info,state,unique){//обновляем имеющу
 		}
 		console.log('416:');
 		console.log(sendData);
-		send('', "auth_success_" + tst, [c, map_root.map1,sendData],uni);
+		send('', "auth_success_" + tst, [c, {
+			'map': map_root.map1,
+			'home': homesystemID,
+			'custom_sys_names': map_root.names,
+			'residents': json_files["locals"]
+		},sendData],uni);
 	};
 	//задаем код чтобы не повторялся
 	var code = Math.floor(Math.random() * 10000000);
