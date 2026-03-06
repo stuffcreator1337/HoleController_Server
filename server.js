@@ -721,6 +721,7 @@ class swagger{
 								console.log("old token: ..." + crestDB[i]['access_token'].substring(crestDB[i]['access_token'].length - 5));
 								crestDB[i]['access_token'] = answer['access_token'];
 								console.log("new token: ..." + crestDB[i]['access_token'].substring(crestDB[i]['access_token'].length - 5));
+								send('', "token_refreshed", id, crestDB[i]['code']);
 							}
 						}
 					}
