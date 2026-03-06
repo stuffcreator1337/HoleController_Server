@@ -1810,9 +1810,9 @@ function webhooksSend(txt, id, inf, that) {
 	}
 	if (data != "") {
 		//Slack:
-		sendToSlack(data);
+		//sendToSlack(data);
 		//Discord:
-		hook.send(data)
+		//hook.send(data)
 		//Telegram
 		sendMessageToChannel(data);;
 		//hook.send(txt);
