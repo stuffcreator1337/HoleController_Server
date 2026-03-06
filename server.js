@@ -1777,7 +1777,7 @@ function webhooksSend(txt, id, inf, that) {
 	} else if (sec > 0.45) {
 		data = "Дома хайсек " +
 			"\n" + inf.solarSystemName +
-			"\n https://zkillboard.com/system/" + id + "/" +
+			"\nhttps://zkillboard.com/system/" + id + "/" +
 			"\n" + map_root.regions[regionID].regionName +
 			"\n Jita -> " + (inf.secur_j - 1) + " (" + (inf.short_j - 1) + ")" +
 			"\n Amarr -> " + (inf.secur_a - 1) + " (" + (inf.short_a - 1) + ")" +
@@ -1787,25 +1787,25 @@ function webhooksSend(txt, id, inf, that) {
 	} else if (sec > 0) {
 		data = "Дома лоусек " +
 			"\n" + inf.solarSystemName +
-			"\n https://zkillboard.com/system/" + id + "/" +
+			"\nhttps://zkillboard.com/system/" + id + "/" +
 			"\n" + map_root.regions[regionID].regionName;
 	} else if (inf.regionID == '11000031') {
 		data = "Дома Thera  " +
-			"\n https://zkillboard.com/system/" + id + "/";
+			"\nhttps://zkillboard.com/system/" + id + "/";
 	} else if (inf.regionID == '10000070') {
 		data = "Дома Pochven  " +
 			"\n" + inf.solarSystemName +
-			"\n https://zkillboard.com/system/" + id + "/";
+			"\nhttps://zkillboard.com/system/" + id + "/";
 	} else if (cl == 'Abyss') {
 		data = "";
 	} else if (inf.short_j == '-1') {
 		data = "Дома новая дыра " + cl +
 			"\n" + inf.solarSystemName +
-			"\n https://zkillboard.com/system/" + id + "/";
+			"\nhttps://zkillboard.com/system/" + id + "/";
 	} else {
 		data = "Дома нули " +
 			"\n" + inf.solarSystemName +
-			"\n https://zkillboard.com/system/" + id + "/" +
+			"\nhttps://zkillboard.com/system/" + id + "/" +
 			"\n" + map_root.regions[regionID].regionName;
 	}
 	if (data != "") {
