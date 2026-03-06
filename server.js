@@ -1,7 +1,7 @@
 var busy = false;
 const path1 = './';
 
-var crest,map1,charFleet,zkbmonitor;
+var crest,map_root,charFleet,zkbmonitor;
 
 const http = require('http');
 const https = require('https');
@@ -119,18 +119,18 @@ readF('ZKBmonitor', function (err, old_db) {
 	console.log(`${FG_GREEN}${BG_BLACK}122: Creating 'zkbmonitor' object...${RESET}`);
 	zkbmonitor = new zkbmon(old_db);
 	zkbmonitor.start_timer();
-	// console.log(map1);
+	// console.log(map_root);
 });
 readF('crestDB', function (err, old_db) {
 	console.log(`${FG_GREEN}${BG_BLACK}128: Creating 'crest' object...${RESET}`);
 	crest = new swagger(old_db);
 	crest.start_timer();
 });
-readF('map1', function (err, old_db) {
-	console.log(`${FG_GREEN}${BG_BLACK}133: Creating 'map1' object...${RESET}`);
-	map1 = new map(old_db);
-	map1.clean_timer();
-	// console.log(map1);
+readF('map_root', function (err, old_db) {
+	console.log(`${FG_GREEN}${BG_BLACK}133: Creating 'map_root' object...${RESET}`);
+	map_root = new map(old_db);
+	map_root.clean_timer();
+	// console.log(map_root);
 });
 
 /*****************************************************************
@@ -267,11 +267,11 @@ io.on("connection", socket => {
 			send('', "privat_char_update", sendData, data);
 		} else {
 			send('', "privat_char_update", sendData, data);
-			map1.map1 = tools.correctJS(map1.map1);
+			map_root.map1 = tools.correctJS(map_root.map1);
 				send(socket, "map_connections", { 
-				'map': map1.map1, 
+				'map': map_root.map1, 
 				'home' : homesystemID,
-				'custom_sys_names': map1.names, 
+				'custom_sys_names': map_root.names, 
 				'residents': json_files["locals"] 
 			}, data);
 		}
@@ -294,7 +294,7 @@ io.on("connection", socket => {
 	socket.on('sigs_from_client', function (data) {
 		console.log('562: ================== sigs_from_client ==========================');
 		var dWrite = { "id": data["id"], "system": data["system"], "sigs": data["sigs"] };
-		var old_sigs = map1.sigs;
+		var old_sigs = map_root.sigs;
 		var finded = false;
 		for (let i = 0; i < old_sigs.length; i++) {
 			console.log("569: " + old_sigs[i].id);
@@ -309,7 +309,7 @@ io.on("connection", socket => {
 			old_sigs[old_sigs.length] = dWrite;
 		}
 
-		map1.sigs = old_sigs;
+		map_root.sigs = old_sigs;
 	});
 	/*****************************************************************
 	|=|	
@@ -317,7 +317,7 @@ io.on("connection", socket => {
 	socket.on('sysname_from_client', function (data) {
 		console.log('562: ================== sigs_from_client ==========================');
 		var dWrite = { "id": data["id"], "system": data["system"], "name": data["name"] };
-		var old_names = map1.names;
+		var old_names = map_root.names;
 		var finded = false;
 		for (let i = 0; i < old_names.length; i++) {
 			console.log("569: " + old_names[i].id);
@@ -332,9 +332,9 @@ io.on("connection", socket => {
 			old_names[old_names.length] = dWrite;
 		}
 
-		map1.names = old_names;
+		map_root.names = old_names;
 
-		send(socket, "sending_names", { "names": map1.names, "data": data }, 'all');
+		send(socket, "sending_names", { "names": map_root.names, "data": data }, 'all');
 	});
 	/*****************************************************************
 	|=|		запрос на сигнатуры
@@ -342,7 +342,7 @@ io.on("connection", socket => {
 	socket.on('sigs_request', function (data) {
 		console.log('588: ================== sigs_request ==========================');
 		console.log('sigs requested from ' + data["user"] + ' for system ' + data.name + " (" + data.id + ")");
-		var old_sigs = map1.sigs;
+		var old_sigs = map_root.sigs;
 		// console.log(old_sigs);
 		// console.log(data.id);
 		var sData = '';
@@ -363,7 +363,7 @@ io.on("connection", socket => {
 		console.log('588: ================== system_names_request ==========================');
 		console.log('system_names requested from ' + data["user"]);
 
-		send(socket, "sending_names", { "names": map1.names, "data": data }, data["user"]);
+		send(socket, "sending_names", { "names": map_root.names, "data": data }, data["user"]);
 	});
 	/*****************************************************************
 	|=|		запрос на дест A<>B
@@ -372,7 +372,7 @@ io.on("connection", socket => {
 		console.log('588: ================== system_names_request ==========================');
 		console.log('dest_request requested from ' + data["user"]);
 		//{ 'user': activeCharTab, 'id1': parseInt($jit.id('current_id').innerHTML), 'id2': parseInt(destSys) }
-		map1.getDistance(data["id1"], data["id2"], function (data1, data2, that) {
+		map_root.getDistance(data["id1"], data["id2"], function (data1, data2, that) {
 			//data2.length+" ("+data1.length+")_jumps";
 			send(socket, "sending_dest", { "id1": data["id1"], "id2": data["id2"], "secure": data2.length, "short": data1.length }, data["user"]);
 		});		
@@ -382,7 +382,7 @@ io.on("connection", socket => {
 	******************************************************************/
 	socket.on('map_request', function (user) {
 		console.log('650: ================== map_request from ' + user + ' ==========================');
-		// readF('map1',function(err,data){
+		// readF('map_root',function(err,data){
 		// var crestDB = crest.crestDB;
 		// for(var i=0; i<crestDB.length;i++){
 
@@ -392,17 +392,17 @@ io.on("connection", socket => {
 		// if (err) {
 		// console.log(err+' Location for: '+id);
 		// } else {
-		// send(socket, "map_connections", {'map':map1.map1,'residents':json_files["locals"]},user);
+		// send(socket, "map_connections", {'map':map_root.map1,'residents':json_files["locals"]},user);
 		// }
 		// });
 		// }
-		// console.log(map1.map1);
-		// console.log(tools.correctJS(map1.map1));
-		map1.map1 = tools.correctJS(map1.map1);
+		// console.log(map_root.map1);
+		// console.log(tools.correctJS(map_root.map1));
+		map_root.map1 = tools.correctJS(map_root.map1);
 		send(socket, "map_connections", { 
-			'map': map1.map1, 
+			'map': map_root.map1, 
 			'home' : homesystemID,
-			'custom_sys_names': map1.names, 
+			'custom_sys_names': map_root.names, 
 			'residents': json_files["locals"] 
 		}, user);
 		// });
@@ -412,7 +412,7 @@ io.on("connection", socket => {
 	|=|	
 	******************************************************************/
 	socket.on('addr_request', function (local_code) {
-		// readF('map1',function(err,data){		
+		// readF('map_root',function(err,data){
 		send(socket, "addr_response", {
 			"addr":localSettings.Server.server_addr,
 			"port":localSettings.Server.port, 
@@ -425,8 +425,8 @@ io.on("connection", socket => {
 	|=|	
 	******************************************************************/
 	socket.on('routes_request', function (user) {
-		// readF('map1',function(err,data){		
-		send(socket, "routes", map1.map1, user);
+		// readF('map_root',function(err,data){
+		send(socket, "routes", map_root.map1, user);
 		// });
 	});
 	/*****************************************************************
@@ -437,8 +437,8 @@ io.on("connection", socket => {
 		// console.log(data);
 		var user = data["user"];
 		var node = data["node"];
-		// readF('map1', function(err,old_j){
-		var old_j = map1.map1;
+		// readF('map_root', function(err,old_j){
+		var old_j = map_root.map1;
 		for (let i = 0; i < old_j.length; i++) {
 			if ((old_j[i]["sys1"] == node) || (old_j[i]["sys2"] == node)) {
 				old_j[i]["alive"] = "0";
@@ -447,8 +447,8 @@ io.on("connection", socket => {
 		}
 		send(socket, "new_links_found", old_j, "all");
 		if (old_j != "[]") {
-			// writeF(old_j,'map1');
-			map1.map1 = old_j;
+			// writeF(old_j,'map_root');
+			map_root.map1 = old_j;
 		} else { console.log("693: empty json from node_to_del"); }
 		// });
 	});
@@ -459,8 +459,8 @@ io.on("connection", socket => {
 	socket.on('restore_last', function (data) {
 		console.log('698: ================== restore last ==========================');
 		//console.log(data);
-		// readF('map1', function(err,old_j){
-		var old_j = map1.map1;
+		// readF('map_root', function(err,old_j){
+		var old_j = map_root.map1;
 		var rest = [];
 		var k = 0;
 		for (let i = 0; i < old_j.length; i++) {
@@ -486,8 +486,8 @@ io.on("connection", socket => {
 		// console.log(old_j);
 		send(socket, "new_links_found", old_j, "all");
 		if (old_j != "[]") {
-			// writeF(old_j,'map1');
-			map1.map1 = old_j;
+			// writeF(old_j,'map_root');
+			map_root.map1 = old_j;
 		} else { console.log("empty json from restore_last"); }
 		// });
 	});
@@ -498,7 +498,7 @@ io.on("connection", socket => {
 		// var user = data["user"];
 		// console.log('message_from_phantom:',data);
 		crest.updateCharLocPhantom(data.characterID, data.characterName, data.location, crest.charLoc);
-		// send(socket, "map_replot", map1.map1,data);
+		// send(socket, "map_replot", map_root.map1,data);
 	});
 
 	/*****************************************************************
@@ -506,7 +506,7 @@ io.on("connection", socket => {
 	******************************************************************/
 	socket.on('map_redraw', function (data) {
 		// var user = data["user"];
-		send(socket, "map_replot", map1.map1, data);
+		send(socket, "map_replot", map_root.map1, data);
 	});
 
 	/*****************************************************************
@@ -515,10 +515,10 @@ io.on("connection", socket => {
 	******************************************************************/
 	socket.on('new_link', function (data) {
 		if (data['sys1'] == '') {
-			send(socket, "map_replot", map1.map1, data['user']);
+			send(socket, "map_replot", map_root.map1, data['user']);
 			return;
 		}
-		map1.create_link(data['sys1'], data['sys2'], data['type'], data['user']);
+		map_root.create_link(data['sys1'], data['sys2'], data['type'], data['user']);
 	});
 	/*****************************************************************
 	|=|		изменение параметров связи
@@ -530,8 +530,8 @@ io.on("connection", socket => {
 		var prop;
 		// console.log(data);
 		//v = (v ? 0 : 1);
-		// readF('map1', function(err,old_j){
-		var old_j = map1.map1;
+		// readF('map_root', function(err,old_j){
+		var old_j = map_root.map1;
 		if (action == "Time") { prop = "tc" }
 		if (action == "Mass") { prop = "mc" }
 		if (action == "Frig") { prop = "fs" }
@@ -554,8 +554,8 @@ io.on("connection", socket => {
 		//console.log(old_j[i]["sys1"],old_j[i]["sys2"]);
 		send(socket, "link_edit_from_node", old_j, "all");
 		if (old_j != "[]") {
-			// writeF(old_j,'map1');
-			map1.map1 = old_j;
+			// writeF(old_j,'map_root');
+			map_root.map1 = old_j;
 		} else { console.log("769: empty json from link_edit"); }
 		// });
 	});
@@ -821,7 +821,7 @@ class swagger{
 	|=|	обновляем дынные по системам с килборды
 	******************************************************************/
 	updateZKB(){
-		var mp = map1.map1;
+		var mp = map_root.map1;
 		for(var j in mp){
 			var s1 = mp[j]["sys1"];
 			var s2 = mp[j]["sys2"];
@@ -972,10 +972,10 @@ class swagger{
 								var s1wh 	= tools.isWh(dbfulleden,new_id);
 								var s2wh 	= tools.isWh(dbfulleden,old_id);
 								var sJumps = null;
-								if(!s1wh && !s2wh){sJumps = map1.jumps[old_id][new_id];}
-								if((tools.isWh(dbfulleden,new_id) == true)||(tools.isWh(dbfulleden,old_id) == true)||(map1.jumps[old_id][new_id]==null)){
+								if (!s1wh && !s2wh) { sJumps = map_root.jumps[old_id][new_id];}
+								if ((tools.isWh(dbfulleden, new_id) == true) || (tools.isWh(dbfulleden, old_id) == true) || (map_root.jumps[old_id][new_id]==null)){
 									console.log(`${FG_BLUE}${BG_BLACK}${err} Old sysID: ${old_id} new sysID: ${new_id}${RESET}`);
-									map1.create_link(new_id,old_id,'',id);
+									map_root.create_link(new_id,old_id,'',id);
 								}
 							}
 						}
@@ -1012,10 +1012,10 @@ class swagger{
 				if((new_id != old_id)&&(new_time < old_time+300000)){
 					console.log('======UPDATING CHARACTER POSITION FOR: '+id+'=====');
 					console.log(new_id,old_id); 
-					// console.log(map1.jumps,[new_id]);
-					if ((tools.isWh(dbfulleden, new_id) == true) || (tools.isWh(dbfulleden, old_id) == true) || (map1.jumps[old_id][new_id] == null)) {
+					// console.log(map_root.jumps,[new_id]);
+					if ((tools.isWh(dbfulleden, new_id) == true) || (tools.isWh(dbfulleden, old_id) == true) || (map_root.jumps[old_id][new_id] == null)) {
 						console.log(`${FG_CYAN}${BG_BLACK}Old sysID: ${old_id} new sysID:${new_id}${RESET}`);
-						map1.create_link(new_id,old_id,'',id);
+						map_root.create_link(new_id,old_id,'',id);
 					}
 				}	
 			}else{
@@ -1373,7 +1373,7 @@ function update_crest(token,info,state,unique){//обновляем имеющу
 		}
 		console.log('416:');
 		console.log(sendData);
-		send('', "auth_success_"+tst, [c,map1.map1,sendData],uni);
+		send('', "auth_success_" + tst, [c, map_root.map1,sendData],uni);
 	};
 	//задаем код чтобы не повторялся
 	var code = Math.floor(Math.random() * 10000000);
@@ -1427,7 +1427,7 @@ function update_crest(token,info,state,unique){//обновляем имеющу
 						};
 						charLoc.push(sendData);
 						console.log(`${FG_YELLOW}${BG_BLACK}438: success! state: ${state} code: ${code} unique: ${unique}${RESET}`);
-						send('', "auth_success_"+state, [code,map1.map1,[sendData]],unique);
+						send('', "auth_success_" + state, [code, map_root.map1,[sendData]],unique);
 					}
 				},info['CharacterID'],info['CharacterName']);				
 			});
@@ -1767,7 +1767,7 @@ function webhooksSend(txt, id, inf, that) {
 		data = "Дома хайсек " +
 			"\n" + inf.solarSystemName +
 			"\n https://zkillboard.com/system/" + id + "/" +
-			"\n" + map1.regions[regionID].regionName +
+			"\n" + map_root.regions[regionID].regionName +
 			"\n Jita -> " + (inf.secur_j - 1) + " (" + (inf.short_j - 1) + ")" +
 			"\n Amarr -> " + (inf.secur_a - 1) + " (" + (inf.short_a - 1) + ")" +
 			"\n Dodixie -> " + (inf.secur_d - 1) + " (" + (inf.short_d - 1) + ")" +
@@ -1777,7 +1777,7 @@ function webhooksSend(txt, id, inf, that) {
 		data = "Дома лоусек " +
 			"\n" + inf.solarSystemName +
 			"\n https://zkillboard.com/system/" + id + "/" +
-			"\n" + map1.regions[regionID].regionName;
+			"\n" + map_root.regions[regionID].regionName;
 	} else if (inf.regionID == '11000031') {
 		data = "Дома Thera  " +
 			"\n https://zkillboard.com/system/" + id + "/";
@@ -1795,7 +1795,7 @@ function webhooksSend(txt, id, inf, that) {
 		data = "Дома нули " +
 			"\n" + inf.solarSystemName +
 			"\n https://zkillboard.com/system/" + id + "/" +
-			"\n" + map1.regions[regionID].regionName;
+			"\n" + map_root.regions[regionID].regionName;
 	}
 	if (data != "") {
 		//Slack:
@@ -1865,16 +1865,16 @@ function saveFile(){
 			var size = fileSize("charLoc");
 			// console.log("| ["+addLength(file,8,' ')+"]   --- "+addLength(size,10,'-')+" bytes  |");
 		});
-	writeF(map1.sigs,"sigs",function(){
+	writeF(map_root.sigs,"sigs",function(){
 			var size = fileSize("sigs");
 			// console.log("| ["+addLength(file,8,' ')+"]   --- "+addLength(size,10,'-')+" bytes  |");
 		});
-	writeF(map1.names,"names",function(){
+	writeF(map_root.names,"names",function(){
 			var size = fileSize("names");
 			// console.log("| ["+addLength(file,8,' ')+"]   --- "+addLength(size,10,'-')+" bytes  |");
 		});
-	writeF(map1.map1,"map1",function(){
-			var size = fileSize("map1");
+	writeF(map_root.map1,"map_root",function(){
+			var size = fileSize("map_root");
 			// console.log("| ["+addLength(file,8,' ')+"]   --- "+addLength(size,10,'-')+" bytes  |");
 		});
 	// for(var file in json_files) {
