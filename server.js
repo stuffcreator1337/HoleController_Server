@@ -271,7 +271,8 @@ io.on("connection", socket => {
 				send(socket, "map_connections", { 
 				'map': map_root.map1, 
 				'home' : homesystemID,
-				'custom_sys_names': map_root.names, 
+				'custom_sys_names': map_root.names,
+				'designators': map_root.designators,
 				'residents': json_files["locals"] 
 			}, data);
 		}
@@ -314,22 +315,53 @@ io.on("connection", socket => {
 	/*****************************************************************
 	|=|	
 	******************************************************************/
-	socket.on('sysname_from_client', function (data) {
-		console.log('562: ================== sigs_from_client ==========================');
-		var dWrite = { "id": data["id"], "system": data["system"], "name": data["name"] };
-		var old_names = map_root.names;
-		var finded = false;
-		for (let i = 0; i < old_names.length; i++) {
-			console.log("569: " + old_names[i].id);
-			if (old_names[i].id == data["id"]) {
-				// console.log("found system");
-				finded = true;
-				old_names[i].name = data["name"];
+	socket.on('designator_from_client', function (data) {
+		console.log('319: ================== designator_from_client ==========================');
+		var newData = { "id": data["id"], "designator": data["designator"] };
+		var dataclear = false;
+		if (data["designator"] == "") dataclear = true;
+		var old_designators = map_root.designators;
+
+		const index = old_designators.findIndex(x => x.id == data["id"]);
+
+		if (index !== -1) {
+			if (dataclear) {
+				old_designators.splice(index, 1);
+			} else {
+				old_designators[index].designator = data["designator"];
+			}
+		} else {
+			if (!dataclear) {
+				old_designators.push(newData);
 			}
 		}
-		if (finded == false) {
-			console.log("1043: system not found");
-			old_names[old_names.length] = dWrite;
+
+		map_root.designators = old_designators;
+
+		send(socket, "sending_designators", { "designators": map_root.designators, "data": data }, 'all');
+	});
+	/*****************************************************************
+	|=|	
+	******************************************************************/
+	socket.on('sysname_from_client', function (data) {
+		console.log('562: ================== names_from_client ==========================');
+		var newData = { "id": data["id"], "system": data["system"], "name": data["name"] };
+		var dataclear = false;
+		if (data["name"] == "") dataclear = true;
+		var old_names = map_root.names;
+
+		const index = old_names.findIndex(x => x.id == data["id"]);
+
+		if (index !== -1) {
+			if (dataclear) {
+				old_names.splice(index, 1);
+			} else {
+				old_names[index].name = data["name"];
+			}
+		} else {
+			if (!dataclear) {
+				old_names.push(newData);
+			}
 		}
 
 		map_root.names = old_names;
@@ -403,6 +435,7 @@ io.on("connection", socket => {
 			'map': map_root.map1, 
 			'home' : homesystemID,
 			'custom_sys_names': map_root.names, 
+			'designators': map_root.designators,
 			'residents': json_files["locals"] 
 		}, user);
 		// });
@@ -1230,17 +1263,18 @@ charFleet = new fleet();
 ******************************************************************/
 class map{
 	constructor(json){
-		this.map1 		= json || readFsync(path+'/server_files/map1_tranq.json');
+		this.map1 			= json || readFsync(path +'/server_files/map1_tranq.json');
 		// for(var i=0;i<16;i++){
 		// this.map1.push(json[i]);}// || readFsync(path+'/server_files/map1_tranq.json')[i]
-		this.systems 	= dbfulleden;
-		// this.consts 	= dbconst;
-		this.jumps 		= dbjumps;
-		this.regions 	= dbregions;
+		this.systems 		= dbfulleden;
+		// this.consts 		= dbconst;
+		this.jumps 			= dbjumps;
+		this.regions 		= dbregions;
 		// this.holes 		= dbholes;
 		// this.info 		= dbinfo;
-		this.sigs 		= readFsync(path+'/server_files/sigs_tranq.json');
-		this.names 		= readFsync(path+'/server_files/names_tranq.json');
+		this.sigs 			= readFsync(path +'/server_files/sigs_tranq.json');
+		this.names 			= readFsync(path +'/server_files/names_tranq.json');
+		this.designators	= readFsync(path +'/server_files/designators_tranq.json');
 	}
 	// getSysId(name){
 		// this.systems
@@ -1379,6 +1413,7 @@ function update_crest(token,info,state,unique){//обновляем имеющу
 			'map': map_root.map1,
 			'home': homesystemID,
 			'custom_sys_names': map_root.names,
+			'designators': map_root.designators,
 			'residents': json_files["locals"]
 		},sendData],uni);
 	};
@@ -1887,6 +1922,10 @@ function saveFile(){
 		});
 	writeF(map_root.map1,"map_root",function(){
 			var size = fileSize("map_root");
+			// console.log("| ["+addLength(file,8,' ')+"]   --- "+addLength(size,10,'-')+" bytes  |");
+		});
+	writeF(map_root.designators,"designators",function(){
+			var size = fileSize("designators");
 			// console.log("| ["+addLength(file,8,' ')+"]   --- "+addLength(size,10,'-')+" bytes  |");
 		});
 	// for(var file in json_files) {
