@@ -317,7 +317,8 @@ io.on("connection", socket => {
 	******************************************************************/
 	socket.on('designator_from_client', function (data) {
 		console.log('319: ================== designator_from_client ==========================');
-		var newData = { "id": data["id"], "designator": data["designator"] };
+		var currDate = new Date().getTime();
+		var newData = { "id": data["id"], "designator": data["designator"], "last_visited": currDate };
 		var dataclear = false;
 		if (data["designator"] == "") dataclear = true;
 		var old_designators = map_root.designators;
