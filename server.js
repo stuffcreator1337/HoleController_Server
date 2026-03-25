@@ -476,8 +476,17 @@ io.on("connection", socket => {
 			if ((old_j[i]["sys1"] == node) || (old_j[i]["sys2"] == node)) {
 				old_j[i]["alive"] = "0";
 				old_j[i]["deleted"] = data["date"];
+				break;
 			}
 		}
+		var old_d = map_root.designators;
+		for (let i = 0; i < old_d.length; i++) {
+			if (old_d[i]["id"] == node) {
+				old_d[i]["designator"] = "";
+				break;
+			}
+		}
+		map_root.designators = old_d;
 		send(socket, "new_links_found", old_j, "all");
 		if (old_j != "[]") {
 			// writeF(old_j,'map_root');
