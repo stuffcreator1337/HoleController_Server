@@ -293,7 +293,7 @@ io.on("connection", socket => {
 	|=|	получил сигнатуры от клиента
 	******************************************************************/
 	socket.on('sigs_from_client', function (data) {
-		console.log('562: ================== sigs_from_client ==========================');
+		console.log("296:>>>>>> 'sigs_from_client'");
 		var dWrite = { "id": data["id"], "system": data["system"], "sigs": data["sigs"] };
 		var old_sigs = map_root.sigs;
 		var finded = false;
@@ -316,7 +316,7 @@ io.on("connection", socket => {
 	|=|	
 	******************************************************************/
 	socket.on('designator_from_client', function (data) {
-		console.log('319: ================== designator_from_client ==========================');
+		console.log("319:>>>>>> 'designator_from_client'");
 		var currDate = new Date().getTime();
 		var newData = { "id": data["id"], "designator": data["designator"], "last_visited": currDate };
 		var dataclear = false;
@@ -345,7 +345,7 @@ io.on("connection", socket => {
 	|=|	
 	******************************************************************/
 	socket.on('sysname_from_client', function (data) {
-		console.log('562: ================== names_from_client ==========================');
+		console.log("348:>>>>>> 'sysname_from_client'");
 		var newData = { "id": data["id"], "system": data["system"], "name": data["name"] };
 		var dataclear = false;
 		if (data["name"] == "") dataclear = true;
@@ -373,8 +373,7 @@ io.on("connection", socket => {
 	|=|		запрос на сигнатуры
 	******************************************************************/
 	socket.on('sigs_request', function (data) {
-		console.log('588: ================== sigs_request ==========================');
-		console.log('sigs requested from ' + data["user"] + ' for system ' + data.name + " (" + data.id + ")");
+		console.log("376:>>>>>> 'sigs_request' from " + data["user"] + " for system " + data.name + " (" + data.id + ")");
 		var old_sigs = map_root.sigs;
 		// console.log(old_sigs);
 		// console.log(data.id);
@@ -393,8 +392,7 @@ io.on("connection", socket => {
 	|=|		
 	******************************************************************/
 	socket.on('system_names_request', function (data) {
-		console.log('588: ================== system_names_request ==========================');
-		console.log('system_names requested from ' + data["user"]);
+		console.log("588:>>>>>> 'system_names' requested from " + data["user"]);
 
 		send(socket, "sending_names", { "names": map_root.names, "data": data }, data["user"]);
 	});
@@ -402,8 +400,7 @@ io.on("connection", socket => {
 	|=|		запрос на дест A<>B
 	******************************************************************/
 	socket.on('dest_request', function (data) {
-		console.log('588: ================== system_names_request ==========================');
-		console.log('dest_request requested from ' + data["user"]);
+		console.log("405:>>>>>> 'dest_request' requested from " + data["user"]);
 		//{ 'user': activeCharTab, 'id1': parseInt($jit.id('current_id').innerHTML), 'id2': parseInt(destSys) }
 		map_root.getDistance(data["id1"], data["id2"], function (data1, data2, that) {
 			//data2.length+" ("+data1.length+")_jumps";
@@ -414,7 +411,7 @@ io.on("connection", socket => {
 	|=|		возвращение карты по запросу юзера
 	******************************************************************/
 	socket.on('map_request', function (user) {
-		console.log('650: ================== map_request from ' + user + ' ==========================');
+		console.log("650:>>>>>> 'map_request' from " + user + " ==========================");
 		// readF('map_root',function(err,data){
 		// var crestDB = crest.crestDB;
 		// for(var i=0; i<crestDB.length;i++){
@@ -1888,7 +1885,7 @@ function send(socket, type, message,user){
 		data: message,
 		user: user
 	});
-	console.log("783:<<<<<<'"+type+"' sent");
+	console.log("783:<<<<<< '"+type+"' sent");
 }
 
 /*****************************************************************
