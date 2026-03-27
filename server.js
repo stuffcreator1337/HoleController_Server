@@ -986,10 +986,19 @@ class swagger{
 					var found = false;
 					for(let i=0;i<charLoc.length;i++){
 						if(charLoc[i]['CharacterID'] == id){
-							if(data['structure_id']){//console.log('DOCKED IN STATION');
+							if(data['structure_id']){//console.log('DOCKED IN CITADEL');
 								charLoc[i]["solar_system_id"] = data['solar_system_id'];
+								charLoc[i]["structure_id"] = data['structure_id'];
 								//console.log(data);							
 								return;}
+							if (data['station_id']){//console.log('DOCKED IN STATION');
+								charLoc[i]["solar_system_id"] = data['solar_system_id'];
+								charLoc[i]["station_id"] = data['station_id'];
+								//console.log(data);							
+								return;
+							}
+							charLoc[i]["structure_id"] = 0;
+							charLoc[i]["station_id"] = 0;
 							var old_id = tools.clone(charLoc[i]["solar_system_id"]);
 							var new_id = data['solar_system_id'];
 							var old_time = charLoc[i]["loc_time"];
@@ -1028,6 +1037,8 @@ class swagger{
 							"CharacterName" : crest.getNameByID(id),
 							"CharacterID" : id,
 							"solar_system_id" : data['solar_system_id'],
+							"structure_id" : 0,
+							"station_id" : 0,
 							"loc_time" : "",
 							"code" : f[1].code
 						});
