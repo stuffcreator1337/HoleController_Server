@@ -850,7 +850,7 @@ class swagger{
 		var now_time = new Date().getTime();
 		// console.log();
 		for(var i=0;i<charLoc.length;i++){
-			var pers_outtime = new Date(charLoc[i].last_logout).getTime() + 18000000;		//время после которого показывать перса не надо, это 30 минут
+			var pers_outtime = new Date(charLoc[i].last_logout).getTime() + 1800000;		//время после которого показывать перса не надо, это 30 минут
 			// console.log((charLoc[i].online == true)||(now_time < pers_outtime));
 			if((charLoc[i].online == true)||(now_time < pers_outtime)){
 				sendData.push(charLoc[i]);
