@@ -474,7 +474,6 @@ io.on("connection", socket => {
 			if ((old_j[i]["sys1"] == node) || (old_j[i]["sys2"] == node)) {
 				old_j[i]["alive"] = "0";
 				old_j[i]["deleted"] = data["date"];
-				break;
 			}
 		}
 		var old_d = map_root.designators;
