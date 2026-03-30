@@ -324,9 +324,11 @@ io.on("connection", socket => {
 		var old_designators = map_root.designators;
 
 		const index = old_designators.findIndex(x => x.id == data["id"]);
-
+		var to_del = {};
 		if (index !== -1) {
 			if (dataclear) {
+				to_del = old_designators[index];
+				to_del.designator = "";
 				old_designators.splice(index, 1);
 			} else {
 				old_designators[index].designator = data["designator"];
@@ -338,8 +340,9 @@ io.on("connection", socket => {
 		}
 
 		map_root.designators = old_designators;
+		if(to_del)old_designators.push(to_del);
 
-		send(socket, "sending_designators", { "designators": map_root.designators, "data": data }, 'all');
+		send(socket, "sending_designators", { "designators": old_designators, "data": data }, 'all');
 	});
 	/*****************************************************************
 	|=|	
