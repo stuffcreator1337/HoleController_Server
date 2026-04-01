@@ -1450,6 +1450,9 @@ function update_crest(token,info,state,unique){//обновляем имеющу
 		}
 	}
 	if(state == 'firstlogin'){
+		const sending_map = map_root.map1;
+		const sending_names = map_root.names
+		const sending_resi = json_files["locals"];
 		//ищем перса, вдруг уже зареган
 		let found = findById(crest.crestDB,info['CharacterID'],'CharacterID');//ищем нужного перса
 		//если перс не найден, значит всё новое - узнаем корпу, делаем новую запись, узнаем локацию
@@ -1491,10 +1494,10 @@ function update_crest(token,info,state,unique){//обновляем имеющу
 						charLoc.push(sendData);
 						console.log(`${FG_YELLOW}${BG_BLACK}438: success! state: ${state} code: ${code} unique: ${unique}${RESET}`);
 						send('', "auth_success_" + state, [code, {
-							'map': map_root.map1,
+							'map': sending_map,
 							'home': homesystemID,
-							'custom_sys_names': map_root.names,
-							'residents': json_files["locals"]
+							'custom_sys_names': sending_names,
+							'residents': sending_resi
 						},[sendData]],unique);
 					}
 				},info['CharacterID'],info['CharacterName']);				
