@@ -450,6 +450,7 @@ io.on("connection", socket => {
 		send(socket, "addr_response", {
 			"addr":localSettings.Server.server_addr,
 			"port":localSettings.Server.port, 
+			"backurl":localSettings.Server.server_backurl,
 			"client":localSettings.App.client, 
 			"home":homesystemID
 		}, local_code);

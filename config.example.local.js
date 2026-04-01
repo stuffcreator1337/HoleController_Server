@@ -15,7 +15,8 @@ module.exports = {
 		welcomeMsg: "Hole Controller restarted."
 	},
 	Server: {
-    	server_addr: "0.0.0.0",	
+		server_addr: "0.0.0.0",
+		server_backurl: "backurl.address.com",	
     	server_addr_alt: "https://url.address.com/",
 		port: 3000
 	},
