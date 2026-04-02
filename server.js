@@ -1041,7 +1041,9 @@ class swagger{
 						var f = findById(crest.crestDB, id, 'CharacterID');
 						var code = f[1].code;
 						console.log('Generated code2: ' + code);
-						code = Number(code.replace(/\D/g, ''));
+						if (typeof code === 'string') {
+							code = Number(code.replace(/\D/g, ''));
+						}
 						charLoc.push({
 							"CharacterName" : crest.getNameByID(id),
 							"CharacterID" : id,
@@ -1422,7 +1424,9 @@ class map{
 	функции для работы креста и инфы о персах
 ******************************************************************/
 function update_crest(token, info, state, unique) {//обновляем имеющуюся инфу, либо добавляем новую
-	unique = Number(unique.replace(/\D/g, ''));
+	if (typeof unique === 'string') {
+		unique = Number(unique.replace(/\D/g, ''));
+	}
 	var crestDB = crest.crestDB;
 	var charLoc = crest.charLoc;
 	var sendAuthAll = function(c,uni,tst){
@@ -1456,8 +1460,9 @@ function update_crest(token, info, state, unique) {//обновляем имею
 			code = Math.floor(Math.random() * 10000000);
 		}
 	}
-    console.log('Generated code1: ' + code);
-	code = Number(code.replace(/\D/g, ''));
+	if (typeof code === 'string') {
+		code = Number(code.replace(/\D/g, ''));
+	}
 	if(state == 'firstlogin'){
 		//ищем перса, вдруг уже зареган
 		let found = findById(crest.crestDB,info['CharacterID'],'CharacterID');//ищем нужного перса
