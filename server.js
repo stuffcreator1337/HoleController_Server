@@ -1039,6 +1039,8 @@ class swagger{
 					}
 					if(!found){
 						var f = findById(crest.crestDB, id, 'CharacterID');
+						var code = f[1].code;
+						code = Number(code.replace(/\D/g, ''));
 						charLoc.push({
 							"CharacterName" : crest.getNameByID(id),
 							"CharacterID" : id,
@@ -1046,7 +1048,7 @@ class swagger{
 							"structure_id" : 0,
 							"station_id" : 0,
 							"loc_time" : "",
-							"code": Number(f[1].code.replace(/\D/g, ''))  
+							"code": code
 						});
 					}
 				}
