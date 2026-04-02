@@ -87,6 +87,9 @@ hook.send(embed);
 */
 const homesystemID = localSettings.Map.homesystemID;
 
+var sending_map;
+var sending_names;
+var sending_resi;
 /*****************************************************************
 	creating datas
 ******************************************************************/
@@ -1450,9 +1453,6 @@ function update_crest(token,info,state,unique){//обновляем имеющу
 		}
 	}
 	if(state == 'firstlogin'){
-		const sending_map = map_root.map1;
-		const sending_names = map_root.names
-		const sending_resi = json_files["locals"];
 		//ищем перса, вдруг уже зареган
 		let found = findById(crest.crestDB,info['CharacterID'],'CharacterID');//ищем нужного перса
 		//если перс не найден, значит всё новое - узнаем корпу, делаем новую запись, узнаем локацию
@@ -1493,6 +1493,7 @@ function update_crest(token,info,state,unique){//обновляем имеющу
 						};
 						charLoc.push(sendData);
 						console.log(`${FG_YELLOW}${BG_BLACK}438: success! state: ${state} code: ${code} unique: ${unique}${RESET}`);
+						update_sending_data();
 						send('', "auth_success_" + state, [code, {
 							'map': sending_map,
 							'home': homesystemID,
@@ -1893,7 +1894,11 @@ function cleanLogName(name) {
 	}
 	return "unknown";
 }
-
+function update_sending_data() {
+	sending_map = map_root.map1;
+	sending_names = map_root.names
+	sending_resi = json_files["locals"];
+}
 /*****************************************************************
 	отправка клиенту
 ******************************************************************/
