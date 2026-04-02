@@ -1038,7 +1038,7 @@ class swagger{
 						}
 					}
 					if(!found){
-						var f = findById(crest.crestDB,id,'CharacterID');
+						var f = findById(crest.crestDB, id, 'CharacterID');
 						charLoc.push({
 							"CharacterName" : crest.getNameByID(id),
 							"CharacterID" : id,
@@ -1046,7 +1046,7 @@ class swagger{
 							"structure_id" : 0,
 							"station_id" : 0,
 							"loc_time" : "",
-							"code" : f[1].code
+							"code": Number(f[1].code.replace(/\D/g, ''))  
 						});
 					}
 				}
@@ -1418,7 +1418,8 @@ class map{
 /*****************************************************************
 	функции для работы креста и инфы о персах
 ******************************************************************/
-function update_crest(token,info,state,unique){//обновляем имеющуюся инфу, либо добавляем новую
+function update_crest(token, info, state, unique) {//обновляем имеющуюся инфу, либо добавляем новую
+	unique = Number(unique.replace(/\D/g, ''));
 	var crestDB = crest.crestDB;
 	var charLoc = crest.charLoc;
 	var sendAuthAll = function(c,uni,tst){
@@ -1452,6 +1453,7 @@ function update_crest(token,info,state,unique){//обновляем имеющу
 			code = Math.floor(Math.random() * 10000000);
 		}
 	}
+	code = Number(code.replace(/\D/g, ''));
 	if(state == 'firstlogin'){
 		//ищем перса, вдруг уже зареган
 		let found = findById(crest.crestDB,info['CharacterID'],'CharacterID');//ищем нужного перса
@@ -1489,7 +1491,7 @@ function update_crest(token,info,state,unique){//обновляем имеющу
 							"CharacterName": cleanLogName(name),
 							"CharacterID":id,
 							"solar_system_id":data['solar_system_id'],
-							"code":code
+							"code": code
 						};
 						charLoc.push(sendData);
 						console.log(`${FG_YELLOW}${BG_BLACK}438: success! state: ${state} code: ${code} unique: ${unique}${RESET}`);
@@ -1521,11 +1523,11 @@ function update_crest(token,info,state,unique){//обновляем имеющу
 		//если перс не найден, его нужно добавить в список с кодом, если найден - только исправить код
 		if(!found){
 			let data = {
-				'CharacterID': info['CharacterID'],
-				'CharacterName': cleanLogName(info['CharacterName']),
-				'refresh_token':token['refresh_token'],
+				"CharacterID": info['CharacterID'],
+				"CharacterName": cleanLogName(info['CharacterName']),
+				"refresh_token":token['refresh_token'],
 				"access_token": token['access_token'],
-				'code': unique
+				"code": code
 			};
 			console.log('ADDING NEW CHARACTER: '+info['CharacterName']);
 			crestDB.push(data);	
@@ -1539,7 +1541,7 @@ function update_crest(token,info,state,unique){//обновляем имеющу
 						"CharacterName": cleanLogName(name),
 						"CharacterID":id,
 						"solar_system_id":data['solar_system_id'],
-						"code":unique
+						"code": unique
 					};
 					charLoc.push(sendData);
 					sendAuthAll(unique,unique,state);
