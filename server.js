@@ -1040,6 +1040,7 @@ class swagger{
 					if(!found){
 						var f = findById(crest.crestDB, id, 'CharacterID');
 						var code = f[1].code;
+						console.log('Generated code2: ' + code);
 						code = Number(code.replace(/\D/g, ''));
 						charLoc.push({
 							"CharacterName" : crest.getNameByID(id),
@@ -1455,6 +1456,7 @@ function update_crest(token, info, state, unique) {//обновляем имею
 			code = Math.floor(Math.random() * 10000000);
 		}
 	}
+    console.log('Generated code1: ' + code);
 	code = Number(code.replace(/\D/g, ''));
 	if(state == 'firstlogin'){
 		//ищем перса, вдруг уже зареган
