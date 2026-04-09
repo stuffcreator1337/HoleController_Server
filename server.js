@@ -67,9 +67,7 @@ const channelId = localSettings.Hooks.telegrambot_channelID;
 		console.log('Telegram bot started');
 		await sendMessageToChannel("Server restarted.");
 	} catch (err) {
-		console.error('[TELEGRAM INIT ERROR]', err.code, err.message);
-		console.error(`${FG_RED}[TELEGRAM INIT ERROR] ${err.code} ${err.message}${RESET}`);
-		console.error(`${FG_RED}[TELEGRAM ERROR] ${code} (${type}) -> ${message}${RESET}`);
+		console.error(`${FG_ORANGE}070: TELEGRAM INIT ERROR ${err.code} ${err.message}${RESET}`);
 	}
 })();
 
