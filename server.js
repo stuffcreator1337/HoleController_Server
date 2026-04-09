@@ -248,19 +248,19 @@ io.on("connection", socket => {
 		if (typeof data === 'string') {
 			data = Number(data.replace(/\D/g, ''));
 		}
-	console.log(`${FG_BLUE}${BG_BLACK}====================${RESET}`);
-	console.log(`${FG_BLUE}${BG_BLACK}532: USER AUTH CODE:${data}${RESET}`);
-	console.log(`${FG_BLUE}${BG_BLACK}====================${RESET}`);
+		console.log(`${FG_BLUE}${BG_BLACK}====================${RESET}`);
+		console.log(`${FG_BLUE}${BG_BLACK}532: USER AUTH CODE:${data}${RESET}`);
+		console.log(`${FG_BLUE}${BG_BLACK}====================${RESET}`);
 		// data = JSON.parse(data);
 		var crestDB = crest.crestDB;
 		// console.log("237: we need id: "+data[i]['CharacterID']);
 		var sendData = [];
 		for (var i = 0; i < crestDB.length; i++) {//перебираем персов из данных на соответствие имеющимся
-			//console.log('635: code = ' + crestDB[i].code);
 			var code = crestDB[i].code;
 			if (typeof code === 'string') {
 				code = Number(code.replace(/\D/g, ''));
 			}
+			console.log('635: code: ' + data + ' processing: ' + code + 'name: ' + cleanLogName(crestDB[i]['CharacterName']) +' equal? ' + code == data);
 			if (code == data) {
 				console.log("542: FOUND " + cleanLogName(crestDB[i]['CharacterName']) + " with code " + data);
 				// for(var j=0;j<)
