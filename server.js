@@ -66,7 +66,7 @@ Telebot.launch();
 hook.setUsername(localSettings.Hooks.name);
 hook.setAvatar(localSettings.Hooks.avatar);
 //sendDiscordMessage(hook,localSettings.Hooks.welcomeMsg);
-await sendMessageToChannel("Server restarted.");
+(async () => { await sendMessageToChannel("Server restarted."); })();
 /*
 const embed = new MessageBuilder()
 	.setTitle("Заголовок")
@@ -656,7 +656,9 @@ class zkbmon {
 			that.requestZkb(url1, syst, argument, function (id, date) {
 				const url = `https://zkillboard.com/kill/${id}`;
 				console.log("ZKB officer last kill->", url);
-				if (that.data[group] != undefined && that.data[group][0] != id) { await sendMessageToChannel(url); }
+				if (that.data[group] != undefined && that.data[group][0] != id) {
+					(async () => { await sendMessageToChannel(url); })();
+				}
 					//console.log("Officer kill old&new:", that.data[group].id, id);
 				zkbmonitor.data[group] = [
 					id,
@@ -1941,7 +1943,7 @@ function webhooksSend(txt, id, inf, that) {
 		//sendDiscordMessage(hook,data)
 		//sendDiscordMessage(hook,txt)
 		//Telegram:
-		await sendMessageToChannel(data);
+		(async () => {await sendMessageToChannel(data);})();
 	}
 }
 /*****************************************************************
