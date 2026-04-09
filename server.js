@@ -245,6 +245,9 @@ io.on("connection", socket => {
 	******************************************************************/
 	socket.on('user_auth', function (data) {
 		data = data.replace(/"/g, '');
+		if (typeof data === 'string') {
+			data = Number(data.replace(/\D/g, ''));
+		}
 	console.log(`${FG_BLUE}${BG_BLACK}====================${RESET}`);
 	console.log(`${FG_BLUE}${BG_BLACK}532: USER AUTH CODE:${data}${RESET}`);
 	console.log(`${FG_BLUE}${BG_BLACK}====================${RESET}`);
@@ -254,7 +257,11 @@ io.on("connection", socket => {
 		var sendData = [];
 		for (var i = 0; i < crestDB.length; i++) {//перебираем персов из данных на соответствие имеющимся
 			//console.log('635: code = ' + crestDB[i].code);
-			if (crestDB[i].code == data) {
+			var code = crestDB[i].code;
+			if (typeof code === 'string') {
+				code = Number(code.replace(/\D/g, ''));
+			}
+			if (code == data) {
 				console.log("542: FOUND " + cleanLogName(crestDB[i]['CharacterName']) + " with code " + data);
 				// for(var j=0;j<)
 				if (findById(crest.charLoc, crestDB[i]['CharacterID'], 'CharacterID')) {
