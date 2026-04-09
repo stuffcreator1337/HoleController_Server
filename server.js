@@ -61,12 +61,21 @@ const BG_BLUE = "\x1b[48;5;27m";
 
 const Telebot = new Telegraf(localSettings.Hooks.telegrambot_token);
 const channelId = localSettings.Hooks.telegrambot_channelID;
-Telebot.launch();
+(async () => {
+	try {
+		await Telebot.launch();
+		console.log('Telegram bot started');
+		await sendMessageToChannel("Server restarted.");
+	} catch (err) {
+		console.error('[TELEGRAM INIT ERROR]', err.code, err.message);
+		console.error(`${FG_RED}[TELEGRAM INIT ERROR] ${err.code} ${err.message}${RESET}`);
+		console.error(`${FG_RED}[TELEGRAM ERROR] ${code} (${type}) -> ${message}${RESET}`);
+	}
+})();
 
 hook.setUsername(localSettings.Hooks.name);
 hook.setAvatar(localSettings.Hooks.avatar);
 //sendDiscordMessage(hook,localSettings.Hooks.welcomeMsg);
-(async () => { await sendMessageToChannel("Server restarted."); })();
 /*
 const embed = new MessageBuilder()
 	.setTitle("Заголовок")
@@ -1824,11 +1833,7 @@ server.listen(3000, "0.0.0.0", () => {
 async function sendMessageToChannel(message) {
 	try {
 		await Telebot.telegram.sendMessage(channelId, message);
-
-		console.log(
-			`${FG_GREEN}${BG_BLACK}Telegram msg "${message}" sent to ${channelId}`
-		);
-
+		console.log(`${FG_GREEN}${BG_BLACK}Telegram msg "${message}" sent to ${channelId}${RESET}`);
 	} catch (err) {
 		handleTelegramError(err, message);
 	}
@@ -1837,9 +1842,7 @@ function handleTelegramError(err, message) {
 	const code = err.code || 'UNKNOWN';
 	const type = err.type || 'UNKNOWN';
 
-	console.error(
-		`${FG_RED}[TELEGRAM ERROR] ${code} (${type}) -> ${message}`
-	);
+	console.error(`${FG_RED}[TELEGRAM ERROR] ${code} (${type}) -> ${message}${RESET}`);
 
 	// если нужно — детали можно включать/выключать
 	//if (process.env.DEBUG) {
