@@ -65,9 +65,7 @@ Telebot.launch();
 
 hook.setUsername(localSettings.Hooks.name);
 hook.setAvatar(localSettings.Hooks.avatar);
-console.log("Sending welcome message to Discord webhook...");
-//console.log(localSettings.Hooks.DiscordWHK);
-hook.send(localSettings.Hooks.welcomeMsg);
+//sendDiscordMessage(hook,localSettings.Hooks.welcomeMsg);
 sendMessageToChannel("Server restarted.");
 /*
 const embed = new MessageBuilder()
@@ -107,11 +105,17 @@ const  tools = require(path+'/tools');
 	connection settings
 ******************************************************************/
 
-process.on('uncaughtException', function (err) {
-	console.error(err);
-	console.log(`${FG_RED}${BG_BLACK}000: "Node NOT Exiting...${RESET}`);
+//process.on('uncaughtException', function (err) {
+//	console.error(err);
+//	console.log(`${FG_RED}${BG_BLACK}000: "Node NOT Exiting...${RESET}`);
+//});
+process.on('unhandledRejection', (reason) => {
+	console.error('[UNHANDLED PROMISE]', reason?.code || '', reason?.message || reason);
 });
 
+process.on('uncaughtException', (err) => {
+	console.error(`${FG_RED}${BG_BLACK}[UNCAUGHT EXCEPTION] ${err.code||''} || ${err.message}${RESET}`);
+});
 var json = '';
 var used_code = "";
 
@@ -1815,9 +1819,52 @@ server.listen(3000, "0.0.0.0", () => {
 /*****************************************************************
 	отправка сообщений в telegram
 ******************************************************************/
-function sendMessageToChannel(message) {
-	Telebot.telegram.sendMessage(channelId, message);
-	console.log(`${FG_GREEN}${BG_BLACK}Telegram msg ${message} sent to ${channelId} from ${localSettings.Hooks.telegrambot_token}`);
+async function sendMessageToChannel(message) {
+	try {
+		await Telebot.telegram.sendMessage(channelId, message);
+
+		console.log(
+			`${FG_GREEN}${BG_BLACK}Telegram msg "${message}" sent to ${channelId}`
+		);
+
+	} catch (err) {
+		handleTelegramError(err, message);
+	}
+}
+function handleTelegramError(err, message) {
+	const code = err.code || 'UNKNOWN';
+	const type = err.type || 'UNKNOWN';
+
+	console.error(
+		`${FG_RED}[TELEGRAM ERROR] ${code} (${type}) -> ${message}`
+	);
+
+	// если нужно — детали можно включать/выключать
+	//if (process.env.DEBUG) {
+	//	console.error(err);
+	//}
+}
+/*****************************************************************
+	отправка сообщений в Discord
+******************************************************************/
+async function sendDiscordMessage(webhook, message) {
+	try {
+		await webhook.send(message);
+
+		console.log(`[DISCORD] sent: ${message}`);
+
+	} catch (err) {
+		handleDiscordError(err, message);
+	}
+}
+function handleDiscordError(err, message) {
+	console.error(
+		`[DISCORD ERROR] ${err.code || 'UNKNOWN'} -> ${message}`
+	);
+
+	if (process.env.DEBUG) {
+		console.error(err);
+	}
 }
 /*****************************************************************
 	отправка сообщений в слак
@@ -1891,10 +1938,10 @@ function webhooksSend(txt, id, inf, that) {
 		//Slack:
 		//sendToSlack(data);
 		//Discord:
-		//hook.send(data)
-		//Telegram
-		sendMessageToChannel(data);;
-		//hook.send(txt);
+		//sendDiscordMessage(hook,data)
+		//sendDiscordMessage(hook,txt)
+		//Telegram:
+		sendMessageToChannel(data);
 	}
 }
 /*****************************************************************
