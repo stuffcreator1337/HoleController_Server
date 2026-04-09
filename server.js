@@ -260,7 +260,7 @@ io.on("connection", socket => {
 			if (typeof code === 'string') {
 				code = Number(code.replace(/\D/g, ''));
 			}
-			console.log('635: code: ' + data + ' processing: ' + code + 'name: ' + cleanLogName(crestDB[i]['CharacterName']) +' equal? ' + code == data);
+			console.log("635: code: " + data + " processing: " + code + "name: " + cleanLogName(crestDB[i]['CharacterName']) +" equal? " + code == data);
 			if (code == data) {
 				console.log("542: FOUND " + cleanLogName(crestDB[i]['CharacterName']) + " with code " + data);
 				// for(var j=0;j<)
