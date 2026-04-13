@@ -455,6 +455,14 @@ io.on("connection", socket => {
 	/*****************************************************************
 	|=|	
 	******************************************************************/
+	socket.on('kill_checked', function (data) {
+		var user = data["user"];
+		var sysID = data["id"];
+		map_root.update_system(sysID, 'kill_checked', user);
+	});
+	/*****************************************************************
+	|=|	
+	******************************************************************/
 	socket.on('routes_request', function (user) {
 		// readF('map_root',function(err,data){
 		send(socket, "routes", map_root.map1, user);
@@ -1406,6 +1414,7 @@ class map{
 				if (systems[sys].solarSystemID == sysID) {
 					systems[sys].last_zkb.killmail_id = data.killmail_id;
 					systems[sys].last_zkb.timestamp = data.timestamp;
+					this.systems_data = systems;
 					return;
 				}
 			}
@@ -1415,6 +1424,7 @@ class map{
 				if (systems[sys].solarSystemID == sysID) {
 					systems[sys].designator.expire = expire;
 					systems[sys].designator.data = data;
+					this.systems_data = systems;
 					return;
 				}
 			}
@@ -1424,6 +1434,33 @@ class map{
 				if (systems[sys].solarSystemID == sysID) {
 					systems[sys].sigs.expire = expire;
 					systems[sys].sigs.data = data;
+					this.systems_data = systems;
+					return;
+				}
+			}
+		}
+		if (arg == 'kill_checked') {
+			var charID = data;
+			for (var sys in systems) {
+				if (systems[sys].solarSystemID == sysID) {
+					var user_code = -1;
+					var charLoc = crest.charLoc;
+					for (var i = 0; i < charLoc.length; i++) {
+						if (charLoc[i]['CharacterID'] == charID) {
+                            user_code = charLoc[i]['code'];
+							break;
+						}
+					}
+					if (user_code < 0) return;
+					for (var u_data in systems[sys].last_zkb.user_data) {
+						if (u_data.code == user_code) {
+							systems[sys].last_zkb.user_data[u_data].viewed_zkb = systems[sys].last_zkb.killmail_id;
+							this.systems_data = systems;
+							return;
+						}
+					}
+					systems[sys].last_zkb.user_data.push({ 'code': user_code, 'viewed_zkb': systems[sys].last_zkb.killmail_id });
+					this.systems_data = systems;
 					return;
 				}
 			}
