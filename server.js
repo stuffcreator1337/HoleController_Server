@@ -1,7 +1,7 @@
 var busy = false;
 const path1 = './';
 
-var crest,map_root,charFleet,zkbmonitor;
+var crest, map_root,map_data,charFleet,zkbmonitor;
 
 const http = require('http');
 const https = require('https');
@@ -99,10 +99,10 @@ var sending_resi;
 	creating datas
 ******************************************************************/
 // const dbconst = require(path1+'/db/constellations');
-const dbjumps = require(path1 +'/db/jumps');
-const dbfulleden = require(path1 + '/db/mapofeden');
-const dbsysnames = require(path1+'/db/sysnames');
-const dbregions = require(path1+'/db/regions');
+const dbjumps		= require(path1 + '/db/jumps');
+const dbfulleden	= require(path1 + '/db/mapofeden');
+const dbsysnames	= require(path1 + '/db/sysnames');
+const dbregions		= require(path1 + '/db/regions');
 // const dbholes = require(path1+'/db/wh_holes');
 // const dbinfo = require(path1+'/db/wh_info');
 const  tools = require(path+'/tools');
@@ -145,6 +145,13 @@ readF('map_root', function (err, old_db) {
 	map_root = new map(old_db);
 	map_root.clean_timer();
 	// console.log(map_root);
+});
+
+readF('map_data', function (err, old_db) {
+	console.log(`${FG_GREEN}${BG_BLACK}133: Creating 'map_data' object...${RESET}`);
+	//map_data = new map(old_db);
+	//map_data.clean_timer();
+	// console.log(map_data);
 });
 
 /*****************************************************************
@@ -294,22 +301,11 @@ io.on("connection", socket => {
 				'home' : homesystemID,
 				'custom_sys_names': map_root.names,
 				'designators': map_root.designators,
+				'systems_data': map_root.systems_data,
 				'residents': json_files["locals"] 
 			}, data);
 		}
 	});
-	/*****************************************************************
-	|=|		
-	******************************************************************/
-	// socket.on('residents_request', function(data) {
-	// var user = data["user"];
-	// var old_j = json_files["locals"];
-	// send('', "new_chars_position", old_j,user);
-	// });
-	// socket.on('residents_update', function() {
-	// var old_j = json_files["locals"];
-	// send('', "new_chars_position", old_j,"all");
-	// });
 	/*****************************************************************
 	|=|	получил сигнатуры от клиента
 	******************************************************************/
@@ -337,8 +333,10 @@ io.on("connection", socket => {
 	|=|	
 	******************************************************************/
 	socket.on('designator_from_client', function (data) {
-		console.log("319:>>>>>> 'designator_from_client'");
 		var currDate = new Date().getTime();
+		var expireDate = currDate+(1000*60*60*24*7);
+		map_root.update_system(data["id"], 'designator', { 'expire': expireDate, 'data' : data["designator"] });
+		console.log("319:>>>>>> 'designator_from_client'");
 		var newData = { "id": data["id"], "designator": data["designator"], "last_visited": currDate };
 		var dataclear = false;
 		if (data["designator"] == "") dataclear = true;
@@ -436,28 +434,13 @@ io.on("connection", socket => {
 	******************************************************************/
 	socket.on('map_request', function (user) {
 		console.log("650:>>>>>> 'map_request' from " + user + " ==========================");
-		// readF('map_root',function(err,data){
-		// var crestDB = crest.crestDB;
-		// for(var i=0; i<crestDB.length;i++){
-
-		// if(crestDB[i]['CharacterID'] == user){}
-		// var url = 'https://esi.evetech.net/latest/characters/'+charID+'/location/?datasource=tranquility';
-		// getCharacterData(url,token, function(err, data,id) {
-		// if (err) {
-		// console.log(err+' Location for: '+id);
-		// } else {
-		// send(socket, "map_connections", {'map':map_root.map1,'residents':json_files["locals"]},user);
-		// }
-		// });
-		// }
-		// console.log(map_root.map1);
-		// console.log(tools.correctJS(map_root.map1));
 		map_root.map1 = tools.correctJS(map_root.map1);
 		send(socket, "map_connections", { 
 			'map': map_root.map1, 
 			'home' : homesystemID,
 			'custom_sys_names': map_root.names, 
 			'designators': map_root.designators,
+			'systems_data': map_root.systems_data,
 			'residents': json_files["locals"] 
 		}, user);
 		// });
@@ -554,15 +537,6 @@ io.on("connection", socket => {
 			map_root.map1 = old_j;
 		} else { console.log("empty json from restore_last"); }
 		// });
-	});
-	/*****************************************************************
-	|=|		обновить локацию перса при сообщении из фантома
-	******************************************************************/
-	socket.on('message_from_phantom', function (data) {
-		// var user = data["user"];
-		// console.log('message_from_phantom:',data);
-		crest.updateCharLocPhantom(data.characterID, data.characterName, data.location, crest.charLoc);
-		// send(socket, "map_replot", map_root.map1,data);
 	});
 
 	/*****************************************************************
@@ -711,6 +685,11 @@ class zkbmon {
 							data1[0].killmail_id,
 							timestamp
 						];
+						var data = {
+							'killmail_id' : data1[0].killmail_id,
+                            'titimestamp': timestamp
+						}
+						map_root.update_system(syst, 'zkb', data);
 					}
 					catch (e) {
 						console.log(`${FG_ORANGE}${BG_BLACK}${e} 638: ZKB JSON.parse error for ${data1[0].killmail_id} from ${syst}${RESET}`);
@@ -1077,48 +1056,6 @@ class swagger{
 				}
 			},charID);
 	}
-	/*****************************************************************
-	|=|	обновляем текущую локацию по команде из фантома
-	******************************************************************/
-	updateCharLocPhantom(id, charName, sysName, charLoc){
-		var found = false;
-		for(let i=0;i<charLoc.length;i++){
-			if(charLoc[i]['CharacterID'] == id){			
-				// console.log('======UPDATING CHARACTER ONLINE FOR: '+id+'=====');
-				var old_id = tools.clone(charLoc[i]["solar_system_id"]);
-				var new_id = dbsysnames[sysName].solarSystemID;//tools.getSysId(sysName);
-				var old_time = charLoc[i]["loc_time"];
-				var new_time = new Date().getTime();
-				charLoc[i]['online'] = true;
-				charLoc[i]["loc_time"] = new_time;
-				charLoc[i]["solar_system_id"] = dbsysnames[sysName].solarSystemID;//tools.getSysId(sysName);
-				found = true;
-				if((new_id != old_id)&&(new_time < old_time+300000)){
-					console.log('======UPDATING CHARACTER POSITION FOR: '+id+'=====');
-					console.log(new_id,old_id); 
-					// console.log(map_root.jumps,[new_id]);
-					if ((tools.isWh(dbfulleden, new_id) == true) || (tools.isWh(dbfulleden, old_id) == true) || (map_root.jumps[old_id][new_id] == null)) {
-						console.log(`${FG_CYAN}${BG_BLACK}Old sysID: ${old_id} new sysID:${new_id}${RESET}`);
-						map_root.create_link(new_id,old_id,'',id);
-					}
-				}	
-			}else{
-				if(charLoc[i]["loc_time"] < (charLoc[i]["loc_time"] + 600000)){
-					charLoc[i]['online'] = false;
-				}
-			}
-		}
-		if(!found){
-				console.log('======CREATING NEW ENTRY FOR: '+id+'=====');
-			charLoc.push({
-				"CharacterName": cleanLogName(charName),
-				"CharacterID" : id,
-				"solar_system_id" : dbsysnames[sysName].solarSystemID,//tools.getSysId(sysName);
-				"loc_time" : "",
-				"code" : 100500
-			});
-		}
-	}
 	getNameByID(id){
 	var crestDB = this.crestDB;
 	for(let i=0;i<crestDB.length;i++){
@@ -1312,15 +1249,14 @@ charFleet = new fleet();
 ******************************************************************/
 class map{
 	constructor(json){
-		this.map1 			= json || readFsync(path +'/server_files/map1_tranq.json');
-		// for(var i=0;i<16;i++){
-		// this.map1.push(json[i]);}// || readFsync(path+'/server_files/map1_tranq.json')[i]
+		this.map1			= json || readFsync(path +'/server_files/map_root_tranq.json');
 		this.systems 		= dbfulleden;
 		// this.consts 		= dbconst;
 		this.jumps 			= dbjumps;
 		this.regions 		= dbregions;
 		// this.holes 		= dbholes;
 		// this.info 		= dbinfo;
+		this.systems_data	= readFsync(path +'/server_files/systems_data_tranq.json');
 		this.sigs 			= readFsync(path +'/server_files/sigs_tranq.json');
 		this.names 			= readFsync(path +'/server_files/names_tranq.json');
 		this.designators	= readFsync(path +'/server_files/designators_tranq.json');
@@ -1418,7 +1354,9 @@ class map{
 		}
 		// console.log(links);
 		//console.log(old_j[i]["sys1"],old_j[i]["sys2"]);
-		if(!already_exists){
+		if (!already_exists) {
+			this.update_system(links["sys1"], 'add');
+			this.update_system(links["sys2"], 'add');
 			old_j.push(links);
 			if(links.sys1 == homesystemID.toString() || links.sys2 == homesystemID.toString()){
 				var s = '';
@@ -1436,6 +1374,54 @@ class map{
 		}
 		else{
 			console.log("empty json from new_link");
+		}
+	}
+	update_system(sysID, arg, data = {}) {
+		var systems = this.systems_data;
+		if (arg == 'add') {
+			for (var sys in systems) {
+				if (systems[sys].solarSystemID == sysID) {
+					return;
+				}
+			}
+			var currDate = new Date();
+			var expire = currDate.getTime() + (1000*60*60*24*7);
+			var addsys = {
+				'solarSystemID': sysID,
+				'expire': expire,
+				'sigs': {
+					'expire': expire,
+					'data': []
+				},
+				'last_zkb': {
+					'killmail_id': -1,
+					'timestamp': -1
+				},
+				'designator': {
+					'expire': expire,
+					'data': ''
+				},
+				'locals_text' : '',
+				'locals_corp' : -1,
+				'locals_alli' : -1
+			};
+			this.systems_data.push(addsys)
+		}
+		if (arg == 'zkb') {
+			for (var sys in systems) {
+				if (systems[sys].solarSystemID == sysID) {
+					systems[sys].last_zkb = data;
+					return;
+				}
+			}
+		}
+		if (arg == 'designator') {
+			for (var sys in systems) {
+				if (systems[sys].solarSystemID == sysID) {
+					systems[sys].designator = data;
+					return;
+				}
+			}
 		}
 	}
 }
@@ -1466,6 +1452,7 @@ function update_crest(token, info, state, unique) {//обновляем имею
 			'home': homesystemID,
 			'custom_sys_names': map_root.names,
 			'designators': map_root.designators,
+			'systems_data': map_root.systems_data,
 			'residents': json_files["locals"]
 		},sendData],uni);
 	};
@@ -1816,7 +1803,6 @@ console.log(`${FG_SALAD}${BG_BLACK}507: Socket.IO running on port: ${localSettin
 
 var fs = require('fs');
 var json_files = {};
-json_files["users"] =  readFsync(path+'/server_files/users_tranq.json');
 json_files["locals"] = [];
 
 var backup = setInterval(saveFile, 10000);
@@ -2002,27 +1988,31 @@ function saveFile(){
 	};
 	// console.log(crest.crestDB);
 	writeF(crest.crestDB,"crestDB",function(){
-			var size = fileSize("crestDB");
+			//var size = fileSize("crestDB");
 			// console.log("| ["+addLength(crest.crestDB,8,' ')+"]   --- "+addLength(size,10,'-')+" bytes  |");
 		});
 	writeF(crest.charLoc,"charLoc",function(){
-			var size = fileSize("charLoc");
+			//var size = fileSize("charLoc");
 			// console.log("| ["+addLength(file,8,' ')+"]   --- "+addLength(size,10,'-')+" bytes  |");
 		});
 	writeF(map_root.sigs,"sigs",function(){
-			var size = fileSize("sigs");
+			//var size = fileSize("sigs");
 			// console.log("| ["+addLength(file,8,' ')+"]   --- "+addLength(size,10,'-')+" bytes  |");
 		});
 	writeF(map_root.names,"names",function(){
-			var size = fileSize("names");
+			//var size = fileSize("names");
 			// console.log("| ["+addLength(file,8,' ')+"]   --- "+addLength(size,10,'-')+" bytes  |");
 		});
 	writeF(map_root.map1,"map_root",function(){
-			var size = fileSize("map_root");
+			//var size = fileSize("map_root");
 			// console.log("| ["+addLength(file,8,' ')+"]   --- "+addLength(size,10,'-')+" bytes  |");
 		});
 	writeF(map_root.designators,"designators",function(){
-			var size = fileSize("designators");
+			//var size = fileSize("designators");
+			// console.log("| ["+addLength(file,8,' ')+"]   --- "+addLength(size,10,'-')+" bytes  |");
+		});
+	writeF(map_root.systems_data,"systems_data",function(){
+			//var size = fileSize("systems_data");
 			// console.log("| ["+addLength(file,8,' ')+"]   --- "+addLength(size,10,'-')+" bytes  |");
 		});
 	// for(var file in json_files) {
