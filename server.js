@@ -1485,14 +1485,16 @@ class map{
 		if (arg == 'local_corp') {
 			for (var sys in systems) {
 				if (systems[sys].solarSystemID == sysID) {
-
 					var corpID = data;
 					let url = 'https://esi.evetech.net/corporations/' + corpID;
 					var that = this;
 					getCCPdata(url, function (e, response) {
 						if (e) { console.log(`${FG_RED}${BG_BLACK}${err} 488: error ${RESET}`); return; }
-						console.log(`${FG_YELLOW}${BG_BLACK}489: Adding local corp: ${response.corporation_name} to sysID: ${sysID}${RESET}`);
-						console.log(response);
+						console.log(`${FG_YELLOW}${BG_BLACK}494: Adding local corp: ${response.name} to sysID: ${sysID}${RESET}`);
+						systems[sys].locals.corp_ID = corpID;
+						systems[sys].locals.corp_data = response;
+                        map_root.systems_data = systems;
+						//console.log(response);
 					});
 
 					return;
