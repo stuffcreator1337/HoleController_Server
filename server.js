@@ -304,6 +304,7 @@ io.on("connection", socket => {
 	******************************************************************/
 	socket.on('sigs_from_client', function (data) {
 		console.log("296:>>>>>> 'sigs_from_client'");
+		map_root.update_system(data["id"], 'sigs', data["sigs"]);
 		var dWrite = { "id": data["id"], "system": data["system"], "sigs": data["sigs"] };
 		var old_sigs = map_root.sigs;
 		var finded = false;
@@ -326,9 +327,7 @@ io.on("connection", socket => {
 	|=|	
 	******************************************************************/
 	socket.on('designator_from_client', function (data) {
-		var currDate = new Date().getTime();
-		var expireDate = currDate+(1000*60*60*24*7);
-		map_root.update_system(data["id"], 'designator', { 'expire': expireDate, 'data' : data["designator"] });
+		map_root.update_system(data["id"], 'designator', data["designator"]);
 		console.log("319:>>>>>> 'designator_from_client'");
 		var newData = { "id": data["id"], "designator": data["designator"], "last_visited": currDate };
 		var dataclear = false;
@@ -1371,14 +1370,14 @@ class map{
 	}
 	update_system(sysID, arg, data = {}) {
 		var systems = this.systems_data;
+		var currDate = new Date();
+		var expire = currDate.getTime() + (1000 * 60 * 60 * 24 * 7);
 		if (arg == 'add') {
 			for (var sys in systems) {
 				if (systems[sys].solarSystemID == sysID) {
 					return;
 				}
 			}
-			var currDate = new Date();
-			var expire = currDate.getTime() + (1000*60*60*24*7);
 			var addsys = {
 				'solarSystemID': sysID,
 				'solarSystemName': data,
@@ -1389,7 +1388,8 @@ class map{
 				},
 				'last_zkb': {
 					'killmail_id': -1,
-					'timestamp': -1
+					'timestamp': -1,
+					'user_data': []
 				},
 				'designator': {
 					'expire': expire,
@@ -1404,7 +1404,8 @@ class map{
 		if (arg == 'zkb') {
 			for (var sys in systems) {
 				if (systems[sys].solarSystemID == sysID) {
-					systems[sys].last_zkb = data;
+					systems[sys].last_zkb.killmail_id = data.killmail_id;
+					systems[sys].last_zkb.timestamp = data.timestamp;
 					return;
 				}
 			}
@@ -1412,7 +1413,17 @@ class map{
 		if (arg == 'designator') {
 			for (var sys in systems) {
 				if (systems[sys].solarSystemID == sysID) {
-					systems[sys].designator = data;
+					systems[sys].designator.expire = expire;
+					systems[sys].designator.data = data;
+					return;
+				}
+			}
+		}
+		if (arg == 'sigs') {
+			for (var sys in systems) {
+				if (systems[sys].solarSystemID == sysID) {
+					systems[sys].sigs.expire = expire;
+					systems[sys].sigs.data = data;
 					return;
 				}
 			}
