@@ -1,7 +1,7 @@
 var busy = false;
 const path1 = './';
 
-var crest, map_root,map_data,charFleet,zkbmonitor;
+var crest, map_root,charFleet,zkbmonitor;
 
 const http = require('http');
 const https = require('https');
@@ -145,13 +145,6 @@ readF('map_root', function (err, old_db) {
 	map_root = new map(old_db);
 	map_root.clean_timer();
 	// console.log(map_root);
-});
-
-readF('map_data', function (err, old_db) {
-	console.log(`${FG_GREEN}${BG_BLACK}133: Creating 'map_data' object...${RESET}`);
-	//map_data = new map(old_db);
-	//map_data.clean_timer();
-	// console.log(map_data);
 });
 
 /*****************************************************************
