@@ -1404,9 +1404,13 @@ class map{
 					'data': ''
 				},
 				'annotation': '',
-				'locals_text' : '',
-				'locals_corp' : -1,
-				'locals_alli' : -1
+				'locals_text': '',
+				'locals': {
+					'corp_ID': -1,
+					'corp_data': {},
+					'alli_ID': -1,
+					'alli_data': {}
+				}
 			};
 			this.systems_data.push(addsys)
 		}
