@@ -680,7 +680,7 @@ class zkbmon {
 						];
 						var data = {
 							'killmail_id' : data1[0].killmail_id,
-                            'titimestamp': timestamp
+                            'timestamp': timestamp
 						}
 						map_root.update_system(syst, 'zkb', data);
 					}
