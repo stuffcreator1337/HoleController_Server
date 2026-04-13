@@ -1403,6 +1403,7 @@ class map{
 					'expire': expire,
 					'data': ''
 				},
+				'annotation': '',
 				'locals_text' : '',
 				'locals_corp' : -1,
 				'locals_alli' : -1
