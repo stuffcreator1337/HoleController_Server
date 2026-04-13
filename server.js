@@ -1431,7 +1431,7 @@ class map{
 					return;
 				}
 			}
-			update_system(sysID, 'add'); return;
+			this.update_system(sysID, 'add'); return;
 		}
 		if (arg == 'designator') {
 			for (var sys in systems) {
@@ -1442,7 +1442,7 @@ class map{
 					return;
 				}
 			}
-			update_system(sysID, 'add'); return;
+			this.update_system(sysID, 'add'); return;
 		}
 		if (arg == 'sigs') {
 			for (var sys in systems) {
@@ -1453,7 +1453,7 @@ class map{
 					return;
 				}
 			}
-			update_system(sysID, 'add'); return;
+			this.update_system(sysID, 'add'); return;
 		}
 		if (arg == 'kill_checked') {
 			var charID = data;
@@ -1480,7 +1480,7 @@ class map{
 					return;
 				}
 			}
-			update_system(sysID, 'add'); return;
+			this.update_system(sysID, 'add'); return;
 		}
 		if (arg == 'local_corp') {
 			for (var sys in systems) {
@@ -1498,7 +1498,7 @@ class map{
 					return;
 				}
 			}
-			update_system(sysID, 'add'); return;
+			this.update_system(sysID, 'add'); return;
 		}
 	}
 }
