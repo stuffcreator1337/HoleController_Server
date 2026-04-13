@@ -1410,7 +1410,6 @@ class map{
 		}
 		if (arg == 'designator') {
 			for (var sys in systems) {
-				console.log(sysID, systems[sys].solarSystemID, systems[sys].solarSystemID == sysID);
 				if (systems[sys].solarSystemID == sysID) {
 					systems[sys].designator = data;
 					return;
