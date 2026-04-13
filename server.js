@@ -359,6 +359,7 @@ io.on("connection", socket => {
 	|=|	
 	******************************************************************/
 	socket.on('sysname_from_client', function (data) {
+        map_root.update_system(data["id"], 'annotation', data["name"]);
 		console.log("348:>>>>>> 'sysname_from_client'");
 		var newData = { "id": data["id"], "system": data["system"], "name": data["name"] };
 		var dataclear = false;
@@ -1497,6 +1498,16 @@ class map{
 						//console.log(response);
 					});
 
+					return;
+				}
+			}
+			this.update_system(sysID, 'add'); return;
+		}
+		if (arg == 'annotation') {
+			for (var sys in systems) {
+				if (systems[sys].solarSystemID == sysID) {
+					systems[sys].annotation = data;
+					this.systems_data = systems;
 					return;
 				}
 			}
