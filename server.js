@@ -1348,8 +1348,8 @@ class map{
 		// console.log(links);
 		//console.log(old_j[i]["sys1"],old_j[i]["sys2"]);
 		if (!already_exists) {
-			this.update_system(links["sys1"], 'add');
-			this.update_system(links["sys2"], 'add');
+			this.update_system(links["sys1"], 'add', this.systems[links.sys1].solarSystemName);
+			this.update_system(links["sys2"], 'add', this.systems[links.sys2].solarSystemName);
 			old_j.push(links);
 			if(links.sys1 == homesystemID.toString() || links.sys2 == homesystemID.toString()){
 				var s = '';
@@ -1381,6 +1381,7 @@ class map{
 			var expire = currDate.getTime() + (1000*60*60*24*7);
 			var addsys = {
 				'solarSystemID': sysID,
+				'solarSystemName': data,
 				'expire': expire,
 				'sigs': {
 					'expire': expire,
