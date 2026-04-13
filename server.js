@@ -405,6 +405,13 @@ io.on("connection", socket => {
 	/*****************************************************************
 	|=|		
 	******************************************************************/
+	socket.on('local_corp_from_client', function (data) {
+		console.log("588:>>>>>> 'local_corp_from_client' received from " + data["user"]);
+		map_root.update_system(data["id"], 'local_corp', data["corpID"]);
+	});
+	/*****************************************************************
+	|=|		
+	******************************************************************/
 	socket.on('system_names_request', function (data) {
 		console.log("588:>>>>>> 'system_names' requested from " + data["user"]);
 
@@ -1412,7 +1419,8 @@ class map{
 					'alli_data': {}
 				}
 			};
-			this.systems_data.push(addsys)
+			this.systems_data.push(addsys);
+			return;
 		}
 		if (arg == 'zkb') {
 			for (var sys in systems) {
@@ -1423,6 +1431,7 @@ class map{
 					return;
 				}
 			}
+			update_system(sysID, 'add'); return;
 		}
 		if (arg == 'designator') {
 			for (var sys in systems) {
@@ -1433,6 +1442,7 @@ class map{
 					return;
 				}
 			}
+			update_system(sysID, 'add'); return;
 		}
 		if (arg == 'sigs') {
 			for (var sys in systems) {
@@ -1443,6 +1453,7 @@ class map{
 					return;
 				}
 			}
+			update_system(sysID, 'add'); return;
 		}
 		if (arg == 'kill_checked') {
 			var charID = data;
@@ -1469,6 +1480,25 @@ class map{
 					return;
 				}
 			}
+			update_system(sysID, 'add'); return;
+		}
+		if (arg == 'local_corp') {
+			for (var sys in systems) {
+				if (systems[sys].solarSystemID == sysID) {
+
+					var corpID = data;
+					let url = 'https://esi.evetech.net/corporations/' + corpID;
+					var that = this;
+					getCCPdata(url, function (e, response) {
+						if (e) { console.log(`${FG_RED}${BG_BLACK}${err} 488: error ${RESET}`); return; }
+						console.log(`${FG_YELLOW}${BG_BLACK}489: Adding local corp: ${response.corporation_name} to sysID: ${sysID}${RESET}`);
+						console.log(response);
+					});
+
+					return;
+				}
+			}
+			update_system(sysID, 'add'); return;
 		}
 	}
 }
