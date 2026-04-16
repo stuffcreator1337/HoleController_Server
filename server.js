@@ -791,10 +791,10 @@ class swagger{
 	|=|	обновляем токен начиная с i, доходим до конца и заканчиваем
 	******************************************************************/
 	delayRefreshToken(i, comment){
-		console.log("delayRefreshToken "+i+": " + comment);
+		//console.log("delayRefreshToken "+i+": " + comment);
 		var crestDB = this.crestDB;
 		if (i == crestDB.length) {
-            console.log("Finished refreshing tokens.");
+            console.log("Finished refreshing tokens. Last num:"+i);
 			return
 		};
 		
@@ -805,7 +805,7 @@ class swagger{
 			'grant_type': 'refresh_token',
 			'refresh_token': crestDB[i]['refresh_token']
 		};
-		console.log("215: refreshing token for: " + cleanLogName(crestDB[i]['CharacterName']));
+		console.log("215: refreshing token num:" + i + " reason:" + comment + " for: " + cleanLogName(crestDB[i]['CharacterName']));
 		var data_in = { 'id': ch_id, 'name': cleanLogName(crestDB[i]['CharacterName']) };
 		auth(data, data_in, function (data_out, err, answer) {
 			var id = data_out.id;
