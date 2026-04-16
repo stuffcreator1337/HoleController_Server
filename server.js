@@ -1409,6 +1409,7 @@ class map{
 			var addsys = {
 				'solarSystemID': sysID,
 				'solarSystemName': data,
+				'last_visited': currDate,
 				'expire': expire,
 				'sigs': {
 					'expire': expire,
@@ -1451,6 +1452,16 @@ class map{
 				if (systems[sys].solarSystemID == sysID) {
 					systems[sys].designator.expire = expire;
 					systems[sys].designator.data = data;
+					this.systems_data = systems;
+					return;
+				}
+			}
+			this.update_system(sysID, 'add'); return;
+		}
+		if (arg == 'jump') {
+			for (var sys in systems) {
+				if (systems[sys].solarSystemID == sysID) {
+					systems[sys].last_visited = currDate;
 					this.systems_data = systems;
 					return;
 				}
