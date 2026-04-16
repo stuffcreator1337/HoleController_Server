@@ -214,7 +214,7 @@ const server = http.createServer((req, res) => {
 		'code': code
 	};
 
-	auth(data, '', (err, name, json1) => {
+	auth(data, '', (data_out, err, json1) => {
 		if (err) {6
 			console.log("142: auth() error:", err);
 			return;
@@ -764,7 +764,10 @@ class swagger{
 					'refresh_token': crestDB[i]['refresh_token']
 				};
 				console.log(`${FG_PINK}${BG_BLACK}618: refreshing token for: ${cleanLogName(crestDB[i]['CharacterName'])}${RESET}`);
-				auth(data, ch_id, function(err, id, answer) {
+				var data_in = { 'id': ch_id, 'name': cleanLogName(crestDB[i]['CharacterName']) };
+				auth(data, data_in, function (data_out, err, answer) {
+					var id = data_out.id;
+					var name = data_out.name;
 					for(let i=0;i<crestDB.length;i++){
 						if(id == crestDB[i]['CharacterID']){								
 							if (err) {
@@ -773,9 +776,10 @@ class swagger{
 							} else {
 								crest.charStatus[id] = 'refreshed';
 								send('', "token_refreshed", id, crestDB[i]['code']);
-								console.log("old token: ..." + crestDB[i]['access_token'].substring(crestDB[i]['access_token'].length - 5));
+								var log1 = "old token: ..." + crestDB[i]['access_token'].substring(crestDB[i]['access_token'].length - 5);
 								crestDB[i]['access_token'] = answer['access_token'];
-								console.log("new token: ..." + crestDB[i]['access_token'].substring(crestDB[i]['access_token'].length - 5));
+								var log2 = "new token: ..." + crestDB[i]['access_token'].substring(crestDB[i]['access_token'].length - 5);
+								consol.elog(log1 + " | " + log2 + " for char: " + name);
 							}
 						}
 					}
@@ -802,7 +806,10 @@ class swagger{
 			'refresh_token': crestDB[i]['refresh_token']
 		};
 		console.log("215: refreshing token for: " + cleanLogName(crestDB[i]['CharacterName']));
-		auth(data, ch_id, function(err, id, answer) {
+		var data_in = { 'id': ch_id, 'name': cleanLogName(crestDB[i]['CharacterName']) };
+		auth(data, data_in, function (data_out, err, answer) {
+			var id = data_out.id;
+			var name = data_out.name;
 			for(let i=0;i<crestDB.length;i++){
 				if(id == crestDB[i]['CharacterID']){								
 					if (err) {
@@ -812,11 +819,16 @@ class swagger{
 					} else {
 						crest.charStatus[id] = 'refreshed';
 						send('', "token_refreshed", id, crestDB[i]['code']);
-						if (crestDB[i]['access_token']) console.log("old token: ..." + crestDB[i]['access_token'].substring(crestDB[i]['access_token'].length - 5));
-						else { console.log("old token: NONE"); }
+						var log1 = "";
+						if (crestDB[i]['access_token']) log1 ="old token: ..." + crestDB[i]['access_token'].substring(crestDB[i]['access_token'].length - 5);
+						else { log1 = "old token: NONE"; }
+
 						crestDB[i]['access_token'] = answer['access_token'];
-						if (crestDB[i]['access_token']) console.log("new token: ..." + crestDB[i]['access_token'].substring(crestDB[i]['access_token'].length - 5));
-						else { console.log("new token: NONE"); }
+
+						var log2 = "";
+						if (crestDB[i]['access_token']) log2 = "new token: ..." + crestDB[i]['access_token'].substring(crestDB[i]['access_token'].length - 5);
+						else { log2 = "new token: NONE"; }
+						consol.elog(log1 + " | " + log2 + " for char: " + name);
 					}
 				}
 			}
@@ -1690,7 +1702,7 @@ function findById(base,value,type){
 }
 	
 
-function auth(data,name,callback){
+function auth(data_in,data_out,callback){
 	var authorizationBasic = Buffer.from(localSettings.App.client + ':' + localSettings.App.secret).toString('base64');
 	var options = {
 		method: 'POST',
@@ -1699,17 +1711,17 @@ function auth(data,name,callback){
 				'Authorization': 'Basic ' + authorizationBasic,
 				'Content-Type': 'application/json'
 			},
-		form : data
+		form: data_in
 	};
 	//console.log("133:");
 	//console.log(options);
 	request.post(options, function (error, response, body) {
 		if (error || response.statusCode !== 200) {
-			callback(error || {statusCode: response.statusCode},name);
+			callback(data_out, error || { statusCode: response.statusCode });
 		}
 		try{
 			let json = JSON.parse(body);
-				callback(null, name, json);  
+			callback(data_out, null, json);  
 		}
 		catch (e) {
 			console.log(`${FG_RED}${BG_BLACK}428: ${e}${RESET}`);
