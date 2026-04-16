@@ -1466,14 +1466,30 @@ class map{
 					for (var i = 0; i < charLoc.length; i++) {
 						if (charLoc[i]['CharacterID'] == charID) {
 							user_code = charLoc[i]['code'];
-							user_code = Number(user_code.replace(/\D/g, ''));
+							if (typeof user_code === 'string') {
+								user_code = Number(user_code.replace(/\D/g, ''));
+							}
 							break;
 						}
 					}
 					if (user_code < 0) return;
-					for (var u_data in systems[sys].last_zkb.user_data) {
-						if (u_data.code == user_code) {
-							systems[sys].last_zkb.user_data[u_data].viewed_zkb = systems[sys].last_zkb.killmail_id;
+					var found = false;
+					if (systems[sys].last_zkb.user_data) {
+						var userData = systems[sys].last_zkb.user_data;
+						for (var i = userData.length - 1; i >= 0; i--) { // Идём с конца
+							var u_data = userData[i];
+							if (u_data.code == user_code) {
+								if (!found) {
+									// Первое вхождение - обновляем
+									userData[i].viewed_zkb = systems[sys].last_zkb.killmail_id;
+									found = true;
+								} else {
+									// Последующие вхождения - удаляем
+									userData.splice(i, 1);
+								}
+							}
+						}
+						if (found) {
 							this.systems_data = systems;
 							return;
 						}
