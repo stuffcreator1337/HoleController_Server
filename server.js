@@ -329,6 +329,7 @@ io.on("connection", socket => {
 	socket.on('designator_from_client', function (data) {
 		map_root.update_system(data["id"], 'designator', data["designator"]);
 		console.log("319:>>>>>> 'designator_from_client'");
+		var currDate = new Date().getTime();
 		var newData = { "id": data["id"], "designator": data["designator"], "last_visited": currDate };
 		var dataclear = false;
 		if (data["designator"] == "") dataclear = true;
@@ -1464,7 +1465,8 @@ class map{
 					var charLoc = crest.charLoc;
 					for (var i = 0; i < charLoc.length; i++) {
 						if (charLoc[i]['CharacterID'] == charID) {
-                            user_code = charLoc[i]['code'];
+							user_code = charLoc[i]['code'];
+							user_code = Number(user_code.replace(/\D/g, ''));
 							break;
 						}
 					}
