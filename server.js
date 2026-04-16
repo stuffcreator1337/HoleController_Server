@@ -779,7 +779,7 @@ class swagger{
 								var log1 = "old token: ..." + crestDB[i]['access_token'].substring(crestDB[i]['access_token'].length - 5);
 								crestDB[i]['access_token'] = answer['access_token'];
 								var log2 = "new token: ..." + crestDB[i]['access_token'].substring(crestDB[i]['access_token'].length - 5);
-								consol.elog(log1 + " | " + log2 + " for char: " + name);
+								console.log(log1 + " | " + log2 + " for char: " + name);
 							}
 						}
 					}
@@ -828,7 +828,7 @@ class swagger{
 						var log2 = "";
 						if (crestDB[i]['access_token']) log2 = "new token: ..." + crestDB[i]['access_token'].substring(crestDB[i]['access_token'].length - 5);
 						else { log2 = "new token: NONE"; }
-						consol.elog(log1 + " | " + log2 + " for char: " + name);
+						console.log(log1 + " | " + log2 + " for char: " + name);
 					}
 				}
 			}
