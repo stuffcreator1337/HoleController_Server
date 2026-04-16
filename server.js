@@ -870,8 +870,8 @@ class swagger{
 				sendData.push(charLoc[i]);
 			}
 		}
-		send('', "new_chars_position", sendData, 'all');
-		send('', "zkb_data", crest.systemsKB, 'all');
+		send('', "actualize_data", { 'chardata': sendData, 'systemdata': map_root.systems_data }, 'all');
+		//send('', "zkb_data", crest.systemsKB, 'all');
 	}
 	/*****************************************************************
 	|=|	обновляем дынные по системам с килборды
