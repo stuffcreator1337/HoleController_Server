@@ -13,6 +13,7 @@ const { MessageBuilder } = require('discord-webhook-node');
 var XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
 const { Telegraf } = require('telegraf');
 const upath = require("path");
+var fs = require('fs');
 
 let localSettings = {};
 
@@ -1980,7 +1981,6 @@ function postCharacterData(h,u,token,callback,id,data){
 console.log(`${FG_SALAD}${BG_BLACK}_______________________________________${RESET}`);
 console.log(`${FG_SALAD}${BG_BLACK}507: Socket.IO running on port: ${localSettings.Server.port}${RESET}`);
 
-var fs = require('fs');
 var json_files = {};
 json_files["locals"] = [];
 
