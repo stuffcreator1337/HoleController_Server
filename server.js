@@ -680,6 +680,7 @@ class zkbmon {
 							//console.log("ZKB ->", argument, syst, data1[0].killmail_id, kill.killmail_time);
 							const timestamp = new Date(kill.killmail_time).getTime();
 							callback(data1[0].killmail_id, timestamp);
+							if (response && response.socket) response.socket.destroy(); // закрыть сокет
 						}
 						catch (e) {
 							console.log(`${FG_ORANGE}${BG_BLACK}${e} 623: ZKB JSON.parse error for ${data1[0].killmail_id}from ${syst}${RESET}`);
@@ -1835,6 +1836,7 @@ function getAjaxZKB(u, callback) {
 		try {
 			//console.log(body);
 			callback(null, JSON.parse(body));
+			if (response && response.socket) response.socket.destroy(); // закрыть сокет
 		} catch (e) {
 			console.log(`${FG_YELLOW}${BG_BLACK}550: ZKB JSON ERROR: ${e}${RESET}`);
 			callback(e, []);
@@ -1901,7 +1903,8 @@ function getCharacterData(what, h,u,token,callback,id,name){
 		}
 		try{				
 			let data = JSON.parse(body);
-			callback(null, data, id, name);  			
+			callback(null, data, id, name);
+			if (response && response.socket) response.socket.destroy(); // закрыть сокет			
 		}
 		catch (e) {
 			console.log(`${FG_RED}${BG_BLACK}1044: ${e}${RESET}`);
