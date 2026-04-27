@@ -890,14 +890,15 @@ class swagger{
 	******************************************************************/
 	updateZKB(){
 		var mp = map_root.map1;
+		var kb_upd = {};
 		for (var j in mp) {
 			if ((mp[j]["alive"]) == 0) continue;
 			var s1 = mp[j]["sys1"];
 			var s2 = mp[j]["sys2"];
-			this.systemsKB["s_"+s1+""] = "";
-			this.systemsKB["s_"+s2+""] = "";
+			kb_upd["s_"+s1+""] = "";
+			kb_upd["s_"+s2+""] = "";
 		}
-
+		this.systemsKB = kb_upd;
 		var tmout = 0;
 		var syst_count = Object.keys(this.systemsKB).length;
 		console.log("Starting KB-parse, systems to check: "+syst_count);
