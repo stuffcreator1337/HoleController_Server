@@ -890,7 +890,8 @@ class swagger{
 	******************************************************************/
 	updateZKB(){
 		var mp = map_root.map1;
-		for(var j in mp){
+		for (var j in mp) {
+			if ((mp[j]["alive"]) == 0) continue;
 			var s1 = mp[j]["sys1"];
 			var s2 = mp[j]["sys2"];
 			this.systemsKB["s_"+s1+""] = "";
@@ -1804,7 +1805,8 @@ function getCCPdata(u,callback){
 		if (error || response.statusCode !== 200) {
 			console.log(`${FG_RED}${BG_BLACK}450: ERROR FOR ${response.statusCode}${error}${RESET}`);
 		}
-		callback(null, JSON.parse(body));  
+		callback(null, JSON.parse(body));
+		if (response && response.socket) response.socket.destroy(); // закрыть сокет
 	});
 }
 function getAjaxZKB(u, callback) {
