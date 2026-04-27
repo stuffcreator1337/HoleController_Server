@@ -1301,6 +1301,10 @@ class map{
 				// this.map1.splice(i,1);
 			}
 		}
+
+		var systems = map_root.systems_data;
+		map_root.systems_data = cleanData(systems);
+
 		readF('history',function(err,saved_history,size,json,that){
 			// console.log(saved_history.length, typeof(saved_history));
 			// console.log(json.length);
@@ -1314,7 +1318,52 @@ class map{
 			  return json.indexOf( el ) < 0;
 			} );
 			console.log('====MAP CACHE CLEANED====');
-		},jsonToDel,this);
+		}, jsonToDel, this);
+
+	}
+	cleanData(arr) {
+		const now = Date.now();
+
+		return arr.filter(item => {
+			// --- 1. Проверяем и чистим вложенные expire ---
+
+			// designator
+			if (item.designator?.expire && item.designator.expire < now) {
+				item.designator.data = "";
+			}
+
+			// sigs
+			if (item.sigs?.expire && item.sigs.expire < now) {
+				item.sigs.data = [];
+			}
+
+			// --- 2. Проверка условий "пустоты" ---
+
+			const annotationEmpty = !item.annotation;
+			const localsTextEmpty = !item.locals_text;
+
+			const locals = item.locals || {};
+
+			const corpIdEmpty = locals.corp_ID === -1 || locals.corp_ID === undefined;
+			const corpDataEmpty = !locals.corp_data || Object.keys(locals.corp_data).length === 0;
+
+			const alliIdEmpty = locals.alli_ID === -1 || locals.alli_ID === undefined;
+			const alliDataEmpty = !locals.alli_data || Object.keys(locals.alli_data).length === 0;
+
+			const isEmpty =
+				annotationEmpty &&
+				localsTextEmpty &&
+				corpIdEmpty &&
+				corpDataEmpty &&
+				alliIdEmpty &&
+				alliDataEmpty;
+
+			// --- 3. Проверка expire верхнего уровня ---
+			const expired = item.expire && item.expire < now;
+
+			// --- 4. Удаляем элемент если ВСЁ выполняется ---
+			return !(isEmpty && expired);
+		});
 	}
 	create_link(new_id,old_id,type,charID){
 		var openDate = new Date();
