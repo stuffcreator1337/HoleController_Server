@@ -1303,7 +1303,7 @@ class map{
 		}
 
 		var systems = map_root.systems_data;
-		map_root.systems_data = cleanData(systems);
+		map_root.systems_data = this.cleanData(systems);
 
 		readF('history',function(err,saved_history,size,json,that){
 			// console.log(saved_history.length, typeof(saved_history));
