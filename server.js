@@ -1644,10 +1644,12 @@ function update_crest(token, info, state, unique) {//обновляем имею
 	if (!findById(crest.crestDB, unique, 'code'))
 	{
 		code = unique;
+        console.log("647: Code is unique, reusing " + code); 
 	}
 	else {
 		while(findById(crest.crestDB,code,'code')){
 			code = Math.floor(Math.random() * 10000000);
+            console.log("651: Generating new code: " + code);
 		}
 	}
 	if (typeof code === 'string') {
@@ -1707,7 +1709,7 @@ function update_crest(token, info, state, unique) {//обновляем имею
 		
 		}else{//перс найден, исправляем код ищем все записи по его коду и отправляем данные
 			var i = found[0];
-			console.log('464: FOUND CHARACTER FOR CODE: ' + crestDB[i]['code']);
+			console.log(`${FG_BLUE}${BG_BLACK}464: FOUND CHARACTER FOR CODE:${crestDB[i]['code']}${RESET}`);
 			//crestDB[i]['code'] = unique;
 			crestDB[i]['refresh_token'] = token['refresh_token'];
 			crestDB[i]['access_token'] = token['access_token'];
@@ -1726,9 +1728,9 @@ function update_crest(token, info, state, unique) {//обновляем имею
 				"CharacterName": cleanLogName(info['CharacterName']),
 				"refresh_token":token['refresh_token'],
 				"access_token": token['access_token'],
-				"code": code
+				"code": unique
 			};
-			console.log('ADDING NEW CHARACTER: '+info['CharacterName']);
+			console.log(`${FG_BLUE}${BG_BLACK}465: ADDING NEW CHARACTER: ${info['CharacterName']}${RESET}`);
 			crestDB.push(data);	
 			let host = 'esi.evetech.net';
 			let url = '/latest/characters/'+info['CharacterID']+'/location/?datasource=tranquility';
