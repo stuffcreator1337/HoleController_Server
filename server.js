@@ -59,6 +59,9 @@ const BG_GREEN = "\x1b[48;5;46m";
 const FG_BLUE = "\x1b[38;5;27m";
 const BG_BLUE = "\x1b[48;5;27m";
 
+const FG_BLUE_LIGHT = "\x1b[38;5;33m";
+const BG_BLUE_LIGHT = "\x1b[48;5;33m";
+
 
 const Telebot = new Telegraf(localSettings.Hooks.telegrambot_token);
 const channelId = localSettings.Hooks.telegrambot_channelID;
@@ -274,7 +277,7 @@ io.on("connection", socket => {
 			}
 			//console.log("635: code: " + data + " processing: " + code + "name: " + cleanLogName(crestDB[i]['CharacterName']) +" equal? " + (code == data));
 			if (code == data) {
-				console.log("542: FOUND " + cleanLogName(crestDB[i]['CharacterName']) + " with code " + data);
+				console.log(`${FG_BLUE_LIGHT}${BG_BLACK}542: FOUND${cleanLogName(crestDB[i]['CharacterName'])}with code${data}${RESET}`);
 				// for(var j=0;j<)
 				if (findById(crest.charLoc, crestDB[i]['CharacterID'], 'CharacterID')) {
 					sendData.push(findById(crest.charLoc, crestDB[i]['CharacterID'], 'CharacterID')[1]);
