@@ -277,7 +277,7 @@ io.on("connection", socket => {
 			}
 			//console.log("635: code: " + data + " processing: " + code + "name: " + cleanLogName(crestDB[i]['CharacterName']) +" equal? " + (code == data));
 			if (code == data) {
-				console.log(`${FG_BLUE_LIGHT}${BG_BLACK}542: FOUND${cleanLogName(crestDB[i]['CharacterName'])}with code${data}${RESET}`);
+				console.log(`${FG_BLUE_LIGHT}${BG_BLACK}542: FOUND ${cleanLogName(crestDB[i]['CharacterName'])} with code ${data}${RESET}`);
 				// for(var j=0;j<)
 				if (findById(crest.charLoc, crestDB[i]['CharacterID'], 'CharacterID')) {
 					sendData.push(findById(crest.charLoc, crestDB[i]['CharacterID'], 'CharacterID')[1]);
